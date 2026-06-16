@@ -1625,8 +1625,8 @@ input[type="text"].fish-input:focus {
         <svg class="icon-svg" viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
         <span id="privacy-text">Privacy Mode</span>
       </div>
-      <button class="btn-topbar" onclick="openAIFillModal()" id="ai-fill-btn" aria-label="AI fill" style="background:var(--primary);color:white;font-weight:700;">🤖 IA</button>
-      <button class="btn-topbar" onclick="toggleLang()" id="lang-toggle" aria-label="Toggle language">PT 🇧🇷</button>
+      <button class="btn-topbar" onclick="openAIFillModal()" id="ai-fill-btn" aria-label="AI fill" style="background:var(--primary);color:white;font-weight:700;display:flex;align-items:center;gap:5px;"><svg class="lucide-svg" style="width:14px;height:14px;" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg> IA</button>
+      <button class="btn-topbar" onclick="toggleLang()" id="lang-toggle" aria-label="Toggle language">PT</button>
       <button class="btn-topbar" id="timer-btn" onclick="toggleTimer()" aria-label="Encounter timer" title="Encounter timer" style="font-variant-numeric:tabular-nums;">
         <svg class="icon-svg" viewBox="0 0 24 24"><path d="M15 1H9v2h6V1zm-4 13h2V8h-2v6zm8.03-6.61l1.42-1.42c-.43-.51-.9-.99-1.41-1.41l-1.42 1.42C16.07 4.74 14.12 4 12 4c-4.97 0-9 4.03-9 9s4.02 9 9 9 9-4.03 9-9c0-2.12-.74-4.07-1.97-5.61zM12 20c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/></svg>
         <span id="timer-display">0:00</span>
@@ -1647,8 +1647,8 @@ input[type="text"].fish-input:focus {
         <button class="drafts-btn drafts-btn-manager" onclick="openDraftsModal()" id="drafts-btn-lbl">Patients Manager</button>
         <div class="drafts-bar-actions">
           <button class="drafts-btn" style="background: var(--border); color: var(--text); padding: 5px 10px; font-weight:bold;" onclick="createNewPatient()" id="btn-clear-sidebar-lbl" title="Create New Patient">+ New</button>
-          <button class="drafts-btn" id="btn-save-visit-lbl" style="background: var(--primary); padding: 5px 10px; font-weight:bold;" onclick="saveVisitAndNotify()" title="Save Visit to Timeline">📋 Save</button>
-          <button class="drafts-btn" id="btn-timeline-lbl" style="background: var(--accent); padding: 5px 10px; font-weight:bold; color:white;" onclick="openLongitudinalModal()" title="Patient Timeline">⏱ History</button>
+          <button class="drafts-btn" id="btn-save-visit-lbl" style="background: var(--primary); padding: 5px 10px; font-weight:bold;display:flex;align-items:center;justify-content:center;gap:4px;" onclick="saveVisitAndNotify()" title="Save Visit to Timeline"><svg class="lucide-svg" style="width:13px;height:13px;" viewBox="0 0 24 24"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg> <span id="btn-save-visit-txt">Save</span></button>
+          <button class="drafts-btn" id="btn-timeline-lbl" style="background: var(--accent); padding: 5px 10px; font-weight:bold; color:white;display:flex;align-items:center;justify-content:center;gap:4px;" onclick="openLongitudinalModal()" title="Patient Timeline"><svg class="lucide-svg" style="width:13px;height:13px;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> <span id="btn-timeline-txt">History</span></button>
         </div>
       </div>
       <div class="drafts-bar-left">
@@ -1719,6 +1719,17 @@ input[type="text"].fish-input:focus {
 </div>
 
 <script>
+// ══════════════════════════════════════════════════════════ SVG ICON CONSTANTS
+// All icons use stroke="currentColor" to inherit button/text color — no color hardcoding.
+const SVG = {
+  clipboard: `<svg class="lucide-svg" viewBox="0 0 24 24"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>`,
+  clock:     `<svg class="lucide-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>`,
+  ai:        `<svg class="lucide-svg" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>`,
+  syringe:   `<svg class="lucide-svg" viewBox="0 0 24 24"><path d="m18 2 4 4"/><path d="m17 7 3-3"/><path d="M19 9 8.7 19.3c-1 1-2.5 1-3.4 0l-.6-.6c-1-1-1-2.5 0-3.4L15 5"/><path d="m9 11 4 4"/><path d="m5 19-3 3"/><path d="m14 4 6 6"/></svg>`,
+  shield:    `<svg class="lucide-svg" style="width:22px;height:22px;" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`,
+  warn:      `<svg class="lucide-svg" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>`,
+};
+
 let lang = 'en';
 let activeMedCat = null;
 let activeCalcSection = null;
@@ -5157,7 +5168,7 @@ function renderVaccineSection(mos) {
   html += `<div style="display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:6px;
     background:${overdueCnt>0?'var(--danger-light)':givenCnt===vacs.length?'var(--primary-light)':'var(--surface)'};
     border:1px solid ${overdueCnt>0?'var(--danger)':givenCnt===vacs.length?'var(--primary)':'var(--border)'};margin-bottom:12px;">
-    <div style="font-size:24px;">${givenCnt===vacs.length?'🛡️':overdueCnt>0?'⚠️':'💉'}</div>
+    <div style="display:flex;align-items:center;color:${overdueCnt>0?'var(--danger)':givenCnt===vacs.length?'var(--primary)':'var(--text-muted)'};">${givenCnt===vacs.length?SVG.shield:overdueCnt>0?SVG.warn:SVG.syringe}</div>
     <div>
       <div style="font-size:13px;font-weight:700;color:${overdueCnt>0?'var(--danger)':givenCnt===vacs.length?'var(--primary)':'var(--text)'};">
         ${givenCnt}/${vacs.length} ${lang==='en'?'vaccines recorded':'vacinas registradas'}
@@ -7068,7 +7079,7 @@ html += `
             <div class="input-row" style="margin-top:8px;">
               <div style="grid-column:1/-1;">
                 <div style="font-size:12px;font-weight:700;color:var(--primary);margin-bottom:6px;">
-                  💉 ${lang==='en'?'Vaccination Record':'Registro de Vacinação'}
+                  ${SVG.syringe} ${lang==='en'?'Vaccination Record':'Registro de Vacinação'}
                 </div>
                 ${renderVaccineSection(state.patient.ageMonths || (parseFloat(state.patient.age||0)*12))}
               </div>
@@ -7093,7 +7104,7 @@ html += `
             <div class="input-row">
               <div style="grid-column:1/-1;">
                 <div style="font-size:12px;font-weight:700;color:var(--primary);margin-bottom:6px;">
-                  💉 ${lang==='en'?'Vaccination Record':'Registro de Vacinação'}
+                  ${SVG.syringe} ${lang==='en'?'Vaccination Record':'Registro de Vacinação'}
                 </div>
                 ${renderVaccineSection(state.patient.ageMonths || (parseFloat(state.patient.age||0)*12))}
               </div>
@@ -7130,7 +7141,7 @@ html += `
             <div class="input-row">
               <div style="grid-column:1/-1;">
                 <div style="font-size:12px;font-weight:700;color:var(--primary);margin-bottom:6px;">
-                  💉 ${lang==='en'?'Vaccination Record':'Registro de Vacinação'}
+                  ${SVG.syringe} ${lang==='en'?'Vaccination Record':'Registro de Vacinação'}
                 </div>
                 ${renderVaccineSection(state.patient.ageMonths || (parseFloat(state.patient.age||0)*12))}
               </div>
@@ -7178,7 +7189,7 @@ html += `
               </div>
               <div style="grid-column:1/-1;">
                 <div style="font-size:12px;font-weight:700;color:var(--primary);margin-bottom:6px;">
-                  💉 ${lang==='en'?'Vaccination Record':'Registro de Vacinação'}
+                  ${SVG.syringe} ${lang==='en'?'Vaccination Record':'Registro de Vacinação'}
                 </div>
                 ${renderVaccineSection(state.patient.ageMonths || (parseFloat(state.patient.age||0)*12))}
               </div>
@@ -8050,7 +8061,7 @@ const FAM_DISEASE_OPTS = lang === 'en'
           ${(state.customImg || []).map((exam, idx) => `
             <div style="background: ${exam.abnormal ? 'var(--danger-light)' : 'var(--surface-solid)'}; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px; margin-bottom: 10px; position: relative;">
               <button class="btn-sm-del" style="position: absolute; top: 12px; right: 12px;" onclick="removeCustomImg(${idx})">✕</button>
-              <button class="toggle-btn ${exam.abnormal ? 'sel-abnormal' : ''}" style="position: absolute; top: 12px; right: 40px; padding:2px; font-size:14px; width:24px; height:24px; display:flex; align-items:center; justify-content:center; background: ${exam.abnormal ? 'var(--danger)' : 'transparent'}; border: 1px solid ${exam.abnormal ? 'var(--danger)' : 'var(--border)'}; opacity: ${exam.abnormal ? '1' : '0.5'}" onclick="toggleImgAbnormal(${idx})" title="${lang === 'en' ? 'Mark Abnormal' : 'Marcar como Alterado'}">${exam.abnormal ? '<span style="color:white">⚠️</span>' : '⚠️'}</button>
+              <button class="toggle-btn ${exam.abnormal ? 'sel-abnormal' : ''}" style="position: absolute; top: 12px; right: 40px; padding:2px; font-size:14px; width:24px; height:24px; display:flex; align-items:center; justify-content:center; background: ${exam.abnormal ? 'var(--danger)' : 'transparent'}; border: 1px solid ${exam.abnormal ? 'var(--danger)' : 'var(--border)'}; opacity: ${exam.abnormal ? '1' : '0.5'}" onclick="toggleImgAbnormal(${idx})" title="${lang === 'en' ? 'Mark Abnormal' : 'Marcar como Alterado'}">${exam.abnormal ? '<span style="color:white">⚠</span>' : '⚠'}</button>
               
               <div style="display: flex; gap: 10px; margin-bottom: 10px; margin-right: 60px;">
                 <div style="flex: 2;">
@@ -9417,11 +9428,11 @@ function runGACalculator() {
     // ── LMP method ──────────────────────────────────────────────
     lmpDate = parseDateString(state.gynOb.lmp);
     if (!lmpDate) {
-      showGAResultBox('error', lang === 'en' ? '⚠️ Enter a valid LMP date first.' : '⚠️ Informe uma data de DUM válida.');
+      showGAResultBox('error', lang === 'en' ? '⚠ Enter a valid LMP date first.' : '⚠ Informe uma data de DUM válida.');
       return;
     }
     if (lmpDate > today) {
-      showGAResultBox('error', lang === 'en' ? '⚠️ LMP cannot be in the future.' : '⚠️ A DUM não pode ser no futuro.');
+      showGAResultBox('error', lang === 'en' ? '⚠ LMP cannot be in the future.' : '⚠ A DUM não pode ser no futuro.');
       return;
     }
     const diffDays = Math.floor((today - lmpDate) / (1000 * 60 * 60 * 24));
@@ -9435,15 +9446,15 @@ function runGACalculator() {
     const usgD = parseInt(state.gynOb.usgGaDays,  10) || 0;
     
     if (!usgDate) {
-      showGAResultBox('error', lang === 'en' ? '⚠️ Enter a valid USG date.' : '⚠️ Informe uma data de USG válida.');
+      showGAResultBox('error', lang === 'en' ? '⚠ Enter a valid USG date.' : '⚠ Informe uma data de USG válida.');
       return;
     }
     if (usgDate > today) {
-      showGAResultBox('error', lang === 'en' ? '⚠️ USG date cannot be in the future.' : '⚠️ A data do USG não pode ser no futuro.');
+      showGAResultBox('error', lang === 'en' ? '⚠ USG date cannot be in the future.' : '⚠ A data do USG não pode ser no futuro.');
       return;
     }
     if (isNaN(usgW) || usgW < 4 || usgW > 45) {
-      showGAResultBox('error', lang === 'en' ? '⚠️ Enter valid GA at USG (4–45 weeks).' : '⚠️ Informe uma IG válida no USG (4–45 semanas).');
+      showGAResultBox('error', lang === 'en' ? '⚠ Enter valid GA at USG (4–45 weeks).' : '⚠ Informe uma IG válida no USG (4–45 semanas).');
       return;
     }
     
@@ -10378,7 +10389,7 @@ function closeModalBtn() {
 }
 
 function updateLangUI() {
-  document.getElementById('lang-toggle').textContent = (lang === 'en') ? 'PT 🇧🇷' : 'EN 🇺🇸';
+  document.getElementById('lang-toggle').textContent = (lang === 'en') ? 'PT' : 'EN';
   document.getElementById('app-title').textContent = T[lang].appTitle;
   document.getElementById('privacy-shield-btn').querySelector('span').textContent = privacyShieldActive ? T[lang].privacyOn : T[lang].privacyOff;
   document.getElementById('drafts-btn-lbl').textContent = T[lang].patientManager;
@@ -10393,16 +10404,16 @@ function updateLangUI() {
     clearEl.textContent = lang === 'en' ? '+ New' : '+ Novo';
     clearEl.title = lang === 'en' ? 'Create New Patient' : 'Criar Novo Paciente';
   }
-  const saveVisitEl = document.getElementById('btn-save-visit-lbl');
-  if (saveVisitEl) saveVisitEl.textContent = lang === 'en' ? '📋 Save' : '📋 Salvar';
-  const timelineEl = document.getElementById('btn-timeline-lbl');
-  if (timelineEl) timelineEl.textContent = lang === 'en' ? '⏱ History' : '⏱ Histórico';
+  const saveVisitTxt = document.getElementById('btn-save-visit-txt');
+  if (saveVisitTxt) saveVisitTxt.textContent = lang === 'en' ? 'Save' : 'Salvar';
+  const timelineTxt = document.getElementById('btn-timeline-txt');
+  if (timelineTxt) timelineTxt.textContent = lang === 'en' ? 'History' : 'Histórico';
 
   // Longitudinal modal (static HTML)
-  const longTitle = document.getElementById('longitudinal-title');
-  if (longTitle) longTitle.textContent = '⏱ ' + (lang === 'en' ? 'Patient Timeline' : 'Linha do Tempo do Paciente');
-  const longSave = document.getElementById('longitudinal-save-btn');
-  if (longSave) longSave.textContent = '📋 ' + (lang === 'en' ? 'Save Current Visit' : 'Salvar Visita Atual');
+  const longTitleTxt = document.getElementById('longitudinal-title-txt');
+  if (longTitleTxt) longTitleTxt.textContent = lang === 'en' ? 'Patient Timeline' : 'Linha do Tempo do Paciente';
+  const longSaveTxt = document.getElementById('longitudinal-save-txt');
+  if (longSaveTxt) longSaveTxt.textContent = lang === 'en' ? 'Save Current Visit' : 'Salvar Visita Atual';
   const longClose = document.getElementById('longitudinal-close-btn');
   if (longClose) longClose.textContent = lang === 'en' ? 'Close' : 'Fechar';
 
@@ -10900,7 +10911,7 @@ function renderLongitudinalModal() {
   if (visits.length === 0) {
     container.innerHTML = `
       <div style="text-align:center;padding:40px 20px;color:var(--text-muted);">
-        <div style="font-size:32px;margin-bottom:12px;">📋</div>
+        <div style="margin-bottom:12px;color:var(--text-muted);"><svg class="lucide-svg" style="width:32px;height:32px;" viewBox="0 0 24 24"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg></div>
         <div style="font-size:15px;font-weight:600;">${lang==='en'?'No visits saved yet':'Nenhuma visita salva ainda'}</div>
         <div style="font-size:13px;margin-top:8px;">${lang==='en'?'Click "Save Visit" to record the current encounter':'Clique em "Salvar Visita" para registrar o atendimento atual'}</div>
       </div>`;
@@ -11137,7 +11148,7 @@ async function runAIFill() {
   const apiKey = (keyInput?.value.trim()) || localStorage.getItem(AI_KEY_STORAGE) || '';
   if (!apiKey) {
     statusEl.style.color = 'var(--danger)';
-    statusEl.textContent = isPT ? '⚠️ Insira sua chave de API do Claude.' : '⚠️ Enter your Claude API key first.';
+    statusEl.textContent = isPT ? '⚠ Insira sua chave de API do Claude.' : '⚠ Enter your Claude API key first.';
     return;
   }
   localStorage.setItem(AI_KEY_STORAGE, apiKey);
@@ -11150,7 +11161,7 @@ async function runAIFill() {
   const text = textInput?.value.trim() || '';
   if (!text && !_aiImageBase64) {
     statusEl.style.color = 'var(--danger)';
-    statusEl.textContent = isPT ? '⚠️ Cole um texto ou envie uma imagem.' : '⚠️ Paste text or upload an image.';
+    statusEl.textContent = isPT ? '⚠ Cole um texto ou envie uma imagem.' : '⚠ Paste text or upload an image.';
     return;
   }
 
@@ -11219,11 +11230,11 @@ JSON schema (use English enum values exactly as shown):
     saveState();
     renderSections();
     closeAIFillModal();
-    showToast(isPT ? `🤖 ${count} campos preenchidos pela IA` : `🤖 ${count} fields filled by AI`);
+    showToast(isPT ? `${count} campos preenchidos pela IA` : `${count} fields filled by AI`);
 
   } catch(e) {
     statusEl.style.color = 'var(--danger)';
-    statusEl.textContent = `⚠️ ${e.message}`;
+    statusEl.textContent = `⚠ ${e.message}`;
     runBtn.disabled = false;
   }
   runBtn.disabled = false;
@@ -11233,7 +11244,7 @@ JSON schema (use English enum values exactly as shown):
 async function generateOneLiner() {
   const apiKey = localStorage.getItem(AI_KEY_STORAGE);
   if (!apiKey) {
-    showToast(lang === 'en' ? '⚠️ No API key. Configure it in the AI settings.' : '⚠️ Chave de API não configurada. Configure nas definições de IA.');
+    showToast(lang === 'en' ? '⚠ No API key. Configure it in the AI settings.' : '⚠ Chave de API não configurada. Configure nas definições de IA.');
     return;
   }
 
@@ -11312,7 +11323,7 @@ async function generateOneLiner() {
 
   } catch(e) {
     statusEl.style.color = 'var(--danger)';
-    statusEl.textContent = `⚠️ ${e.message}`;
+    statusEl.textContent = `⚠ ${e.message}`;
   }
 
   btn.disabled = false;
@@ -11435,12 +11446,12 @@ if (!localStorage.getItem('rmd_kb_hint_v3')) {
 <div id="longitudinal-modal" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,0.55);backdrop-filter:blur(4px);z-index:9998;align-items:flex-start;justify-content:center;padding-top:60px;overflow-y:auto;">
   <div style="background:var(--surface-solid);border-radius:var(--radius);width:90%;max-width:600px;box-shadow:0 20px 40px rgba(0,0,0,0.2);animation:slideUp 0.2s cubic-bezier(0.16,1,0.3,1);">
     <div style="display:flex;align-items:center;padding:16px 20px;border-bottom:1px solid var(--border);">
-      <span id="longitudinal-title" style="font-size:16px;font-weight:800;color:var(--text);flex:1;">⏱ Patient Timeline</span>
+      <span id="longitudinal-title" style="font-size:16px;font-weight:800;color:var(--text);flex:1;display:flex;align-items:center;gap:8px;"><svg class="lucide-svg" style="width:16px;height:16px;" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> <span id="longitudinal-title-txt">Patient Timeline</span></span>
       <button onclick="closeLongitudinalModal()" style="background:none;border:none;cursor:pointer;font-size:20px;color:var(--text-muted);">✕</button>
     </div>
     <div id="longitudinal-content" style="padding:16px 20px;max-height:65vh;overflow-y:auto;"></div>
     <div style="padding:12px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px;">
-      <button id="longitudinal-save-btn" class="btn-primary" onclick="saveVisitAndNotify();renderLongitudinalModal();">📋 Save Current Visit</button>
+      <button id="longitudinal-save-btn" class="btn-primary" onclick="saveVisitAndNotify();renderLongitudinalModal();" style="display:flex;align-items:center;gap:6px;"><svg class="lucide-svg" style="width:14px;height:14px;" viewBox="0 0 24 24"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg> <span id="longitudinal-save-txt">Save Current Visit</span></button>
       <button id="longitudinal-close-btn" onclick="closeLongitudinalModal()" style="padding:10px 18px;border:1px solid var(--border);border-radius:var(--radius-sm);background:transparent;font-size:14px;cursor:pointer;">Close</button>
     </div>
   </div>
@@ -11466,7 +11477,7 @@ if (!localStorage.getItem('rmd_kb_hint_v3')) {
 <div id="ai-fill-modal" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,0.6);backdrop-filter:blur(4px);z-index:9999;align-items:flex-start;justify-content:center;padding-top:60px;overflow-y:auto;">
   <div style="background:var(--surface-solid);border-radius:var(--radius);width:92%;max-width:560px;box-shadow:0 20px 40px rgba(0,0,0,0.25);margin-bottom:40px;">
     <div style="display:flex;align-items:center;padding:16px 20px;border-bottom:1px solid var(--border);background:var(--primary-light);border-radius:var(--radius) var(--radius) 0 0;">
-      <span style="font-size:16px;font-weight:800;color:var(--primary);flex:1;">🤖 <span id="ai-modal-title">Preenchimento por IA</span></span>
+      <span style="font-size:16px;font-weight:800;color:var(--primary);flex:1;display:flex;align-items:center;gap:8px;"><svg class="lucide-svg" style="width:16px;height:16px;" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg> <span id="ai-modal-title">Preenchimento por IA</span></span>
       <button onclick="closeAIFillModal()" style="background:none;border:none;cursor:pointer;font-size:20px;color:var(--text-muted);">✕</button>
     </div>
     <div style="padding:20px;">
@@ -11517,8 +11528,9 @@ if (!localStorage.getItem('rmd_kb_hint_v3')) {
       <div id="ai-status" style="font-size:13px;min-height:18px;margin-bottom:12px;font-weight:500;"></div>
 
       <!-- Action button -->
-      <button id="ai-run-btn" class="btn-primary" style="width:100%;font-size:15px;padding:13px;" onclick="runAIFill()">
-        🤖 <span id="ai-run-label">Analisar e Preencher</span>
+      <button id="ai-run-btn" class="btn-primary" style="width:100%;font-size:15px;padding:13px;display:flex;align-items:center;justify-content:center;gap:8px;" onclick="runAIFill()">
+        <svg class="lucide-svg" style="width:16px;height:16px;" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        <span id="ai-run-label">Analisar e Preencher</span>
       </button>
 
       <div style="font-size:11px;color:var(--text-muted);text-align:center;margin-top:10px;" id="ai-footer-note">
