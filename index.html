@@ -8966,14 +8966,23 @@ function updateHPIField(key, val) {
   generateHPINarrative();
 }
 
+const _durationSingular = {
+  minutes:'minute', hours:'hour', days:'day', weeks:'week', months:'month', years:'year',
+  minutos:'minuto', horas:'hora', dias:'dia', semanas:'semana', meses:'mês', anos:'ano'
+};
+function _pluralizeUnit(v, u) {
+  if (!u) return u;
+  return (Number(v) === 1) ? (_durationSingular[u] || u) : u;
+}
+
 function updateHPIDurationFields(val, unit) {
   if (val !== null) state.hpi.durationValue = val;
   if (unit !== null) state.hpi.durationUnit = unit;
-  
+
   const v = state.hpi.durationValue || '';
-  const u = state.hpi.durationUnit || '';
+  const u = _pluralizeUnit(v, state.hpi.durationUnit || '');
   state.hpi.duration = v && u ? `${v} ${u}` : (v || u);
-  
+
   saveState();
   generateHPINarrative();
 }
