@@ -1547,6 +1547,7 @@ input[type="text"].fish-input:focus {
         <svg class="icon-svg" viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
         <span id="privacy-text">Privacy Mode</span>
       </div>
+      <button class="btn-topbar" onclick="openAIFillModal()" id="ai-fill-btn" aria-label="AI fill" style="background:var(--primary);color:white;font-weight:700;">🤖 IA</button>
       <button class="btn-topbar" onclick="toggleLang()" id="lang-toggle" aria-label="Toggle language">PT 🇧🇷</button>
       <button class="btn-topbar" id="timer-btn" onclick="toggleTimer()" aria-label="Encounter timer" title="Encounter timer" style="font-variant-numeric:tabular-nums;">
         <svg class="icon-svg" viewBox="0 0 24 24"><path d="M15 1H9v2h6V1zm-4 13h2V8h-2v6zm8.03-6.61l1.42-1.42c-.43-.51-.9-.99-1.41-1.41l-1.42 1.42C16.07 4.74 14.12 4 12 4c-4.97 0-9 4.03-9 9s4.02 9 9 9 9-4.03 9-9c0-2.12-.74-4.07-1.97-5.61zM12 20c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/></svg>
@@ -10137,6 +10138,7 @@ function updateLangUI() {
   const modalDictate = document.getElementById('modal-dictate-btn');
   if (modalDictate) modalDictate.title = lang === 'en' ? 'Voice dictation' : 'Ditado por voz';
 
+  updateAIModalLang();
   renderTabs();
   renderSections();
   updateProgressBar();
@@ -10704,6 +10706,209 @@ function saveVisitAndNotify() {
   }
 }
 
+// ══════════════════════════════════════════════════════════ AI FILL FEATURE
+const AI_KEY_STORAGE = 'rmd_ai_key';
+let _aiImageBase64 = null;
+let _aiImageMediaType = null;
+
+function openAIFillModal() {
+  const modal = document.getElementById('ai-fill-modal');
+  if (!modal) return;
+  modal.style.display = 'flex';
+  const saved = localStorage.getItem(AI_KEY_STORAGE);
+  const keyInput = document.getElementById('ai-key-input');
+  if (keyInput && saved) keyInput.value = saved;
+  _aiImageBase64 = null;
+  _aiImageMediaType = null;
+  const prev = document.getElementById('ai-image-preview');
+  if (prev) prev.style.display = 'none';
+  const imgInput = document.getElementById('ai-image-input');
+  if (imgInput) imgInput.value = '';
+  const ta = document.getElementById('ai-text-input');
+  if (ta) ta.value = '';
+  document.getElementById('ai-status').textContent = '';
+  updateAIModalLang();
+}
+
+function closeAIFillModal() {
+  const modal = document.getElementById('ai-fill-modal');
+  if (modal) modal.style.display = 'none';
+}
+
+function toggleAIKeyVisibility() {
+  const inp = document.getElementById('ai-key-input');
+  if (inp) inp.type = inp.type === 'password' ? 'text' : 'password';
+}
+
+function handleAIImageUpload(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const drop = document.getElementById('ai-image-drop-lbl');
+  if (drop) drop.textContent = file.name;
+  const reader = new FileReader();
+  reader.onload = function(ev) {
+    const result = ev.target.result;
+    _aiImageBase64 = result.split(',')[1];
+    _aiImageMediaType = file.type || 'image/jpeg';
+    const prev = document.getElementById('ai-image-preview');
+    if (prev) { prev.src = result; prev.style.display = 'block'; }
+  };
+  reader.readAsDataURL(file);
+}
+
+function updateAIModalLang() {
+  const pt = lang !== 'en';
+  const set = (id, txt) => { const el = document.getElementById(id); if (el) el.textContent = txt; };
+  set('ai-modal-title',      pt ? 'Preenchimento por IA'                              : 'AI Auto-Fill');
+  set('ai-key-section-title',pt ? 'Chave de API do Claude'                            : 'Claude API Key');
+  set('ai-key-hint',         pt ? 'Salva apenas no seu navegador. Nunca enviada a terceiros.' : 'Saved only in your browser. Never sent to third parties.');
+  set('ai-text-label',       pt ? 'Texto do Prontuário'                               : 'Medical Record Text');
+  set('ai-or-label',         pt ? 'ou'                                                : 'or');
+  set('ai-img-label',        pt ? 'Foto / Imagem do Prontuário'                       : 'Medical Record Image');
+  set('ai-image-drop-lbl',   pt ? 'Clique para selecionar imagem'                     : 'Click to select image');
+  set('ai-run-label',        pt ? 'Analisar e Preencher'                              : 'Analyze and Fill');
+  set('ai-footer-note',      pt ? 'Campos já preenchidos não serão apagados. Medicamentos serão adicionados à lista existente.'
+                                : 'Already-filled fields are preserved. Medications are appended to the existing list.');
+  const ta = document.getElementById('ai-text-input');
+  if (ta) ta.placeholder = pt ? 'Cole aqui o texto do prontuário, nota clínica, resumo de alta, anamnese...'
+                               : 'Paste medical record text, clinical note, discharge summary, history...';
+  const keyInp = document.getElementById('ai-key-input');
+  if (keyInp) keyInp.placeholder = 'sk-ant-api03-...';
+  const aiFillBtn = document.getElementById('ai-fill-btn');
+  if (aiFillBtn) aiFillBtn.title = pt ? 'Preencher com IA' : 'AI auto-fill';
+}
+
+async function runAIFill() {
+  const keyInput  = document.getElementById('ai-key-input');
+  const textInput = document.getElementById('ai-text-input');
+  const statusEl  = document.getElementById('ai-status');
+  const runBtn    = document.getElementById('ai-run-btn');
+  const isPT      = lang !== 'en';
+
+  const apiKey = (keyInput?.value.trim()) || localStorage.getItem(AI_KEY_STORAGE) || '';
+  if (!apiKey) {
+    statusEl.style.color = 'var(--danger)';
+    statusEl.textContent = isPT ? '⚠️ Insira sua chave de API do Claude.' : '⚠️ Enter your Claude API key first.';
+    return;
+  }
+  localStorage.setItem(AI_KEY_STORAGE, apiKey);
+
+  const text = textInput?.value.trim() || '';
+  if (!text && !_aiImageBase64) {
+    statusEl.style.color = 'var(--danger)';
+    statusEl.textContent = isPT ? '⚠️ Cole um texto ou envie uma imagem.' : '⚠️ Paste text or upload an image.';
+    return;
+  }
+
+  runBtn.disabled = true;
+  statusEl.style.color = 'var(--text-muted)';
+  statusEl.textContent = isPT ? '⏳ Analisando prontuário...' : '⏳ Analyzing record...';
+
+  const systemPrompt = `You are a medical data extraction assistant. Extract structured clinical data from the provided medical record and return it as a valid JSON object. Only include fields you can confidently extract. Omit absent or unclear fields. Return ONLY raw JSON — no markdown, no code block, no explanation.
+
+JSON schema (use English enum values exactly as shown):
+{
+  "patient": { "name":"", "age":"", "sex":"male|female|other", "weight":"kg", "height":"cm", "dob":"", "mrn":"", "occupation":"", "marital":"", "nationality":"" },
+  "cc": "chief complaint string",
+  "hpi": { "complaint":"", "onset":"sudden|gradual|progressive", "durationValue":"", "durationUnit":"minutes|hours|days|weeks|months|years", "char":"sharp|dull|pressure|burning|cramping|aching|stabbing|throbbing|tightness|other", "location":"", "radiation":"", "severity":"0-10", "assoc":"", "context":"" },
+  "hpiNotes": "free narrative paragraph",
+  "pmh": [{ "dx":"", "year":"" }],
+  "psh": [{ "sx":"", "year":"" }],
+  "medications": [{ "name":"", "dose":"", "route":"Oral|Intravenous|Intramuscular|Subcutaneous|Inhaled|Topical|Sublingual|Nasal|Transdermal|Other", "freq":"Once daily|Twice daily|Three times daily|Every 6 hours|Every 8 hours|Every 12 hours|As needed (PRN)|Weekly|Other", "notes":"" }],
+  "allergies": ["string"],
+  "nkda": false,
+  "famHx": { "DiseaseName": { "checked": true, "members": ["Father|Mother|Sibling|Grandparent|Other"], "custom": "" } },
+  "socialHx": { "tobacco":"Never|Former smoker|Current smoker|Vaping / Electronic cigarettes", "alcohol":"None|Socially|Occasionally|Regularly|Daily basis", "exercise":"Sedentary|Light (1-2x/week)|Moderate (3-4x/week)|Active (daily)", "drugs":"" },
+  "vitals": { "sbp":"", "dbp":"", "hr":"", "rr":"", "temp":"", "spo2":"", "glucose":"" }
+}`;
+
+  const userContent = [];
+  if (_aiImageBase64) {
+    userContent.push({ type: 'image', source: { type: 'base64', media_type: _aiImageMediaType, data: _aiImageBase64 } });
+  }
+  userContent.push({ type: 'text', text: text ? `Medical record:\n\n${text}` : 'Extract all clinical data visible in this medical record image.' });
+
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'content-type': 'application/json',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 2048,
+        system: systemPrompt,
+        messages: [{ role: 'user', content: userContent }]
+      })
+    });
+
+    if (!resp.ok) {
+      const err = await resp.json().catch(() => ({}));
+      throw new Error(err.error?.message || `HTTP ${resp.status}`);
+    }
+
+    const data = await resp.json();
+    const raw  = data.content?.[0]?.text || '';
+
+    let extracted;
+    try {
+      const jsonMatch = raw.match(/\{[\s\S]*\}/);
+      extracted = JSON.parse(jsonMatch ? jsonMatch[0] : raw);
+    } catch(e) {
+      throw new Error(isPT ? 'Não foi possível interpretar a resposta da IA. Tente novamente.' : 'Could not parse AI response. Please try again.');
+    }
+
+    const count = mergeAIExtracted(extracted);
+    saveState();
+    renderSections();
+    closeAIFillModal();
+    showToast(isPT ? `🤖 ${count} campos preenchidos pela IA` : `🤖 ${count} fields filled by AI`);
+
+  } catch(e) {
+    statusEl.style.color = 'var(--danger)';
+    statusEl.textContent = `⚠️ ${e.message}`;
+    runBtn.disabled = false;
+  }
+  runBtn.disabled = false;
+}
+
+function mergeAIExtracted(ex) {
+  let count = 0;
+  function setField(obj, key, val) {
+    if (val !== undefined && val !== null && val !== '') { obj[key] = String(val); count++; }
+  }
+  if (ex.patient && typeof ex.patient === 'object') {
+    ['name','age','sex','weight','height','dob','mrn','occupation','marital','nationality'].forEach(k => setField(state.patient, k, ex.patient[k]));
+  }
+  if (ex.cc) { state.cc = ex.cc; count++; }
+  if (ex.hpi && typeof ex.hpi === 'object') {
+    ['complaint','onset','durationValue','durationUnit','char','location','radiation','severity','assoc','context'].forEach(k => {
+      if (ex.hpi[k] !== undefined && ex.hpi[k] !== '') { state.hpi[k] = ex.hpi[k]; count++; }
+    });
+  }
+  if (ex.hpiNotes) { state.hpiNotes = ex.hpiNotes; count++; }
+  if (Array.isArray(ex.pmh) && ex.pmh.length) { state.pmh = ex.pmh; count += ex.pmh.length; }
+  if (Array.isArray(ex.psh) && ex.psh.length) { state.psh = ex.psh; count += ex.psh.length; }
+  if (Array.isArray(ex.medications) && ex.medications.length) {
+    state.medications = [...state.medications, ...ex.medications]; count += ex.medications.length;
+  }
+  if (ex.nkda === true) { state.nkda = true; count++; }
+  if (Array.isArray(ex.allergies) && ex.allergies.length) { state.allergies = ex.allergies; count += ex.allergies.length; }
+  if (ex.famHx && typeof ex.famHx === 'object') {
+    Object.keys(ex.famHx).forEach(k => { state.famHx[k] = ex.famHx[k]; count++; });
+  }
+  if (ex.socialHx && typeof ex.socialHx === 'object') {
+    ['tobacco','alcohol','exercise','drugs'].forEach(k => setField(state.socialHx, k, ex.socialHx[k]));
+  }
+  if (ex.vitals && typeof ex.vitals === 'object') {
+    ['sbp','dbp','hr','rr','temp','spo2','glucose'].forEach(k => setField(state.vitals, k, ex.vitals[k]));
+  }
+  return count;
+}
+
 // Start sequence
 loadState();
 updateLangUI(); // Set languages & initial render
@@ -10812,6 +11017,66 @@ if (!localStorage.getItem('rmd_kb_hint_v3')) {
   </div>
 </div>
 
+
+<!-- AI FILL MODAL -->
+<div id="ai-fill-modal" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,0.6);backdrop-filter:blur(4px);z-index:9999;align-items:flex-start;justify-content:center;padding-top:60px;overflow-y:auto;">
+  <div style="background:var(--surface-solid);border-radius:var(--radius);width:92%;max-width:560px;box-shadow:0 20px 40px rgba(0,0,0,0.25);margin-bottom:40px;">
+    <div style="display:flex;align-items:center;padding:16px 20px;border-bottom:1px solid var(--border);background:var(--primary-light);border-radius:var(--radius) var(--radius) 0 0;">
+      <span style="font-size:16px;font-weight:800;color:var(--primary);flex:1;">🤖 <span id="ai-modal-title">Preenchimento por IA</span></span>
+      <button onclick="closeAIFillModal()" style="background:none;border:none;cursor:pointer;font-size:20px;color:var(--text-muted);">✕</button>
+    </div>
+    <div style="padding:20px;">
+
+      <!-- API Key -->
+      <div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:16px;">
+        <div style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;" id="ai-key-section-title">Chave de API do Claude</div>
+        <div style="display:flex;gap:6px;">
+          <input type="password" id="ai-key-input" placeholder="sk-ant-api03-..." style="flex:1;font-family:monospace;font-size:13px;background:var(--surface-solid);">
+          <button onclick="toggleAIKeyVisibility()" title="Mostrar/ocultar" style="padding:8px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface-solid);cursor:pointer;font-size:14px;color:var(--text-muted);">👁</button>
+        </div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:6px;display:flex;align-items:center;gap:4px;">
+          <svg viewBox="0 0 24 24" style="width:11px;height:11px;fill:var(--primary);flex-shrink:0;"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
+          <span id="ai-key-hint">Salva apenas no seu navegador. Nunca é enviada a terceiros.</span>
+        </div>
+      </div>
+
+      <!-- Text input -->
+      <div style="margin-bottom:12px;">
+        <label style="font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;" id="ai-text-label">Texto do Prontuário</label>
+        <textarea id="ai-text-input" rows="7" style="margin-top:6px;font-size:13px;line-height:1.5;" id="ai-text-label-input" placeholder="Cole aqui o texto do prontuário, nota clínica, resumo de alta, anamnese..."></textarea>
+      </div>
+
+      <!-- Divider -->
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+        <div style="flex:1;height:1px;background:var(--border);"></div>
+        <span style="font-size:12px;color:var(--text-muted);font-weight:600;" id="ai-or-label">ou</span>
+        <div style="flex:1;height:1px;background:var(--border);"></div>
+      </div>
+
+      <!-- Image upload -->
+      <div style="margin-bottom:16px;">
+        <label style="font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;" id="ai-img-label">Foto / Imagem do Prontuário</label>
+        <label id="ai-image-drop" style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:6px;padding:16px;border:2px dashed var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:all 0.2s;color:var(--text-muted);font-size:13px;">
+          📎 <span id="ai-image-drop-lbl">Clique para selecionar imagem</span>
+          <input type="file" id="ai-image-input" accept="image/*" onchange="handleAIImageUpload(event)" style="display:none;">
+        </label>
+        <img id="ai-image-preview" src="" style="display:none;width:100%;max-height:200px;object-fit:contain;border-radius:var(--radius-sm);margin-top:8px;border:1px solid var(--border);">
+      </div>
+
+      <!-- Status -->
+      <div id="ai-status" style="font-size:13px;min-height:18px;margin-bottom:12px;font-weight:500;"></div>
+
+      <!-- Action button -->
+      <button id="ai-run-btn" class="btn-primary" style="width:100%;font-size:15px;padding:13px;" onclick="runAIFill()">
+        🤖 <span id="ai-run-label">Analisar e Preencher</span>
+      </button>
+
+      <div style="font-size:11px;color:var(--text-muted);text-align:center;margin-top:10px;" id="ai-footer-note">
+        Campos já preenchidos não serão apagados. Medicamentos serão adicionados à lista existente.
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- AUTOSAVE TOAST -->
 <div class="toast" id="save-toast" role="status" aria-live="polite">
