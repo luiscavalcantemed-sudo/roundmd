@@ -3712,20 +3712,6 @@ function switchTab(idx) {
   updateProgressBar();
 }
 
-// Swipe support variables
-let touchStartX = 0;
-let touchEndX = 0;
-
-function handleGesture() {
-  if (touchEndX < touchStartX - 80) {
-    // Swiped left -> Next tab
-    switchTab(currentTab + 1);
-  }
-  if (touchEndX > touchStartX + 80) {
-    // Swiped right -> Previous tab
-    switchTab(currentTab - 1);
-  }
-}
 
 // ══════════════════════════════════════════════════════════ SPEECH TO TEXT DICTATION ENGINE
 function startDictation(targetId) {
@@ -6149,15 +6135,6 @@ function renderSections() {
   
   const secEl = document.createElement('div');
   secEl.className = 'section active';
-  
-  // TOUCH GESTURE BINDING ON SECTION
-  secEl.addEventListener('touchstart', e => {
-    touchStartX = e.changedTouches[0].screenX;
-  });
-  secEl.addEventListener('touchend', e => {
-    touchEndX = e.changedTouches[0].screenX;
-    handleGesture();
-  });
   
   let html = '';
   
