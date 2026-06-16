@@ -395,7 +395,7 @@ label:first-of-type {
   margin-top: 0;
 }
 input[type="text"],
-input[type="number"],
+input[type="number" inputmode="decimal"],
 input[type="date"],
 select,
 textarea {
@@ -6196,13 +6196,13 @@ function renderSections() {
             <div style="display:flex; gap:6px; align-items:flex-end;">
               <div style="flex:1;">
                 <div style="font-size:11px; color:var(--text-muted); margin-bottom:3px;">${lang==='en'?'Years':'Anos'}</div>
-                <input type="number" id="pt-age" min="0" max="130"
+                <input type="number" inputmode="decimal" id="pt-age" min="0" max="130"
                   value="${state.patient.age || ''}"
                   oninput="updateAgeYears(this.value)">
               </div>
               <div style="flex:1;">
                 <div style="font-size:11px; color:var(--text-muted); margin-bottom:3px;">${lang==='en'?'Months':'Meses'}</div>
-                <input type="number" id="pt-age-months" min="0" max="11"
+                <input type="number" inputmode="decimal" id="pt-age-months" min="0" max="11"
                   value="${state.patient.ageMonths !== undefined ? (state.patient.ageMonths % 12) : ''}"
                   oninput="updateAgeMonths(this.value)">
               </div>
@@ -6333,7 +6333,7 @@ function renderSections() {
           <div>
             <label>${t.hpiDuration}</label>
             <div style="display:flex; gap:6px; align-items:center;">
-              <input type="number" inputmode="numeric" min="1" id="hpi-dur-val" value="${state.hpi.durationValue || ''}" oninput="updateHPIDurationFields(this.value, null)" style="width:70px;">
+              <input type="number" inputmode="decimal" inputmode="numeric" min="1" id="hpi-dur-val" value="${state.hpi.durationValue || ''}" oninput="updateHPIDurationFields(this.value, null)" style="width:70px;">
               <select id="hpi-dur-unit" onchange="updateHPIDurationFields(null, this.value)" style="flex:1;">
                 <option value=""></option>
                 ${t.durationUnits.map(u => `<option value="${u}" ${state.hpi.durationUnit === u ? 'selected' : ''}>${u}</option>`).join('')}
@@ -6524,7 +6524,7 @@ const pmhLib = PMH_CATS[lang];
             <div class="input-row" style="margin-bottom:8px;">
               <input type="text" placeholder="${t.pmhPlaceholder}" value="${p.dx || ''}" oninput="updatePHField('pmh', ${idx}, 'dx', this.value)">
               <div style="display:flex; gap:6px;">
-                <input type="number" min="1900" max="2100" placeholder="${t.yearLabel}" value="${p.year || ''}" oninput="updatePHField('pmh', ${idx}, 'year', this.value)">
+                <input type="number" inputmode="decimal" min="1900" max="2100" placeholder="${t.yearLabel}" value="${p.year || ''}" oninput="updatePHField('pmh', ${idx}, 'year', this.value)">
                 <button class="btn-sm-del" onclick="removePHItem('pmh', ${idx})">✕</button>
               </div>
             </div>
@@ -6566,7 +6566,7 @@ const pmhLib = PMH_CATS[lang];
             <div class="input-row" style="margin-bottom:8px;">
               <input type="text" placeholder="${t.pshPlaceholder}" value="${p.sx || ''}" oninput="updatePHField('psh', ${idx}, 'sx', this.value)">
               <div style="display:flex; gap:6px;">
-                <input type="number" min="1900" max="2100" placeholder="${t.yearLabel}" value="${p.year || ''}" oninput="updatePHField('psh', ${idx}, 'year', this.value)">
+                <input type="number" inputmode="decimal" min="1900" max="2100" placeholder="${t.yearLabel}" value="${p.year || ''}" oninput="updatePHField('psh', ${idx}, 'year', this.value)">
                 <button class="btn-sm-del" onclick="removePHItem('psh', ${idx})">✕</button>
               </div>
             </div>
@@ -6633,12 +6633,12 @@ html += `
               <div class="input-row" style="margin-top:10px;">
                 <div>
                   <label style="color: var(--ob-text);">${t.gaCalcUSGWeeks}</label>
-                  <input type="number" id="ob-usg-ga-weeks" min="4" max="45" value="${state.gynOb.usgGaWeeks || ''}"
+                  <input type="number" inputmode="decimal" id="ob-usg-ga-weeks" min="4" max="45" value="${state.gynOb.usgGaWeeks || ''}"
                     oninput="updateGynObField('usgGaWeeks', this.value)">
                 </div>
                 <div>
                   <label style="color: var(--ob-text);">${t.gaCalcUSGDays}</label>
-                  <input type="number" id="ob-usg-ga-days" min="0" max="6" value="${state.gynOb.usgGaDays || ''}"
+                  <input type="number" inputmode="decimal" id="ob-usg-ga-days" min="0" max="6" value="${state.gynOb.usgGaDays || ''}"
                     oninput="updateGynObField('usgGaDays', this.value)">
                 </div>
               </div>
@@ -6653,11 +6653,11 @@ html += `
           <div class="input-row">
             <div>
               <label>${t.gaWeeks}</label>
-              <input type="number" id="ob-ga-weeks" min="0" max="45" value="${state.gynOb.gaWeeks || ''}" oninput="calculateOBDates('ga')">
+              <input type="number" inputmode="decimal" id="ob-ga-weeks" min="0" max="45" value="${state.gynOb.gaWeeks || ''}" oninput="calculateOBDates('ga')">
             </div>
             <div>
               <label>${t.gaDays}</label>
-              <input type="number" id="ob-ga-days" min="0" max="6" value="${state.gynOb.gaDays || ''}" oninput="calculateOBDates('ga')">
+              <input type="number" inputmode="decimal" id="ob-ga-days" min="0" max="6" value="${state.gynOb.gaDays || ''}" oninput="calculateOBDates('ga')">
             </div>
           </div>
           
@@ -6690,7 +6690,7 @@ html += `
         <div class="input-row">
           <div>
             <label>${t.menarche}</label>
-            <input type="number" value="${state.gynOb.menarche || ''}" oninput="updateGynObField('menarche', this.value)">
+            <input type="number" inputmode="decimal" value="${state.gynOb.menarche || ''}" oninput="updateGynObField('menarche', this.value)">
           </div>
           <div>
             <label>${t.cycleRegularity}</label>
@@ -6704,11 +6704,11 @@ html += `
         <div class="input-row" style="margin-top:10px;">
           <div>
             <label>${t.cycleLength}</label>
-            <input type="number" value="${state.gynOb.cycleLength || ''}" oninput="updateGynObField('cycleLength', this.value)">
+            <input type="number" inputmode="decimal" value="${state.gynOb.cycleLength || ''}" oninput="updateGynObField('cycleLength', this.value)">
           </div>
           <div>
             <label>${t.cycleDuration}</label>
-            <input type="number" value="${state.gynOb.cycleDuration || ''}" oninput="updateGynObField('cycleDuration', this.value)">
+            <input type="number" inputmode="decimal" value="${state.gynOb.cycleDuration || ''}" oninput="updateGynObField('cycleDuration', this.value)">
           </div>
         </div>
         
@@ -6790,15 +6790,15 @@ html += `
         <div class="input-row-3">
           <div>
             <label>${t.gravida}</label>
-            <input type="number" value="${state.gynOb.gravida || ''}" oninput="updateGynObField('gravida', this.value)">
+            <input type="number" inputmode="decimal" value="${state.gynOb.gravida || ''}" oninput="updateGynObField('gravida', this.value)">
           </div>
           <div>
             <label>${t.para}</label>
-            <input type="number" value="${state.gynOb.para || ''}" oninput="updateGynObField('para', this.value)">
+            <input type="number" inputmode="decimal" value="${state.gynOb.para || ''}" oninput="updateGynObField('para', this.value)">
           </div>
           <div>
             <label>${t.abortus}</label>
-            <input type="number" value="${state.gynOb.abortus || ''}" oninput="updateGynObField('abortus', this.value)">
+            <input type="number" inputmode="decimal" value="${state.gynOb.abortus || ''}" oninput="updateGynObField('abortus', this.value)">
           </div>
         </div>
         
@@ -6841,11 +6841,11 @@ html += `
           <div class="input-row">
             <div>
               <label>${t.pedsGestAge}</label>
-              <input type="number" id="peds-ga" min="22" max="45" value="${state.pedsHx.gestAge||''}" oninput="updatePedsField('gestAge',this.value)">
+              <input type="number" inputmode="decimal" id="peds-ga" min="22" max="45" value="${state.pedsHx.gestAge||''}" oninput="updatePedsField('gestAge',this.value)">
             </div>
             <div>
               <label>${t.pedsBirthWeight}</label>
-              <input type="number" step="0.01" inputmode="decimal" id="peds-bw" min="0.3" max="8" value="${state.pedsHx.birthWeight||''}" oninput="updatePedsField('birthWeight',this.value)">
+              <input type="number" inputmode="decimal" step="0.01" inputmode="decimal" id="peds-bw" min="0.3" max="8" value="${state.pedsHx.birthWeight||''}" oninput="updatePedsField('birthWeight',this.value)">
             </div>
           </div>
           <div class="input-row" style="margin-top:8px;">
@@ -6858,7 +6858,7 @@ html += `
             </div>
             <div>
               <label>${lang==='en'?'NICU days':'Dias de UTI neonatal'}</label>
-              <input type="number" min="0" max="365" value="${state.pedsHx.nicudays||''}" oninput="updatePedsField('nicudays',this.value)">
+              <input type="number" inputmode="decimal" min="0" max="365" value="${state.pedsHx.nicudays||''}" oninput="updatePedsField('nicudays',this.value)">
             </div>
           </div>
         </div>`;
@@ -6870,11 +6870,11 @@ html += `
             <div class="input-row">
               <div>
                 <label>Apgar 1 min</label>
-                <input type="number" min="0" max="10" value="${state.pedsHx.apgar1||''}" oninput="updatePedsField('apgar1',this.value)">
+                <input type="number" inputmode="decimal" min="0" max="10" value="${state.pedsHx.apgar1||''}" oninput="updatePedsField('apgar1',this.value)">
               </div>
               <div>
                 <label>Apgar 5 min</label>
-                <input type="number" min="0" max="10" value="${state.pedsHx.apgar5||''}" oninput="updatePedsField('apgar5',this.value)">
+                <input type="number" inputmode="decimal" min="0" max="10" value="${state.pedsHx.apgar5||''}" oninput="updatePedsField('apgar5',this.value)">
               </div>
             </div>
             <div class="input-row" style="margin-top:8px;">
@@ -6923,13 +6923,13 @@ html += `
                   <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
                     <div>
                       <label style="font-size:11px;">${lang==='en'?'Duration of breastfeeding (months)':'Duração do aleitamento (meses)'}</label>
-                      <input type="number" min="0" max="60" value="${state.pedsHx.breastfedMonths||''}"
+                      <input type="number" inputmode="decimal" min="0" max="60" value="${state.pedsHx.breastfedMonths||''}"
                         oninput="updatePedsField('breastfedMonths',this.value)"
                         placeholder="${lang==='en'?'e.g. 6':'ex. 6'}">
                     </div>
                     <div>
                       <label style="font-size:11px;">${lang==='en'?'Exclusive BF duration (months)':'AME exclusivo (meses)'}</label>
-                      <input type="number" min="0" max="24" value="${state.pedsHx.breastfedExclusive||''}"
+                      <input type="number" inputmode="decimal" min="0" max="24" value="${state.pedsHx.breastfedExclusive||''}"
                         oninput="updatePedsField('breastfedExclusive',this.value)"
                         placeholder="${lang==='en'?'e.g. 6 (WHO rec.)':'ex. 6 (rec. OMS)'}">
                     </div>
@@ -6959,13 +6959,13 @@ html += `
                     </div>
                     <div>
                       <label style="font-size:11px;">${lang==='en'?'Volume per feed (mL)':'Volume por mamada (mL)'}</label>
-                      <input type="number" min="0" max="400" value="${state.pedsHx.formulaVolumePerFeed||''}"
+                      <input type="number" inputmode="decimal" min="0" max="400" value="${state.pedsHx.formulaVolumePerFeed||''}"
                         oninput="updatePedsField('formulaVolumePerFeed',this.value)"
                         placeholder="${lang==='en'?'e.g. 150':'ex. 150'}">
                     </div>
                     <div>
                       <label style="font-size:11px;">${lang==='en'?'Feeds per day':'Mamadas por dia'}</label>
-                      <input type="number" min="0" max="20" value="${state.pedsHx.formulaFreqDay||''}"
+                      <input type="number" inputmode="decimal" min="0" max="20" value="${state.pedsHx.formulaFreqDay||''}"
                         oninput="updatePedsField('formulaFreqDay',this.value)"
                         placeholder="${lang==='en'?'e.g. 6':'ex. 6'}">
                     </div>
@@ -6978,7 +6978,7 @@ html += `
                   <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
                     <div>
                       <label style="font-size:11px;">${lang==='en'?'Age at introduction (months)':'Idade de introdução alimentar (meses)'}</label>
-                      <input type="number" min="0" max="24" value="${state.pedsHx.foodIntroMonths||''}"
+                      <input type="number" inputmode="decimal" min="0" max="24" value="${state.pedsHx.foodIntroMonths||''}"
                         oninput="updatePedsField('foodIntroMonths',this.value)"
                         placeholder="${lang==='en'?'e.g. 6 (WHO rec.)':'ex. 6 (rec. OMS)'}">
                       ${state.pedsHx.foodIntroMonths && parseFloat(state.pedsHx.foodIntroMonths) < 4 ? `
@@ -7049,12 +7049,12 @@ html += `
             <div class="input-row">
               <div>
                 <label>${lang==='en'?'Breastfeeding duration (months)':'Duração do AME/aleitamento (meses)'}</label>
-                <input type="number" min="0" max="48" value="${state.pedsHx.breastfedMonths||''}" oninput="updatePedsField('breastfedMonths',this.value)">
+                <input type="number" inputmode="decimal" min="0" max="48" value="${state.pedsHx.breastfedMonths||''}" oninput="updatePedsField('breastfedMonths',this.value)">
 
               </div>
               <div>
                 <label>${lang==='en'?'Food introduction (months)':'Introdução alimentar (meses)'}</label>
-                <input type="number" min="0" max="36" value="${state.pedsHx.foodIntroMonths||''}" oninput="updatePedsField('foodIntroMonths',this.value)">
+                <input type="number" inputmode="decimal" min="0" max="36" value="${state.pedsHx.foodIntroMonths||''}" oninput="updatePedsField('foodIntroMonths',this.value)">
               </div>
             </div>
             <div class="input-row" style="margin-top:8px;">
@@ -7091,7 +7091,7 @@ html += `
               </div>
               <div>
                 <label>${lang==='en'?'Screen time (h/day)':'Tempo de tela (h/dia)'}</label>
-                <input type="number" min="0" max="24" value="${state.pedsHx.screenTime||''}" oninput="updatePedsField('screenTime',this.value)">
+                <input type="number" inputmode="decimal" min="0" max="24" value="${state.pedsHx.screenTime||''}" oninput="updatePedsField('screenTime',this.value)">
               </div>
             </div>
             <div style="margin-top:10px;">
@@ -7137,7 +7137,7 @@ html += `
             <div class="input-row" style="margin-top:8px;">
               <div>
                 <label>${lang==='en'?'Screen time (h/day)':'Tempo de tela (h/dia)'}</label>
-                <input type="number" min="0" max="24" value="${state.pedsHx.screenTime||''}" oninput="updatePedsField('screenTime',this.value)">
+                <input type="number" inputmode="decimal" min="0" max="24" value="${state.pedsHx.screenTime||''}" oninput="updatePedsField('screenTime',this.value)">
               </div>
               <div>
                 <label>${lang==='en'?'Physical activity':'Atividade física'}</label>
@@ -7440,11 +7440,11 @@ const FAM_DISEASE_OPTS = lang === 'en'
             <div class="input-row">
               <div>
                 <label>${t.tobaccoPacksDay}</label>
-                <input type="number" step="0.1" inputmode="decimal" min="0" max="10" value="${state.socialHx.packsDay || ''}" oninput="updateSocialField('packsDay', this.value); calculatePackYears();">
+                <input type="number" inputmode="decimal" step="0.1" inputmode="decimal" min="0" max="10" value="${state.socialHx.packsDay || ''}" oninput="updateSocialField('packsDay', this.value); calculatePackYears();">
               </div>
               <div>
                 <label>${t.tobaccoYears}</label>
-                <input type="number" min="0" max="100" value="${state.socialHx.smokeYears || ''}" oninput="updateSocialField('smokeYears', this.value); calculatePackYears();">
+                <input type="number" inputmode="decimal" min="0" max="100" value="${state.socialHx.smokeYears || ''}" oninput="updateSocialField('smokeYears', this.value); calculatePackYears();">
               </div>
             </div>
             
@@ -7461,7 +7461,7 @@ const FAM_DISEASE_OPTS = lang === 'en'
               ${(state.socialHx.tobacco === 'Former smoker' || state.socialHx.tobacco === 'Ex-fumante') ? `
                 <div>
                   <label>${t.tobaccoQuitYear}</label>
-                  <input type="number" min="1900" max="2100" value="${state.socialHx.quitYear || ''}" oninput="updateSocialField('quitYear', this.value)">
+                  <input type="number" inputmode="decimal" min="1900" max="2100" value="${state.socialHx.quitYear || ''}" oninput="updateSocialField('quitYear', this.value)">
                 </div>
               ` : ''}
             </div>
@@ -7565,12 +7565,12 @@ const FAM_DISEASE_OPTS = lang === 'en'
         <div class="input-row">
           <div class="vital-wrap">
             <label>${t.bpSys}</label>
-            <input type="number" id="v-sbp" min="40" max="300" value="${state.vitals.sbp || ''}" oninput="state.vitals.sbp=this.value; saveState(); updateVitalFeedback('sbp');">
+            <input type="number" inputmode="decimal" id="v-sbp" min="40" max="300" value="${state.vitals.sbp || ''}" oninput="state.vitals.sbp=this.value; saveState(); updateVitalFeedback('sbp');">
             <span class="vital-indicator" id="feed-sbp"></span>
           </div>
           <div class="vital-wrap">
             <label>${t.bpDia}</label>
-            <input type="number" id="v-dbp" min="20" max="200" value="${state.vitals.dbp || ''}" oninput="state.vitals.dbp=this.value; saveState(); updateVitalFeedback('dbp');">
+            <input type="number" inputmode="decimal" id="v-dbp" min="20" max="200" value="${state.vitals.dbp || ''}" oninput="state.vitals.dbp=this.value; saveState(); updateVitalFeedback('dbp');">
             <span class="vital-indicator" id="feed-dbp"></span>
           </div>
         </div>
@@ -7579,12 +7579,12 @@ const FAM_DISEASE_OPTS = lang === 'en'
         <div class="input-row" style="margin-top:10px;">
           <div class="vital-wrap">
             <label>${t.hr}</label>
-            <input type="number" id="v-hr" min="20" max="300" value="${state.vitals.hr || ''}" oninput="state.vitals.hr=this.value; saveState(); updateVitalFeedback('hr');">
+            <input type="number" inputmode="decimal" id="v-hr" min="20" max="300" value="${state.vitals.hr || ''}" oninput="state.vitals.hr=this.value; saveState(); updateVitalFeedback('hr');">
             <span class="vital-indicator" id="feed-hr"></span>
           </div>
           <div class="vital-wrap">
             <label>${t.rr}</label>
-            <input type="number" id="v-rr" min="4" max="70" value="${state.vitals.rr || ''}" oninput="state.vitals.rr=this.value; saveState(); updateVitalFeedback('rr');">
+            <input type="number" inputmode="decimal" id="v-rr" min="4" max="70" value="${state.vitals.rr || ''}" oninput="state.vitals.rr=this.value; saveState(); updateVitalFeedback('rr');">
             <span class="vital-indicator" id="feed-rr"></span>
           </div>
         </div>
@@ -7592,18 +7592,18 @@ const FAM_DISEASE_OPTS = lang === 'en'
         <div class="input-row" style="margin-top:10px;">
           <div class="vital-wrap">
             <label>${t.temp}</label>
-            <input type="number" step="0.1" inputmode="decimal" id="v-temp" min="30" max="45" value="${state.vitals.temp || ''}" oninput="state.vitals.temp=this.value; saveState(); updateVitalFeedback('temp');">
+            <input type="number" inputmode="decimal" step="0.1" inputmode="decimal" id="v-temp" min="30" max="45" value="${state.vitals.temp || ''}" oninput="state.vitals.temp=this.value; saveState(); updateVitalFeedback('temp');">
             <span class="vital-indicator" id="feed-temp"></span>
           </div>
           <div class="vital-wrap">
             <label>${t.spo2}</label>
-            <input type="number" id="v-spo2" min="50" max="100" value="${state.vitals.spo2 || ''}" oninput="state.vitals.spo2=this.value; saveState(); updateVitalFeedback('spo2');">
+            <input type="number" inputmode="decimal" id="v-spo2" min="50" max="100" value="${state.vitals.spo2 || ''}" oninput="state.vitals.spo2=this.value; saveState(); updateVitalFeedback('spo2');">
             <span class="vital-indicator" id="feed-spo2"></span>
           </div>
         </div>
         
         <label>${t.glucose}</label>
-        <input type="number" min="10" max="2000" value="${state.vitals.glucose || ''}" oninput="state.vitals.glucose=this.value; saveState();">
+        <input type="number" inputmode="decimal" min="10" max="2000" value="${state.vitals.glucose || ''}" oninput="state.vitals.glucose=this.value; saveState();">
       </div>
     `;
     
@@ -7624,7 +7624,7 @@ const FAM_DISEASE_OPTS = lang === 'en'
           <!-- Peso -->
           <div style="margin-bottom:10px;">
             <label>${t.weight} <span style="font-weight:400;color:var(--text-muted);">(kg)</span></label>
-            <input type="number" step="0.1" inputmode="decimal" id="pt-weight-pe" min="0.5" max="300"
+            <input type="number" inputmode="decimal" step="0.1" inputmode="decimal" id="pt-weight-pe" min="0.5" max="300"
               value="${state.patient.weight || ''}"
               oninput="updatePatientField('weight', this.value); recalculateBMI(); updateZScores();">
             <span id="z-wt-chip"></span>
@@ -7633,7 +7633,7 @@ const FAM_DISEASE_OPTS = lang === 'en'
           <!-- Estatura -->
           <div style="margin-bottom:10px;">
             <label>${t.height} <span style="font-weight:400;color:var(--text-muted);">${_mos > 0 && _mos <= 24 ? '(' + (lang==='en'?'length, cm':'comprimento, cm') + ')' : '(cm)'}</span></label>
-            <input type="number" id="pt-height-pe" min="30" max="250"
+            <input type="number" inputmode="decimal" id="pt-height-pe" min="30" max="250"
               value="${state.patient.height || ''}"
               oninput="updatePatientField('height', this.value); recalculateBMI(); updateZScores();">
             <span id="z-ht-chip"></span>
@@ -7642,7 +7642,7 @@ const FAM_DISEASE_OPTS = lang === 'en'
           <!-- IMC -->
           <div style="margin-bottom:10px;">
             <label>IMC / BMI <span style="font-weight:400;color:var(--text-muted);">(kg/m²)</span></label>
-            <input type="number" step="0.01" id="bmi-calc-box" readonly
+            <input type="number" inputmode="decimal" step="0.01" id="bmi-calc-box" readonly
               style="background:var(--bg);color:var(--text-muted);cursor:default;"
               placeholder="${lang==='en'?'Auto-calculated':'Calculado automaticamente'}">
             <span id="z-bmi-chip"></span>
@@ -7652,7 +7652,7 @@ const FAM_DISEASE_OPTS = lang === 'en'
           ${_showHC ? `
           <div style="margin-bottom:10px;">
             <label>${lang==='en'?'Head circumference':'Perímetro cefálico'} <span style="font-weight:400;color:var(--text-muted);">(cm)</span></label>
-            <input type="number" step="0.1" inputmode="decimal" id="pt-hc-pe" min="20" max="70"
+            <input type="number" inputmode="decimal" step="0.1" inputmode="decimal" id="pt-hc-pe" min="20" max="70"
               value="${state.pedsExam.hc || ''}"
               oninput="updatePedsExamField('hc', this.value); updateZScores();">
             <span id="z-hc-chip"></span>
@@ -7663,7 +7663,7 @@ const FAM_DISEASE_OPTS = lang === 'en'
           ${_showWaist ? `
           <div style="margin-bottom:10px;">
             <label>${lang==='en'?'Abdominal circumference':'Circunferência abdominal'} <span style="font-weight:400;color:var(--text-muted);">(cm)</span></label>
-            <input type="number" step="0.1" inputmode="decimal" id="pt-waist-pe" min="30" max="200"
+            <input type="number" inputmode="decimal" step="0.1" inputmode="decimal" id="pt-waist-pe" min="30" max="200"
               value="${state.pedsExam.waist || ''}"
               oninput="updatePedsExamField('waist', this.value);">
           </div>
@@ -7695,11 +7695,11 @@ const FAM_DISEASE_OPTS = lang === 'en'
           <div class="input-row">
             <div>
               <label>${t.fht}</label>
-              <input type="number" value="${state.obExam.fht || ''}" oninput="updateOBExamField('fht', this.value)">
+              <input type="number" inputmode="decimal" value="${state.obExam.fht || ''}" oninput="updateOBExamField('fht', this.value)">
             </div>
             <div>
               <label>${t.fundal}</label>
-              <input type="number" value="${state.obExam.fundal || ''}" oninput="updateOBExamField('fundal', this.value)">
+              <input type="number" inputmode="decimal" value="${state.obExam.fundal || ''}" oninput="updateOBExamField('fundal', this.value)">
             </div>
           </div>
           
@@ -7713,14 +7713,14 @@ const FAM_DISEASE_OPTS = lang === 'en'
             </div>
             <div>
               <label>${t.obDilation}</label>
-              <input type="number" step="0.5" value="${state.obExam.dilation || ''}" oninput="updateOBExamField('dilation', this.value)">
+              <input type="number" inputmode="decimal" step="0.5" value="${state.obExam.dilation || ''}" oninput="updateOBExamField('dilation', this.value)">
             </div>
           </div>
           
           <div class="input-row" style="margin-top:10px;">
             <div>
               <label>${t.obEffacement}</label>
-              <input type="number" value="${state.obExam.effacement || ''}" oninput="updateOBExamField('effacement', this.value)">
+              <input type="number" inputmode="decimal" value="${state.obExam.effacement || ''}" oninput="updateOBExamField('effacement', this.value)">
             </div>
             <div>
               <label>${t.obStation}</label>
@@ -8254,13 +8254,13 @@ const FAM_DISEASE_OPTS = lang === 'en'
         <div class="input-row" style="margin-bottom:10px;">
           <div>
             <label>${lang==='en'?'Serum creatinine (mg/dL)':'Creatinina sérica (mg/dL)'}</label>
-            <input type="number" step="0.01" inputmode="decimal" min="0.1" max="20"
+            <input type="number" inputmode="decimal" step="0.01" inputmode="decimal" min="0.1" max="20"
               value="${(state.calcs||{}).cg_cr||''}"
               oninput="setCalc('cg_cr', parseFloat(this.value)||null); runCG();">
           </div>
           <div>
             <label>${lang==='en'?'Age (years)':'Idade (anos)'}</label>
-            <input type="number" inputmode="numeric" min="1" max="130"
+            <input type="number" inputmode="decimal" inputmode="numeric" min="1" max="130"
               value="${(state.calcs||{}).cg_age || state.patient.age || ''}"
               oninput="setCalc('cg_age', parseFloat(this.value)||null); runCG();">
           </div>
@@ -8268,7 +8268,7 @@ const FAM_DISEASE_OPTS = lang === 'en'
         <div class="input-row" style="margin-bottom:10px;">
           <div>
             <label>${lang==='en'?'Weight (kg)':'Peso (kg)'}</label>
-            <input type="number" step="0.1" inputmode="decimal" min="1" max="300"
+            <input type="number" inputmode="decimal" step="0.1" inputmode="decimal" min="1" max="300"
               value="${(state.calcs||{}).cg_wt || state.patient.weight || ''}"
               oninput="setCalc('cg_wt', parseFloat(this.value)||null); runCG();">
           </div>
@@ -8294,7 +8294,7 @@ const FAM_DISEASE_OPTS = lang === 'en'
       html += `<div class="calc-card" style="border:none;border-radius:0;margin:0;border-top:1px solid var(--border);">
         <div style="margin-bottom:10px;">
           <label>${lang==='en'?'Weight (kg)':'Peso (kg)'}</label>
-          <input type="number" step="0.1" inputmode="decimal" min="0.5" max="100"
+          <input type="number" inputmode="decimal" step="0.1" inputmode="decimal" min="0.5" max="100"
             value="${(state.calcs||{}).hs_wt || state.patient.weight || ''}"
             oninput="setCalc('hs_wt', parseFloat(this.value)||null);">
         </div>
@@ -8340,7 +8340,7 @@ const FAM_DISEASE_OPTS = lang === 'en'
           </div>
           <div>
             <label>${lang==='en'?'Weight (kg)':'Peso (kg)'}</label>
-            <input type="number" step="0.1" inputmode="decimal" min="0.5" max="100"
+            <input type="number" inputmode="decimal" step="0.1" inputmode="decimal" min="0.5" max="100"
               value="${(state.calcs||{}).pd_wt || state.patient.weight || ''}"
               oninput="setCalc('pd_wt', parseFloat(this.value)||null);">
           </div>
@@ -8393,7 +8393,7 @@ const FAM_DISEASE_OPTS = lang === 'en'
         <div style="margin-top:14px;border-top:1px solid var(--border);padding-top:12px;">
           <div style="font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;margin-bottom:8px;">${lang==='en'?'Timed Up and Go (TUG)':'Timed Up and Go (TUG)'}</div>
           <div style="display:flex;align-items:center;gap:10px;">
-            <input type="number" step="0.1" inputmode="decimal" min="0" max="300"
+            <input type="number" inputmode="decimal" step="0.1" inputmode="decimal" min="0" max="300"
               placeholder="${lang==='en'?'Time in seconds':'Tempo em segundos'}"
               value="${(state.calcs||{}).tug_s||''}"
               oninput="setCalc('tug_s', parseFloat(this.value)||null)"
@@ -8419,7 +8419,7 @@ const FAM_DISEASE_OPTS = lang === 'en'
         <div class="input-row" style="margin-bottom:10px;">
           <div>
             <label>${lang==='en'?'MMSE score (0–30)':'MEEM (0–30)'}</label>
-            <input type="number" min="0" max="30"
+            <input type="number" inputmode="decimal" min="0" max="30"
               value="${(state.calcs||{}).mmse||''}"
               oninput="setCalc('mmse', parseInt(this.value)||null)">
             ${(() => {
@@ -8433,7 +8433,7 @@ const FAM_DISEASE_OPTS = lang === 'en'
           </div>
           <div>
             <label>${lang==='en'?'MoCA score (0–30)':'MoCA (0–30)'}</label>
-            <input type="number" min="0" max="30"
+            <input type="number" inputmode="decimal" min="0" max="30"
               value="${(state.calcs||{}).moca||''}"
               oninput="setCalc('moca', parseInt(this.value)||null)">
             ${(() => {
