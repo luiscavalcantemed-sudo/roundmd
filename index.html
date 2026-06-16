@@ -1602,7 +1602,7 @@ input[type="text"].fish-input:focus {
     <label id="modal-note-label">Add details:</label>
     <div class="dictate-wrap">
       <textarea id="modal-textarea" rows="3"></textarea>
-      <button class="btn-dictate" onclick="startDictation('modal-textarea')" title="Voice dictation">
+      <button class="btn-dictate" id="modal-dictate-btn" onclick="startDictation('modal-textarea')" title="Voice dictation">
         <svg class="icon-svg" viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z"/></svg>
       </button>
     </div>
@@ -6108,7 +6108,7 @@ function renderSections() {
         <label>${t.ccLabel}</label>
         <div class="dictate-wrap">
           <textarea id="cc-text" placeholder="${t.ccPlaceholder}" oninput="state.cc=this.value; saveState();">${state.cc || ''}</textarea>
-          <button class="btn-dictate" onclick="startDictation('cc-text')" title="Voice dictation">
+          <button class="btn-dictate" onclick="startDictation('cc-text')" title="${lang==='en'?'Voice dictation':'Ditado por voz'}">
             <svg class="icon-svg" viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z"/></svg>
           </button>
         </div>
@@ -6314,7 +6314,7 @@ function renderSections() {
         <label>${t.hpiNotes}</label>
         <div class="dictate-wrap">
           <textarea id="hpi-notes" rows="6" oninput="parseHPINarrative(this.value)">${state.hpiNotes || ''}</textarea>
-          <button class="btn-dictate" onclick="startDictation('hpi-notes')" title="Voice dictation">
+          <button class="btn-dictate" onclick="startDictation('hpi-notes')" title="${lang==='en'?'Voice dictation':'Ditado por voz'}">
             <svg class="icon-svg" viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z"/></svg>
           </button>
         </div>
@@ -8336,7 +8336,7 @@ const FAM_DISEASE_OPTS = lang === 'en'
               <span style="font-size:11px;font-weight:700;color:${color};padding-top:8px;min-width:16px;">${pi+1}.</span>
               <div class="dictate-wrap" style="flex:1;">
                 <textarea rows="2" style="font-size:13px;" id="${isAcute?'problem-plan':'chronic-plan'}-${idx}-${pi}" oninput="${updPl(pi)}">${pl||''}</textarea>
-                <button class="btn-dictate" onclick="startDictation('${isAcute?'problem-plan':'chronic-plan'}-${idx}-${pi}')" title="Dictate">
+                <button class="btn-dictate" onclick="startDictation('${isAcute?'problem-plan':'chronic-plan'}-${idx}-${pi}')" title="${lang==='en'?'Voice dictation':'Ditado por voz'}">
                   <svg class="icon-svg" viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z"/></svg>
                 </button>
               </div>
@@ -10112,17 +10112,34 @@ function updateLangUI() {
   if (saveVisitEl) saveVisitEl.textContent = lang === 'en' ? '📋 Save' : '📋 Salvar';
   const timelineEl = document.getElementById('btn-timeline-lbl');
   if (timelineEl) timelineEl.textContent = lang === 'en' ? '⏱ History' : '⏱ Histórico';
-  
+
+  // Longitudinal modal (static HTML)
+  const longTitle = document.getElementById('longitudinal-title');
+  if (longTitle) longTitle.textContent = '⏱ ' + (lang === 'en' ? 'Patient Timeline' : 'Linha do Tempo do Paciente');
+  const longSave = document.getElementById('longitudinal-save-btn');
+  if (longSave) longSave.textContent = '📋 ' + (lang === 'en' ? 'Save Current Visit' : 'Salvar Visita Atual');
+  const longClose = document.getElementById('longitudinal-close-btn');
+  if (longClose) longClose.textContent = lang === 'en' ? 'Close' : 'Fechar';
+
+  // PE/ROS modal (static HTML)
+  const modalSearch = document.getElementById('modal-search-input');
+  if (modalSearch) modalSearch.placeholder = lang === 'en' ? 'Type to filter clinical signs...' : 'Filtrar sinais clínicos...';
+  const modalNoteLabel = document.getElementById('modal-note-label');
+  if (modalNoteLabel) modalNoteLabel.textContent = lang === 'en' ? 'Add details:' : 'Adicionar detalhes:';
+  const modalSaveBtn = document.getElementById('modal-save-btn');
+  if (modalSaveBtn) modalSaveBtn.textContent = lang === 'en' ? 'Save Findings' : 'Salvar Achados';
+
+  // Timer title
+  const timerBtn = document.getElementById('timer-btn');
+  if (timerBtn) timerBtn.title = lang === 'en' ? 'Encounter timer' : 'Cronômetro da consulta';
+
+  // Static modal dictation button
+  const modalDictate = document.getElementById('modal-dictate-btn');
+  if (modalDictate) modalDictate.title = lang === 'en' ? 'Voice dictation' : 'Ditado por voz';
+
   renderTabs();
   renderSections();
   updateProgressBar();
-  const longModal = document.getElementById('longitudinal-modal');
-  if (longModal) {
-    const titleEl = longModal.querySelector('span[style*="font-weight:800"]');
-    if (titleEl) titleEl.textContent = '⏱ ' + (lang === 'en' ? 'Patient Timeline' : 'Linha do Tempo do Paciente');
-    const saveBtn = longModal.querySelector('button.btn-primary');
-    if (saveBtn) saveBtn.textContent = '📋 ' + (lang === 'en' ? 'Save Current Visit' : 'Salvar Visita Atual');
-  }
 }
 
 function swapDateParts(dateStr) {
@@ -10770,13 +10787,13 @@ if (!localStorage.getItem('rmd_kb_hint_v3')) {
 <div id="longitudinal-modal" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,0.55);backdrop-filter:blur(4px);z-index:9998;align-items:flex-start;justify-content:center;padding-top:60px;overflow-y:auto;">
   <div style="background:var(--surface-solid);border-radius:var(--radius);width:90%;max-width:600px;box-shadow:0 20px 40px rgba(0,0,0,0.2);animation:slideUp 0.2s cubic-bezier(0.16,1,0.3,1);">
     <div style="display:flex;align-items:center;padding:16px 20px;border-bottom:1px solid var(--border);">
-      <span style="font-size:16px;font-weight:800;color:var(--text);flex:1;">⏱ Patient Timeline</span>
+      <span id="longitudinal-title" style="font-size:16px;font-weight:800;color:var(--text);flex:1;">⏱ Patient Timeline</span>
       <button onclick="closeLongitudinalModal()" style="background:none;border:none;cursor:pointer;font-size:20px;color:var(--text-muted);">✕</button>
     </div>
     <div id="longitudinal-content" style="padding:16px 20px;max-height:65vh;overflow-y:auto;"></div>
     <div style="padding:12px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px;">
-      <button class="btn-primary" onclick="saveVisitAndNotify();renderLongitudinalModal();">📋 Save Current Visit</button>
-      <button onclick="closeLongitudinalModal()" style="padding:10px 18px;border:1px solid var(--border);border-radius:var(--radius-sm);background:transparent;font-size:14px;cursor:pointer;">Close</button>
+      <button id="longitudinal-save-btn" class="btn-primary" onclick="saveVisitAndNotify();renderLongitudinalModal();">📋 Save Current Visit</button>
+      <button id="longitudinal-close-btn" onclick="closeLongitudinalModal()" style="padding:10px 18px;border:1px solid var(--border);border-radius:var(--radius-sm);background:transparent;font-size:14px;cursor:pointer;">Close</button>
     </div>
   </div>
 </div>
