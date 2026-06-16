@@ -6161,14 +6161,6 @@ function renderSections() {
     html += `<h2 class="section-title">${currentTabDef.icon} ${t.patientTitle}</h2>`;
     html += `
       <div class="card">
-        <label style="font-weight:700; color:var(--primary);">${lang==='en'?'One-liner (Patient Summary)':'One-liner (Resumo do Paciente)'}</label>
-        <textarea id="pt-oneliner" rows="2" placeholder="${lang==='en'?'e.g. 65yo M with HTN/DM presenting with chest pain for 2 days':'Ex: Homem de 65 anos, HAS e DM2, com dor torácica há 2 dias'}" style="resize:vertical; font-size:13px;"
-          oninput="state.oneLiner=this.value; saveState();">${state.oneLiner||''}</textarea>
-        <div style="font-size:11px; color:var(--text-muted); margin-top:4px;">${lang==='en'?'Appears at the top of all generated notes.':'Aparece no topo de todas as notas geradas.'}</div>
-      </div>
-    `;
-    html += `
-      <div class="card">
         <label>${t.name}</label>
         <input type="text" class="phi-mask" id="pt-name" value="${state.patient.name || ''}" oninput="updatePatientField('name', this.value)">
 
@@ -8569,6 +8561,23 @@ const FAM_DISEASE_OPTS = lang === 'en'
         `).join('')}
       </div>
       <button class="btn-add" onclick="addPendencia(); return false;">${lang==='en'?'+ Add pending item':'+ Adicionar pendência'}</button>
+
+      <!-- ── ONE-LINER ─────────────────────────────────────────────────── -->
+      <div style="margin-top:28px; border-top:2px solid var(--primary); padding-top:18px;">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px; flex-wrap:wrap;">
+          <div style="font-size:14px; font-weight:700; color:var(--primary);">One-liner</div>
+          <div style="font-size:12px; color:var(--text-muted); flex:1;">${lang==='en'?'Short summary that appears at the top of all generated notes.':'Resumo breve que aparece no topo de todas as notas geradas.'}</div>
+          <button id="btn-gen-oneliner" onclick="generateOneLiner()" style="background:var(--primary);color:white;border:none;border-radius:var(--radius);padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;white-space:nowrap;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            ${lang==='en'?'Generate AI one-liner':'Gerar one-liner com IA'}
+          </button>
+        </div>
+        <div id="oneliner-status" style="font-size:12px;color:var(--text-muted);margin-bottom:6px;min-height:18px;"></div>
+        <textarea id="pt-oneliner" rows="2"
+          placeholder="${lang==='en'?'Click the button above to generate, or type manually…':'Clique no botão acima para gerar, ou edite manualmente…'}"
+          style="resize:vertical; font-size:13px; width:100%; box-sizing:border-box;"
+          oninput="state.oneLiner=this.value; saveState();">${state.oneLiner||''}</textarea>
+      </div>
 
     `;
   }
@@ -11202,6 +11211,95 @@ JSON schema (use English enum values exactly as shown):
     runBtn.disabled = false;
   }
   runBtn.disabled = false;
+}
+
+// ══════════════════════════════════════════════════════════ ONE-LINER AI GENERATOR
+async function generateOneLiner() {
+  const apiKey = localStorage.getItem(AI_KEY_STORAGE);
+  if (!apiKey) {
+    showToast(lang === 'en' ? '⚠️ No API key. Configure it in the AI settings.' : '⚠️ Chave de API não configurada. Configure nas definições de IA.');
+    return;
+  }
+
+  const btn = document.getElementById('btn-gen-oneliner');
+  const statusEl = document.getElementById('oneliner-status');
+  const textarea = document.getElementById('pt-oneliner');
+  if (!btn || !statusEl || !textarea) return;
+
+  btn.disabled = true;
+  statusEl.style.color = 'var(--text-muted)';
+  statusEl.textContent = lang === 'en' ? '⏳ Generating…' : '⏳ Gerando…';
+
+  // Build a compact case summary to send to the AI
+  const h = state.hpi;
+  const p = state.patient;
+  const isPT = lang === 'pt';
+
+  const agePart = p.age ? `${p.age}${isPT ? ' anos' : 'yo'}` : '';
+  const sexPart = p.sex === 'male' ? (isPT ? 'masculino' : 'M') : p.sex === 'female' ? (isPT ? 'feminino' : 'F') : '';
+  const pmhPart = (state.pmh || []).map(x => x.dx).filter(Boolean).join(', ');
+  const ccPart  = state.cc || h.complaint || '';
+  const durPart = h.durationValue && h.durationUnit
+    ? `${h.durationValue} ${_pluralizeUnit(h.durationValue, h.durationUnit)}`
+    : (h.duration || '');
+  const ddxPart = (state.ddx || []).map(d => d.dx).filter(Boolean).join(', ');
+  const pendPart = (state.pendencias || []).map(p => p.text).filter(Boolean).join('; ');
+
+  const caseSummary = [
+    agePart && sexPart ? `${isPT?'Paciente':'Patient'}: ${agePart}, ${sexPart}` : '',
+    ccPart  ? `${isPT?'Queixa principal':'Chief complaint'}: ${ccPart}` : '',
+    h.onset ? `${isPT?'Início':'Onset'}: ${h.onset}` : '',
+    durPart ? `${isPT?'Duração':'Duration'}: ${durPart}` : '',
+    h.location ? `${isPT?'Localização':'Location'}: ${h.location}` : '',
+    h.char  ? `${isPT?'Caráter':'Character'}: ${h.char}` : '',
+    h.severity ? `${isPT?'Intensidade':'Severity'}: ${h.severity}/10` : '',
+    pmhPart ? `${isPT?'Antecedentes':'PMH'}: ${pmhPart}` : '',
+    h.assoc ? `${isPT?'Sintomas associados':'Associated symptoms'}: ${h.assoc}` : '',
+    ddxPart ? `${isPT?'Hipóteses diagnósticas':'Differentials'}: ${ddxPart}` : '',
+    pendPart ? `${isPT?'Pendências':'Pending'}: ${pendPart}` : '',
+  ].filter(Boolean).join('\n');
+
+  const systemPrompt = isPT
+    ? `Você é um médico experiente escrevendo resumos clínicos concisos. Gere um "one-liner" clínico em português brasileiro — uma única frase (máximo 2 linhas) que resume o caso de forma objetiva e profissional. Formato sugerido: "[Idade] [sexo], [antecedentes relevantes], que se apresenta com [queixa principal] [duração], associado(a) a [sintomas relevantes]." Não use bullet points. Não adicione explicações. Responda apenas com o one-liner.`
+    : `You are an experienced physician writing concise clinical summaries. Generate a clinical "one-liner" in English — a single sentence (max 2 lines) summarizing the case objectively and professionally. Suggested format: "[Age]yo [sex] with [relevant PMH] presenting with [chief complaint] for [duration], associated with [relevant symptoms]." No bullet points. No explanations. Reply with only the one-liner.`;
+
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'content-type': 'application/json',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 200,
+        system: systemPrompt,
+        messages: [{ role: 'user', content: caseSummary || (isPT ? 'Dados do caso não preenchidos.' : 'No case data provided.') }]
+      })
+    });
+
+    if (!resp.ok) {
+      const err = await resp.json().catch(() => ({}));
+      throw new Error(err.error?.message || `HTTP ${resp.status}`);
+    }
+
+    const data = await resp.json();
+    const result = (data.content?.[0]?.text || '').trim();
+
+    state.oneLiner = result;
+    saveState();
+    textarea.value = result;
+    statusEl.style.color = 'var(--primary)';
+    statusEl.textContent = isPT ? '✓ One-liner gerado — edite se necessário.' : '✓ One-liner generated — edit if needed.';
+
+  } catch(e) {
+    statusEl.style.color = 'var(--danger)';
+    statusEl.textContent = `⚠️ ${e.message}`;
+  }
+
+  btn.disabled = false;
 }
 
 function mergeAIExtracted(ex) {
