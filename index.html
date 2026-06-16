@@ -7213,6 +7213,11 @@ const FAM_DISEASE_OPTS = lang === 'en'
         ` : ''}
       </div>
       
+      <datalist id="all-med-names">
+        ${[...new Set(Object.values(COMMON_MEDS[lang]).flat().map(m=>m.name))].sort().map(n=>`<option value="${n}">`).join('')}
+        ${getCustomMeds().map(n=>`<option value="${n}">`).join('')}
+      </datalist>
+
       <div id="medications-list">
         ${state.medications.map((m, idx) => `
           <div class="med-card card">
@@ -7222,19 +7227,12 @@ const FAM_DISEASE_OPTS = lang === 'en'
             </div>
             
             <label>${t.medName}</label>
-            <select onchange="selectMedName(${idx}, this.value)" style="margin-bottom:4px;">
-              <option value=""></option>
-              ${Object.values(COMMON_MEDS[lang]).flat().map(med => med.name).filter((n,i,a) => a.indexOf(n)===i).sort().map(name =>
-                `<option value="${name}" ${m.name===name?'selected':''}>${name}</option>`
-              ).join('')}
-              <option value="__other__">${lang==='en'?'Other / type below':'Outro / digitar abaixo'}</option>
-            </select>
-            ${(!m.name || Object.values(COMMON_MEDS[lang]).flat().some(med=>med.name===m.name)) ? '' : `
-              <input type="text" value="${m.name||''}"
-                placeholder="${lang==='en'?'Medication name...':'Nome do medicamento...'}"
-                style="margin-bottom:4px;"
-                oninput="updateMedField(${idx},'name',this.value)">
-            `}
+            <input type="text" list="all-med-names"
+              value="${m.name||''}"
+              placeholder="${lang==='en'?'Type to search medication...':'Buscar medicamento...'}"
+              style="margin-bottom:4px;"
+              oninput="updateMedField(${idx},'name',this.value)"
+              onchange="onMedNameChange(${idx},this.value)">
             
             <div class="input-row" style="margin-top:10px;">
               <div>
@@ -7783,7 +7781,7 @@ const FAM_DISEASE_OPTS = lang === 'en'
             <div id="lab-row-${idx}" style="display:flex; gap:8px; align-items:center; background: ${exam.abnormal ? 'var(--danger-light)' : 'transparent'}; border-bottom: ${(idx === state.customLabs.length - 1) ? 'none' : '1px solid var(--border)'}; padding: 6px 8px;">
               
               <div style="flex: 2;">
-                <input type="text" list="lab-exams-list" value="${exam.name || ''}" oninput="updateCustomLab(${idx}, 'name', this.value)" onfocus="const v=this.value;this.value='';this.value=v;" onclick="const v=this.value;this.value='';this.value=v;" placeholder="${lang === 'en' ? 'Select/type...' : 'Exame...'}" style="padding: 4px 6px; font-size: 12px; width:100%; box-sizing:border-box; background:transparent; border:none; border-bottom:1px solid var(--border); border-radius:0;">
+                <input type="text" list="lab-exams-list" value="${exam.name || ''}" oninput="updateCustomLab(${idx}, 'name', this.value)" onchange="onLabNameChange(${idx},this.value)" onfocus="const v=this.value;this.value='';this.value=v;" onclick="const v=this.value;this.value='';this.value=v;" placeholder="${lang === 'en' ? 'Select/type...' : 'Exame...'}" style="padding: 4px 6px; font-size: 12px; width:100%; box-sizing:border-box; background:transparent; border:none; border-bottom:1px solid var(--border); border-radius:0;">
               </div>
               <div style="flex: 1;">
                 <input type="text" inputmode="numeric" class="phi-mask" value="${exam.date || ''}" oninput="handleDateInput(event, 'date', state.customLabs[${idx}])" placeholder="${lang === 'en' ? 'MM/DD/YYYY' : 'DD/MM/AAAA'}" maxlength="10" style="padding: 4px 6px; font-size: 12px; width:100%; box-sizing:border-box; background:transparent; border:none; border-bottom:1px solid var(--border); border-radius:0; text-align:center;">
@@ -7839,6 +7837,10 @@ const FAM_DISEASE_OPTS = lang === 'en'
           <option value="Glicemia">
           <option value="HbA1c">
           <option value="Perfil Lipídico">
+          <option value="Colesterol Total">
+          <option value="HDL">
+          <option value="LDL">
+          <option value="Triglicerídeos">
           <option value="TSH">
           <option value="T4 Livre">
           <option value="PCR">
@@ -7847,15 +7849,35 @@ const FAM_DISEASE_OPTS = lang === 'en'
           <option value="D-Dímero">
           <option value="AST/TGO">
           <option value="ALT/TGP">
+          <option value="GGT">
+          <option value="Fosfatase Alcalina">
           <option value="Bilirrubinas">
+          <option value="Albumina">
+          <option value="Proteínas Totais">
           <option value="Coagulograma">
+          <option value="TAP/INR">
+          <option value="TTPA">
+          <option value="Fibrinogênio">
+          <option value="Ferritina">
+          <option value="Ferro Sérico">
+          <option value="Vitamina B12">
+          <option value="Ácido Fólico">
+          <option value="Vitamina D">
+          <option value="Magnésio">
+          <option value="Fósforo">
+          <option value="Cálcio">
+          <option value="Ácido Úrico">
+          <option value="Amilase">
+          <option value="Lipase">
+          <option value="CPK">
+          <option value="LDH">
+          <option value="BNP">
+          <option value="NT-proBNP">
           <option value="EAS (Urina Tipo I)">
           <option value="Urocultura">
           <option value="Hemocultura">
           <option value="Gasometria Arterial">
-          <option value="Ácido Úrico">
-          <option value="Vitamina B12">
-          <option value="Vitamina D">
+          ${getCustomLabs().map(n=>`<option value="${n}">`).join('\n          ')}
         </datalist>
         <datalist id="img-exams-list">
           <option value="Raio-X de Tórax">
@@ -8400,7 +8422,7 @@ const FAM_DISEASE_OPTS = lang === 'en'
       <!-- ── PENDÊNCIAS / FOLLOW-UP ────────────────────────────────────── -->
       ${impSection(lang==='en'?'Pending Items / Follow-up':'Pendências / Follow-up', 'var(--primary-muted, #64748b)', (state.pendencias||[]).filter(p=>p.text).length + ' ' + (lang==='en'?'item(s)':'item(ns)'))}
       <div id="pend-list">
-        ${(!(state.pendencias||[]).some(p=>p.text)) ? `
+        ${(!(state.pendencias||[]).length) ? `
           <div style="font-size:13px;color:var(--text-muted);padding:8px 0;font-style:italic;">${lang==='en'?'No pending items.':'Nenhuma pendência adicionada.'}</div>
         ` : (state.pendencias||[]).map((p, idx) => `
           <div style="border:1px solid var(--border);border-left:4px solid #64748b;border-radius:var(--radius);padding:12px 16px;margin-bottom:8px;background:var(--surface-solid);display:flex;align-items:center;gap:10px;">
@@ -10298,6 +10320,47 @@ function runCG() {
 }
 
 // ════════════════════════════════════════ MED FAVORITES
+function getCustomMeds() {
+  try { return JSON.parse(localStorage.getItem('rmd_custom_meds') || '[]'); } catch { return []; }
+}
+function saveCustomMed(name) {
+  if (!name) return;
+  const list = getCustomMeds();
+  if (!list.includes(name)) { list.push(name); localStorage.setItem('rmd_custom_meds', JSON.stringify(list)); }
+}
+function getCustomLabs() {
+  try { return JSON.parse(localStorage.getItem('rmd_custom_labs') || '[]'); } catch { return []; }
+}
+function saveCustomLab(name) {
+  if (!name) return;
+  const list = getCustomLabs();
+  if (!list.includes(name)) { list.push(name); localStorage.setItem('rmd_custom_labs', JSON.stringify(list)); }
+}
+
+function onMedNameChange(idx, val) {
+  if (!val || !state.medications[idx]) return;
+  const lib = Object.values(COMMON_MEDS[lang]).flat();
+  const match = lib.find(m => m.name === val);
+  if (match) {
+    if (!state.medications[idx].dose)  state.medications[idx].dose  = match.dose  || '';
+    if (!state.medications[idx].route) state.medications[idx].route = match.route || '';
+    if (!state.medications[idx].freq)  state.medications[idx].freq  = match.freq  || '';
+  } else {
+    saveCustomMed(val);
+  }
+  updateMedField(idx, 'name', val);
+  renderSections();
+}
+
+function onLabNameChange(idx, val) {
+  if (!val) return;
+  const knownLabs = ['Hemograma','Creatinina','Ureia','Sódio','Potássio','Glicemia','HbA1c','Perfil Lipídico','TSH','T4 Livre','PCR','VHS','Troponina','D-Dímero','AST/TGO','ALT/TGP','Bilirrubinas','Coagulograma','EAS (Urina Tipo I)','Urocultura','Hemocultura','Gasometria Arterial','Ácido Úrico','Vitamina B12','Vitamina D','Colesterol Total','HDL','LDL','Triglicerídeos','Ferritina','Ferro Sérico','Albumina','Proteínas Totais','Magnésio','Fósforo','Cálcio','Amilase','Lipase','CPK','LDH','BNP','NT-proBNP','Fibrinogênio','TAP/INR','TTPA','Plaquetas','Leucócitos','Neutrófilos','Linfócitos','Eosinófilos','Hemoglobina','Hematócrito','VCM','HCM','RDW'];
+  if (!knownLabs.some(l => l.toLowerCase() === val.toLowerCase())) {
+    saveCustomLab(val);
+  }
+  updateCustomLab(idx, 'name', val);
+}
+
 function selectMedName(idx, val) {
   if (val === '__other__') {
     updateMedField(idx, 'name', '');
@@ -10712,28 +10775,7 @@ let _aiImageBase64 = null;
 let _aiImageMediaType = null;
 
 function openAIFillModal() {
-  // Password gate
-  const pin = document.getElementById('ai-pin-overlay');
-  if (pin) {
-    pin.style.display = 'flex';
-    const inp = document.getElementById('ai-pin-input');
-    if (inp) { inp.value = ''; setTimeout(() => inp.focus(), 80); }
-    document.getElementById('ai-pin-error').textContent = '';
-  }
-}
-
-function submitAIPin() {
-  const inp = document.getElementById('ai-pin-input');
-  const err = document.getElementById('ai-pin-error');
-  if (!inp) return;
-  if (inp.value === '0000') {
-    document.getElementById('ai-pin-overlay').style.display = 'none';
-    _openAIFillModalInner();
-  } else {
-    inp.value = '';
-    err.textContent = lang !== 'en' ? 'Senha incorreta.' : 'Incorrect password.';
-    inp.focus();
-  }
+  _openAIFillModalInner();
 }
 
 function _openAIFillModalInner() {
@@ -11072,22 +11114,6 @@ if (!localStorage.getItem('rmd_kb_hint_v3')) {
 
 
 <!-- AI FILL MODAL -->
-<!-- PIN OVERLAY -->
-<div id="ai-pin-overlay" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,0.7);backdrop-filter:blur(4px);z-index:10000;align-items:center;justify-content:center;">
-  <div style="background:var(--surface-solid);border-radius:var(--radius);padding:32px 28px;width:92%;max-width:320px;box-shadow:0 20px 40px rgba(0,0,0,0.3);text-align:center;">
-    <div style="font-size:28px;margin-bottom:12px;">🔒</div>
-    <div style="font-size:16px;font-weight:800;color:var(--text);margin-bottom:6px;" id="pin-title">Autenticação necessária</div>
-    <div style="font-size:13px;color:var(--text-muted);margin-bottom:20px;" id="pin-subtitle">Digite a senha para usar a IA</div>
-    <input type="password" id="ai-pin-input" maxlength="8" placeholder="••••"
-      style="width:100%;text-align:center;font-size:22px;letter-spacing:8px;font-family:monospace;padding:12px;border:2px solid var(--border);border-radius:var(--radius-sm);background:var(--bg);color:var(--text);margin-bottom:10px;"
-      onkeydown="if(event.key==='Enter')submitAIPin()">
-    <div id="ai-pin-error" style="font-size:12px;color:var(--danger);min-height:16px;margin-bottom:12px;font-weight:600;"></div>
-    <div style="display:flex;gap:10px;">
-      <button onclick="document.getElementById('ai-pin-overlay').style.display='none'" style="flex:1;padding:10px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface-solid);cursor:pointer;font-size:14px;color:var(--text-muted);" id="pin-cancel-btn">Cancelar</button>
-      <button onclick="submitAIPin()" class="btn-primary" style="flex:1;padding:10px;font-size:14px;" id="pin-confirm-btn">Confirmar</button>
-    </div>
-  </div>
-</div>
 
 <div id="ai-fill-modal" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,0.6);backdrop-filter:blur(4px);z-index:9999;align-items:flex-start;justify-content:center;padding-top:60px;overflow-y:auto;">
   <div style="background:var(--surface-solid);border-radius:var(--radius);width:92%;max-width:560px;box-shadow:0 20px 40px rgba(0,0,0,0.25);margin-bottom:40px;">
