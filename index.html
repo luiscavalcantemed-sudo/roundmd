@@ -10712,12 +10712,34 @@ let _aiImageBase64 = null;
 let _aiImageMediaType = null;
 
 function openAIFillModal() {
+  // Password gate
+  const pin = document.getElementById('ai-pin-overlay');
+  if (pin) {
+    pin.style.display = 'flex';
+    const inp = document.getElementById('ai-pin-input');
+    if (inp) { inp.value = ''; setTimeout(() => inp.focus(), 80); }
+    document.getElementById('ai-pin-error').textContent = '';
+  }
+}
+
+function submitAIPin() {
+  const inp = document.getElementById('ai-pin-input');
+  const err = document.getElementById('ai-pin-error');
+  if (!inp) return;
+  if (inp.value === '0000') {
+    document.getElementById('ai-pin-overlay').style.display = 'none';
+    _openAIFillModalInner();
+  } else {
+    inp.value = '';
+    err.textContent = lang !== 'en' ? 'Senha incorreta.' : 'Incorrect password.';
+    inp.focus();
+  }
+}
+
+function _openAIFillModalInner() {
   const modal = document.getElementById('ai-fill-modal');
   if (!modal) return;
   modal.style.display = 'flex';
-  const saved = localStorage.getItem(AI_KEY_STORAGE);
-  const keyInput = document.getElementById('ai-key-input');
-  if (keyInput && saved) keyInput.value = saved;
   _aiImageBase64 = null;
   _aiImageMediaType = null;
   const prev = document.getElementById('ai-image-preview');
@@ -10727,7 +10749,25 @@ function openAIFillModal() {
   const ta = document.getElementById('ai-text-input');
   if (ta) ta.value = '';
   document.getElementById('ai-status').textContent = '';
+  // Show/hide key section based on whether key is already saved
+  const saved = localStorage.getItem(AI_KEY_STORAGE);
+  const keySection = document.getElementById('ai-key-section');
+  const keySavedRow = document.getElementById('ai-key-saved-row');
+  if (saved) {
+    if (keySection) keySection.style.display = 'none';
+    if (keySavedRow) keySavedRow.style.display = 'flex';
+  } else {
+    if (keySection) keySection.style.display = 'block';
+    if (keySavedRow) keySavedRow.style.display = 'none';
+  }
   updateAIModalLang();
+}
+
+function showAIKeySection() {
+  const keySection = document.getElementById('ai-key-section');
+  const keySavedRow = document.getElementById('ai-key-saved-row');
+  if (keySection) keySection.style.display = 'block';
+  if (keySavedRow) keySavedRow.style.display = 'none';
 }
 
 function closeAIFillModal() {
@@ -10776,6 +10816,14 @@ function updateAIModalLang() {
   if (keyInp) keyInp.placeholder = 'sk-ant-api03-...';
   const aiFillBtn = document.getElementById('ai-fill-btn');
   if (aiFillBtn) aiFillBtn.title = pt ? 'Preencher com IA' : 'AI auto-fill';
+  // PIN overlay
+  set('pin-title',       pt ? 'Autenticação necessária'        : 'Authentication required');
+  set('pin-subtitle',    pt ? 'Digite a senha para usar a IA'  : 'Enter password to use AI');
+  set('pin-cancel-btn',  pt ? 'Cancelar'                       : 'Cancel');
+  set('pin-confirm-btn', pt ? 'Confirmar'                      : 'Confirm');
+  // Key-saved row
+  set('ai-key-saved-lbl',    pt ? 'Chave de API configurada' : 'API key configured');
+  set('ai-key-change-lbl',   pt ? 'Alterar chave'            : 'Change key');
 }
 
 async function runAIFill() {
@@ -10792,6 +10840,11 @@ async function runAIFill() {
     return;
   }
   localStorage.setItem(AI_KEY_STORAGE, apiKey);
+  // Hide key input section now that key is saved
+  const keySection = document.getElementById('ai-key-section');
+  const keySavedRow = document.getElementById('ai-key-saved-row');
+  if (keySection) keySection.style.display = 'none';
+  if (keySavedRow) keySavedRow.style.display = 'flex';
 
   const text = textInput?.value.trim() || '';
   if (!text && !_aiImageBase64) {
@@ -11019,6 +11072,23 @@ if (!localStorage.getItem('rmd_kb_hint_v3')) {
 
 
 <!-- AI FILL MODAL -->
+<!-- PIN OVERLAY -->
+<div id="ai-pin-overlay" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,0.7);backdrop-filter:blur(4px);z-index:10000;align-items:center;justify-content:center;">
+  <div style="background:var(--surface-solid);border-radius:var(--radius);padding:32px 28px;width:92%;max-width:320px;box-shadow:0 20px 40px rgba(0,0,0,0.3);text-align:center;">
+    <div style="font-size:28px;margin-bottom:12px;">🔒</div>
+    <div style="font-size:16px;font-weight:800;color:var(--text);margin-bottom:6px;" id="pin-title">Autenticação necessária</div>
+    <div style="font-size:13px;color:var(--text-muted);margin-bottom:20px;" id="pin-subtitle">Digite a senha para usar a IA</div>
+    <input type="password" id="ai-pin-input" maxlength="8" placeholder="••••"
+      style="width:100%;text-align:center;font-size:22px;letter-spacing:8px;font-family:monospace;padding:12px;border:2px solid var(--border);border-radius:var(--radius-sm);background:var(--bg);color:var(--text);margin-bottom:10px;"
+      onkeydown="if(event.key==='Enter')submitAIPin()">
+    <div id="ai-pin-error" style="font-size:12px;color:var(--danger);min-height:16px;margin-bottom:12px;font-weight:600;"></div>
+    <div style="display:flex;gap:10px;">
+      <button onclick="document.getElementById('ai-pin-overlay').style.display='none'" style="flex:1;padding:10px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface-solid);cursor:pointer;font-size:14px;color:var(--text-muted);" id="pin-cancel-btn">Cancelar</button>
+      <button onclick="submitAIPin()" class="btn-primary" style="flex:1;padding:10px;font-size:14px;" id="pin-confirm-btn">Confirmar</button>
+    </div>
+  </div>
+</div>
+
 <div id="ai-fill-modal" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,0.6);backdrop-filter:blur(4px);z-index:9999;align-items:flex-start;justify-content:center;padding-top:60px;overflow-y:auto;">
   <div style="background:var(--surface-solid);border-radius:var(--radius);width:92%;max-width:560px;box-shadow:0 20px 40px rgba(0,0,0,0.25);margin-bottom:40px;">
     <div style="display:flex;align-items:center;padding:16px 20px;border-bottom:1px solid var(--border);background:var(--primary-light);border-radius:var(--radius) var(--radius) 0 0;">
@@ -11027,8 +11097,14 @@ if (!localStorage.getItem('rmd_kb_hint_v3')) {
     </div>
     <div style="padding:20px;">
 
-      <!-- API Key -->
-      <div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:16px;">
+      <!-- API Key saved indicator (shown when key already stored) -->
+      <div id="ai-key-saved-row" style="display:none;align-items:center;justify-content:space-between;background:var(--primary-light);border:1px solid var(--primary);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:16px;">
+        <span style="font-size:13px;font-weight:700;color:var(--primary);">✓ <span id="ai-key-saved-lbl">Chave de API configurada</span></span>
+        <button onclick="showAIKeySection()" style="background:none;border:none;cursor:pointer;font-size:12px;color:var(--text-muted);text-decoration:underline;padding:0;" id="ai-key-change-lbl">Alterar chave</button>
+      </div>
+
+      <!-- API Key input (shown when no key stored) -->
+      <div id="ai-key-section" style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:16px;">
         <div style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;" id="ai-key-section-title">Chave de API do Claude</div>
         <div style="display:flex;gap:6px;">
           <input type="password" id="ai-key-input" placeholder="sk-ant-api03-..." style="flex:1;font-family:monospace;font-size:13px;background:var(--surface-solid);">
