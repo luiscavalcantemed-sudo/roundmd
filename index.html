@@ -425,6 +425,17 @@ select {
   background-repeat: no-repeat;
   background-position: right 12px center;
   padding-right: 32px;
+  cursor: pointer;
+}
+/* iOS fixes: datalist suggestions and auto-zoom prevention */
+input[list] {
+  -webkit-appearance: auto;
+  appearance: auto;
+}
+@supports (-webkit-touch-callout: none) {
+  input, select, textarea {
+    font-size: 16px;
+  }
 }
 .input-row {
   display: grid;
