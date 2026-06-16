@@ -1133,6 +1133,50 @@ select {
 .chip.filtered-out {
   display: none;
 }
+.chip-wrapper {
+  display: contents;
+}
+.chip-sub-group {
+  display: none;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 4px 0 4px 8px;
+  width: 100%;
+  border-left: 2px solid var(--border);
+  margin-left: 4px;
+}
+.chip-sub-group.open { display: flex; }
+.chip.chip-sub {
+  font-size: 11px;
+  padding: 3px 10px;
+  border-color: var(--primary);
+  color: var(--primary);
+  background: transparent;
+}
+.chip.chip-sub.selected {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: white;
+}
+.chip.chip-normal {
+  border-color: var(--success, #15803d);
+  color: var(--success, #15803d);
+  background: transparent;
+}
+.chip.chip-normal.selected {
+  background: var(--success, #15803d);
+  border-color: var(--success, #15803d);
+  color: white;
+}
+.chips-section-label {
+  width: 100%;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--text-muted);
+  margin: 8px 0 4px;
+}
 
 /* ADDONS AND SPECIALS */
 .addon-card {
@@ -1642,6 +1686,100 @@ let activeMedCat = null;
 let activeCalcSection = null;
 let activePmhCat = null;
 let activePshCat = null;
+const PE_SUB_CHIPS = {
+  en: {
+    'Abdomen': {
+      'Tenderness': ['RUQ','LUQ','RLQ','LLQ','Epigastric','Periumbilical','Left flank','Right flank','Diffuse'],
+      'Rebound tenderness': ['RUQ','RLQ','LLQ','Diffuse'],
+      'Rigidity': ['Diffuse','Localized'],
+      'Palpable mass': ['RUQ','LUQ','RLQ','LLQ','Epigastric','Periumbilical'],
+    },
+    'Cardiovascular': {
+      'Murmur': ['Systolic','Diastolic','Grade I–II','Grade III–IV','Grade V–VI','Aortic area','Mitral area','Tricuspid area','Left sternal border','Radiates to neck','Radiates to axilla'],
+      'Peripheral edema': ['+1','+2','+3','+4','Bilateral','Right','Left','Ankle','Pretibial'],
+    },
+    'Respiratory': {
+      'Crackles': ['Fine','Coarse','Right base','Left base','Bibasal','Diffuse'],
+      'Wheezing': ['Expiratory','Inspiratory','Bilateral','Localized'],
+      'Diminished breath sounds': ['Right','Left','Bilateral','Basal'],
+      'Absent breath sounds': ['Right','Left'],
+    },
+    'Musculoskeletal': {
+      'Tenderness': ['Shoulder','Elbow','Wrist','Hand/fingers','Hip','Knee','Ankle','Foot/toes','Lumbar spine','Cervical spine','Sacroiliac'],
+      'Joint swelling': ['Shoulder','Elbow','Wrist','Hand/fingers','Hip','Knee','Ankle','Foot/toes'],
+      'Limited range of motion': ['Shoulder','Elbow','Wrist','Hip','Knee','Ankle','Cervical','Lumbar'],
+    },
+    'Neurological': {
+      'Motor weakness': ['Right arm','Left arm','Right leg','Left leg','Right side (hemiparesis)','Left side (hemiparesis)','Both legs (paraparesis)','Distal','Proximal'],
+      'Sensory deficit': ['Right side','Left side','Both lower limbs','Dermatomal','Stocking-glove pattern'],
+      'Cranial nerve deficit': ['CN II (vision)','CN III/IV/VI (EOM)','CN V (trigeminal)','CN VII (facial)','CN VIII (hearing/balance)','CN IX/X (swallowing)','CN XII (tongue)'],
+    },
+    'Skin': {
+      'Rash': ['Trunk','Arms','Legs','Face','Diffuse','Maculopapular','Vesicular','Urticarial'],
+      'Ulcer': ['Pressure ulcer','Venous ulcer','Arterial ulcer','Diabetic foot ulcer','Sacral','Heel','Leg'],
+    },
+  },
+  pt: {
+    'Abdome': {
+      'Dor à palpação': ['QSD','QSE','QID','QIE','Epigástrio','Periumbilical','Flanco D','Flanco E','Difuso','Hipogástrio'],
+      'Dor à descompressão': ['QSD','QID','QIE','Difuso'],
+      'Rigidez abdominal': ['Difusa','Localizada'],
+      'Massa palpável': ['QSD','QSE','QID','QIE','Epigástrio','Periumbilical','Hipogástrio'],
+    },
+    'Cardiovascular': {
+      'Sopro cardíaco': ['Sistólico','Diastólico','Grau I–II','Grau III–IV','Grau V–VI','Área aórtica','Área mitral','Área tricúspide','Foco pulmonar','Irradia ao pescoço','Irradia à axila'],
+      'Edema periférico': ['+1','+2','+3','+4','Bilateral','Direito','Esquerdo','Tornozelos','Pré-tibial'],
+    },
+    'Respiratório': {
+      'Estertores crepitantes': ['Finos','Grosseiros','Base D','Base E','Bases bilaterais','Difuso'],
+      'Sibilos': ['Expiratórios','Inspiratórios','Bilaterais','Localizados'],
+      'Murmúrio vesicular diminuído': ['À direita','À esquerda','Bilateral','Basal'],
+      'Murmúrio vesicular ausente': ['À direita','À esquerda'],
+    },
+    'Musculoesquelético': {
+      'Dor articular': ['Ombro','Cotovelo','Punho','Mãos/dedos','Quadril','Joelho','Tornozelo','Pés/dedos','Coluna lombar','Coluna cervical','Sacroilíaca'],
+      'Edema articular': ['Ombro','Cotovelo','Punho','Mãos/dedos','Quadril','Joelho','Tornozelo','Pés/dedos'],
+      'Limitação de movimento': ['Ombro','Cotovelo','Punho','Quadril','Joelho','Tornozelo','Cervical','Lombar'],
+    },
+    'Neurológico': {
+      'Fraqueza motora': ['Braço D','Braço E','Perna D','Perna E','Hemiparesia D','Hemiparesia E','Paraparesia','Distal','Proximal'],
+      'Déficit sensitivo': ['Hemicorpo D','Hemicorpo E','Membros inferiores','Dermatomal','Em bota e luva'],
+      'Déficit de par craniano': ['II (visão)','III/IV/VI (oculomotores)','V (trigêmeo)','VII (facial)','VIII (audição/equilíbrio)','IX/X (deglutição)','XII (língua)'],
+    },
+    'Pele': {
+      'Exantema': ['Tronco','Membros superiores','Membros inferiores','Face','Difuso','Maculopapular','Vesicular','Urticariforme'],
+      'Úlcera cutânea': ['Úlcera por pressão','Úlcera venosa','Úlcera arterial','Pé diabético','Região sacral','Calcâneo','Perna'],
+    },
+  }
+};
+
+const PE_NORMAL_CHIPS = {
+  en: {
+    'General Appearance': ['Alert and oriented','No acute distress','Well-nourished','Cooperative'],
+    'Abdomen': ['Soft','Non-distended','Normoactive bowel sounds','No rebound tenderness','No organomegaly','No palpable masses','No CVA tenderness'],
+    'Cardiovascular': ['Regular rate and rhythm','No peripheral edema','Peripheral pulses 2+ bilateral','Capillary refill <2s'],
+    'Respiratory': ['Clear to auscultation bilaterally','No respiratory distress','No accessory muscle use','Symmetric chest expansion'],
+    'Neurological': ['Alert and oriented ×3','Motor strength 5/5','Sensation intact','No meningeal signs','Reflexes 2+ symmetric'],
+    'Musculoskeletal': ['Full range of motion','No joint swelling or erythema','No bony tenderness','Normal gait'],
+    'Neck': ['Supple','No jugular venous distension','No lymphadenopathy','Trachea midline'],
+    'Skin': ['Warm and dry','No rashes','No ulcers','Normal turgor'],
+    'Head, Eyes, Ears, Nose & Throat': ['PERRL','Moist mucous membranes','No pharyngeal erythema','TMs intact'],
+    'Psychiatric': ['Appropriate mood and affect','Logical thought process','Insight intact'],
+  },
+  pt: {
+    'Aspecto Geral': ['Alerta e orientado','Sem desconforto agudo','Bem nutrido','Colaborativo'],
+    'Abdome': ['Flácido','Sem distensão','RHA normoativos','Sem dor à descompressão','Sem visceromegalias','Sem massas palpáveis','Sem dor à percussão lombar'],
+    'Cardiovascular': ['Ritmo regular em 2 tempos','Sem edemas','Pulsos periféricos simétricos 2+','Tempo de enchimento capilar <2s'],
+    'Respiratório': ['MV universalmente audível, sem RA','Sem desconforto respiratório','Sem uso de musculatura acessória','Expansibilidade simétrica'],
+    'Neurológico': ['Orientado em tempo e espaço','Força motora 5/5 global','Sensibilidade preservada','Sem sinais meníngeos','Reflexos simétricos 2+'],
+    'Musculoesquelético': ['Amplitude de movimento preservada','Sem edema ou eritema articular','Sem dor à palpação óssea','Marcha normal'],
+    'Pescoço': ['Pescoço livre e indolor','Sem turgência jugular','Sem linfadenopatias','Traqueia centralizada'],
+    'Pele': ['Corada e hidratada','Sem lesões ou exantemas','Sem úlceras','Turgor normal'],
+    'Cabeça, Olhos, Ouvidos, Nariz e Garganta': ['Pupilas isocóricas e fotorreativas','Mucosas úmidas','Orofaringe sem alterações','MT íntegras'],
+    'Psiquiátrico': ['Humor e afeto congruentes','Pensamento lógico','Juízo crítico preservado'],
+  }
+};
+
 const COMMON_MEDS = {
   en: {
     'Pediatric Supplements': [
@@ -7781,7 +7919,7 @@ const FAM_DISEASE_OPTS = lang === 'en'
             <div id="lab-row-${idx}" style="display:flex; gap:8px; align-items:center; background: ${exam.abnormal ? 'var(--danger-light)' : 'transparent'}; border-bottom: ${(idx === state.customLabs.length - 1) ? 'none' : '1px solid var(--border)'}; padding: 6px 8px;">
               
               <div style="flex: 2;">
-                <input type="text" list="lab-exams-list" value="${exam.name || ''}" oninput="updateCustomLab(${idx}, 'name', this.value)" onchange="onLabNameChange(${idx},this.value)" onfocus="const v=this.value;this.value='';this.value=v;" onclick="const v=this.value;this.value='';this.value=v;" placeholder="${lang === 'en' ? 'Select/type...' : 'Exame...'}" style="padding: 4px 6px; font-size: 12px; width:100%; box-sizing:border-box; background:transparent; border:none; border-bottom:1px solid var(--border); border-radius:0;">
+                <input type="text" list="lab-exams-list" value="${exam.name || ''}" oninput="updateCustomLab(${idx}, 'name', this.value)" onchange="onLabNameChange(${idx},this.value)" placeholder="${lang === 'en' ? 'Select/type...' : 'Exame...'}" style="padding: 4px 6px; font-size: 12px; width:100%; box-sizing:border-box; background:transparent; border:none; border-bottom:1px solid var(--border); border-radius:0;">
               </div>
               <div style="flex: 1;">
                 <input type="text" inputmode="numeric" class="phi-mask" value="${exam.date || ''}" oninput="handleDateInput(event, 'date', state.customLabs[${idx}])" placeholder="${lang === 'en' ? 'MM/DD/YYYY' : 'DD/MM/AAAA'}" maxlength="10" style="padding: 4px 6px; font-size: 12px; width:100%; box-sizing:border-box; background:transparent; border:none; border-bottom:1px solid var(--border); border-radius:0; text-align:center;">
@@ -8350,9 +8488,8 @@ const FAM_DISEASE_OPTS = lang === 'en'
             </div>
             ${(!isAcute || idx > 0) ? `<button class="btn-sm-del" style="flex-shrink:0;" onclick="${remFn}">✕</button>` : ''}
           </div>
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+          <div style="display:flex;align-items:center;margin-bottom:8px;">
             <span style="font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;">${lang==='en'?'Plan':'Plano'}</span>
-            <button class="btn-macro" style="font-size:11px;padding:2px 8px;margin:0;" onclick="${addFn}">+ ${lang==='en'?'Add item':'Adicionar'}</button>
           </div>
           ${planArr.map((pl, pi) => `
             <div style="display:flex;gap:8px;margin-bottom:6px;align-items:flex-start;">
@@ -8366,6 +8503,7 @@ const FAM_DISEASE_OPTS = lang === 'en'
               ${planArr.length > 1 ? `<button class="btn-sm-del" style="padding:4px 8px;margin-top:4px;" onclick="${remPl(pi)}">✕</button>` : ''}
             </div>
           `).join('')}
+          <button class="btn-add" style="margin-top:6px;margin-bottom:0;font-size:12px;padding:6px 14px;" onclick="${addFn}">+ ${lang==='en'?'Add item':'Adicionar item'}</button>
         </div>`;
     }
 
@@ -8400,9 +8538,9 @@ const FAM_DISEASE_OPTS = lang === 'en'
       <!-- ── DIAGNÓSTICOS DIFERENCIAIS ────────────────────────────────── -->
       ${impSection(lang==='en'?'Differential Diagnoses':'Diagnósticos Diferenciais', 'var(--warn, #d97706)', (state.ddx||[]).filter(d=>d.dx).length + ' ' + (lang==='en'?'item(s)':'item(ns)'))}
       <div id="ddx-list">
-        ${(!(state.ddx||[]).some(d=>d.dx)) ? `
+        ${(!(state.ddx||[]).length) ? `
           <div style="font-size:13px;color:var(--text-muted);padding:8px 0;font-style:italic;">${lang==='en'?'No differentials added.':'Nenhum diagnóstico diferencial adicionado.'}</div>
-        ` : (state.ddx||[]).filter(d=>d.dx!==undefined).map((d, idx) => `
+        ` : (state.ddx||[]).map((d, idx) => `
           <div style="border:1px solid var(--border);border-left:4px solid #d97706;border-radius:var(--radius);padding:14px 16px;margin-bottom:12px;background:var(--surface-solid);">
             <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
               <div style="width:24px;height:24px;border-radius:50%;background:#d97706;color:white;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;">${idx+1}</div>
@@ -10036,72 +10174,139 @@ function switchOutputTab(tab) {
 function openPESystemAbnormal(sys) {
   modalContext = sys;
   const sysDefs = T[lang].peSystems[sys];
-  
   const { sysKey } = getEnglishPEKeys(sys, null, lang);
   const peObj = state.pe[sysKey] || { status: 'na', note: '', chips: [] };
-  
   const display = getPESystemDisplay(sysKey, lang);
-  
+
   document.getElementById('modal-title').textContent = sys;
-  document.getElementById('modal-search-input').value = ''; // Reset search
-  
+  document.getElementById('modal-search-input').value = '';
+
   const chipsContainer = document.getElementById('modal-chips');
   chipsContainer.innerHTML = '';
-  
-  sysDefs.chips.forEach(chipName => {
-    const isSelected = display.chips && display.chips.includes(chipName);
-    const chipEl = document.createElement('div');
-    chipEl.className = `chip ${isSelected ? 'selected' : ''}`;
-    chipEl.textContent = chipName;
-    chipEl.onclick = () => togglePEChip(chipEl, chipName);
-    chipsContainer.appendChild(chipEl);
-  });
-  
+
+  const sysSubChips = (PE_SUB_CHIPS[lang] || {})[sys] || {};
+  const sysNormalChips = (PE_NORMAL_CHIPS[lang] || {})[sys] || [];
+
+  // ── Abnormal chips section ──────────────────────────────────────
+  if (sysDefs.chips && sysDefs.chips.length) {
+    const lbl = document.createElement('div');
+    lbl.className = 'chips-section-label';
+    lbl.textContent = lang === 'en' ? '⚠ Alterações / Abnormal findings' : '⚠ Alterações';
+    chipsContainer.appendChild(lbl);
+
+    sysDefs.chips.forEach(chipName => {
+      const isSelected = display.chips && display.chips.includes(chipName);
+
+      // Wrapper keeps chip + its sub-group together in flow
+      const wrapper = document.createElement('span');
+      wrapper.style.cssText = 'display:inline-flex;flex-direction:column;align-items:flex-start;';
+
+      const chipEl = document.createElement('div');
+      chipEl.className = `chip${isSelected ? ' selected' : ''}`;
+      chipEl.textContent = chipName;
+
+      const subDefs = sysSubChips[chipName];
+      let subGroup = null;
+
+      if (subDefs && subDefs.length) {
+        subGroup = document.createElement('div');
+        subGroup.className = 'chip-sub-group' + (isSelected ? ' open' : '');
+        subDefs.forEach(subName => {
+          const sub = document.createElement('div');
+          sub.className = 'chip chip-sub';
+          sub.textContent = subName;
+          sub.onclick = e => { e.stopPropagation(); sub.classList.toggle('selected'); };
+          subGroup.appendChild(sub);
+        });
+        wrapper.appendChild(chipEl);
+        wrapper.appendChild(subGroup);
+      } else {
+        wrapper.appendChild(chipEl);
+      }
+
+      chipEl.onclick = () => {
+        chipEl.classList.toggle('selected');
+        if (subGroup) subGroup.classList.toggle('open', chipEl.classList.contains('selected'));
+        if (subGroup && !chipEl.classList.contains('selected'))
+          subGroup.querySelectorAll('.chip-sub').forEach(s => s.classList.remove('selected'));
+      };
+
+      chipsContainer.appendChild(wrapper);
+    });
+  }
+
+  // ── Normal findings section ─────────────────────────────────────
+  if (sysNormalChips.length) {
+    const sep = document.createElement('div');
+    sep.style.cssText = 'width:100%;border-top:1px solid var(--border);margin:10px 0 4px;';
+    chipsContainer.appendChild(sep);
+
+    const lbl2 = document.createElement('div');
+    lbl2.className = 'chips-section-label';
+    lbl2.style.color = 'var(--success,#15803d)';
+    lbl2.textContent = lang === 'en' ? '✓ Normal findings to document' : '✓ Achados normais a registrar';
+    chipsContainer.appendChild(lbl2);
+
+    sysNormalChips.forEach(chipName => {
+      const chipEl = document.createElement('div');
+      chipEl.className = 'chip chip-normal';
+      chipEl.textContent = chipName;
+      chipEl.onclick = () => chipEl.classList.toggle('selected');
+      chipsContainer.appendChild(chipEl);
+    });
+  }
+
   const txtArea = document.getElementById('modal-textarea');
   txtArea.value = peObj.custom ? peObj.note : '';
-  
   document.getElementById('modal-overlay').classList.add('open');
 }
 
 function filterModalChips() {
   const query = document.getElementById('modal-search-input').value.toLowerCase();
-  const chips = document.querySelectorAll('#modal-chips .chip');
-  chips.forEach(chip => {
-    if (chip.textContent.toLowerCase().includes(query)) {
-      chip.classList.remove('filtered-out');
-    } else {
-      chip.classList.add('filtered-out');
-    }
+  document.querySelectorAll('#modal-chips .chip').forEach(chip => {
+    const matches = chip.textContent.toLowerCase().includes(query);
+    chip.classList.toggle('filtered-out', !matches);
   });
 }
 
-function togglePEChip(el, name) {
+function togglePEChip(el) {
   el.classList.toggle('selected');
 }
 
 function saveModal() {
   const sys = modalContext;
   const sysDefs = T[lang].peSystems[sys];
-  
-  const selectedChips = [];
+
+  const selectedAbnormal = [];
+  const selectedNormal = [];
+
   document.querySelectorAll('#modal-chips .chip.selected').forEach(c => {
-    selectedChips.push(c.textContent);
+    if (c.classList.contains('chip-normal')) {
+      selectedNormal.push(c.textContent);
+    } else if (!c.classList.contains('chip-sub')) {
+      // Collect parent chip + any selected sub-chips
+      const wrapper = c.parentElement;
+      const subs = wrapper ? [...wrapper.querySelectorAll('.chip-sub.selected')].map(s => s.textContent) : [];
+      selectedAbnormal.push(subs.length ? `${c.textContent} (${subs.join(', ')})` : c.textContent);
+    }
   });
-  
+
   const customNote = document.getElementById('modal-textarea').value.trim();
-  
-  // Translate system and chips to English for state storage
-  const { sysKey, chipKeys } = getEnglishPEKeys(sys, selectedChips, lang);
-  
-  const note = customNote || (selectedChips.length ? selectedChips.join(', ') : sysDefs.normal);
-  
-  state.pe[sysKey] = {
-    status: 'abnormal',
-    note: note,
-    chips: chipKeys,
-    custom: !!customNote
-  };
-  
+
+  // Build natural note
+  const parts = [];
+  if (selectedAbnormal.length) parts.push(selectedAbnormal.join(', '));
+  if (selectedNormal.length)   parts.push(selectedNormal.join(', '));
+  const note = customNote || (parts.length ? parts.join('. ') : sysDefs.normal);
+
+  // Only store abnormal chip names (without sub-chips) for state
+  const rawAbnormal = document.querySelectorAll
+    ? [...document.querySelectorAll('#modal-chips .chip.selected:not(.chip-sub):not(.chip-normal)')].map(c => c.textContent)
+    : [];
+  const { sysKey, chipKeys } = getEnglishPEKeys(sys, rawAbnormal, lang);
+
+  state.pe[sysKey] = { status: 'abnormal', note, chips: chipKeys, custom: !!customNote };
+
   saveState();
   closeModalBtn();
   renderSections();
