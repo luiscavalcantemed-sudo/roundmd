@@ -1570,8 +1570,8 @@ input[type="text"].fish-input:focus {
         <span id="drafts-status" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-size:11px;">Active Patient: Draft</span>
       </div>
       <button class="drafts-btn" style="background: var(--border); color: var(--text); padding: 5px 10px; font-weight:bold;" onclick="createNewPatient()" id="btn-clear-sidebar-lbl" title="Create New Patient">+ New</button>
-      <button class="drafts-btn" style="background: var(--primary); padding: 5px 10px; font-weight:bold;" onclick="saveVisitAndNotify()" title="Save Visit to Timeline">📋 Save</button>
-      <button class="drafts-btn" style="background: var(--accent); padding: 5px 10px; font-weight:bold; color:white;" onclick="openLongitudinalModal()" title="Patient Timeline">⏱ History</button>
+      <button class="drafts-btn" id="btn-save-visit-lbl" style="background: var(--primary); padding: 5px 10px; font-weight:bold;" onclick="saveVisitAndNotify()" title="Save Visit to Timeline">📋 Save</button>
+      <button class="drafts-btn" id="btn-timeline-lbl" style="background: var(--accent); padding: 5px 10px; font-weight:bold; color:white;" onclick="openLongitudinalModal()" title="Patient Timeline">⏱ History</button>
     </div>
     
     <div class="nav-scroll" id="nav-tabs"></div>
@@ -10105,9 +10105,13 @@ function updateLangUI() {
   
   const clearEl = document.getElementById('btn-clear-sidebar-lbl');
   if (clearEl) {
-    clearEl.textContent = lang === 'en' ? 'Delete' : 'Excluir';
-    clearEl.title = lang === 'en' ? 'Create New Patient (Clear All)' : 'Criar Novo Paciente (Limpar Tudo)';
+    clearEl.textContent = lang === 'en' ? '+ New' : '+ Novo';
+    clearEl.title = lang === 'en' ? 'Create New Patient' : 'Criar Novo Paciente';
   }
+  const saveVisitEl = document.getElementById('btn-save-visit-lbl');
+  if (saveVisitEl) saveVisitEl.textContent = lang === 'en' ? '📋 Save' : '📋 Salvar';
+  const timelineEl = document.getElementById('btn-timeline-lbl');
+  if (timelineEl) timelineEl.textContent = lang === 'en' ? '⏱ History' : '⏱ Histórico';
   
   renderTabs();
   renderSections();
@@ -10533,14 +10537,14 @@ let _longitudinalCompareB = null;
 function openLongitudinalModal() {
   const modal = document.getElementById('longitudinal-modal');
   if (modal) {
-    modal.classList.add('open');
+    modal.style.display = 'flex';
     renderLongitudinalModal();
   }
 }
 
 function closeLongitudinalModal() {
   const modal = document.getElementById('longitudinal-modal');
-  if (modal) modal.classList.remove('open');
+  if (modal) modal.style.display = 'none';
   _longitudinalCompareA = null;
   _longitudinalCompareB = null;
 }
