@@ -4,6 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>RoundMD V1 | Clinical Assistant</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="RoundMD">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0f6e56">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -11340,9 +11344,65 @@ function mergeAIExtracted(ex) {
   return count;
 }
 
+// ══════════════════════════════════════════════════════════ APP ICON (iOS Home Screen)
+function setAppIcon() {
+  try {
+    const c = document.createElement('canvas');
+    c.width = 180; c.height = 180;
+    const ctx = c.getContext('2d');
+
+    // Three-tone green background (dark top → lighter bottom)
+    ctx.fillStyle = '#0c5443';
+    ctx.fillRect(0, 0, 180, 180);
+    ctx.fillStyle = '#0f6e56';
+    ctx.fillRect(0, 72, 180, 66);
+    ctx.fillStyle = '#118054';
+    ctx.fillRect(0, 128, 180, 52);
+
+    // Large ghosted "R" watermark
+    ctx.save();
+    ctx.globalAlpha = 0.11;
+    ctx.fillStyle = 'white';
+    ctx.font = 'bold 195px Georgia, serif';
+    ctx.textBaseline = 'bottom';
+    ctx.fillText('R', -10, 182);
+    ctx.restore();
+
+    // "Round" — bold, centered
+    ctx.fillStyle = 'white';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'alphabetic';
+    ctx.font = 'bold 44px -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif';
+    ctx.fillText('Round', 90, 108);
+
+    // "MD" — lighter weight, with manual letter spacing
+    ctx.globalAlpha = 0.80;
+    ctx.font = '300 33px -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif';
+    ctx.textAlign = 'left';
+    const gap = 9;
+    const mW = ctx.measureText('M').width;
+    const dW = ctx.measureText('D').width;
+    const startX = 90 - (mW + gap + dW) / 2;
+    ctx.fillText('M', startX, 146);
+    ctx.fillText('D', startX + mW + gap, 146);
+    ctx.globalAlpha = 1;
+
+    // Set <link rel="apple-touch-icon">
+    let link = document.querySelector("link[rel='apple-touch-icon']");
+    if (!link) {
+      link = document.createElement('link');
+      link.rel = 'apple-touch-icon';
+      link.sizes = '180x180';
+      document.head.appendChild(link);
+    }
+    link.href = c.toDataURL('image/png');
+  } catch(e) {}
+}
+
 // Start sequence
 loadState();
 updateLangUI(); // Set languages & initial render
+setAppIcon();   // Generate and register iOS home screen icon
 
 // ── PRIVACY TAP-TO-REVEAL ──
 // When privacy mode is active, tapping a blurred field reveals it for 3 s.
