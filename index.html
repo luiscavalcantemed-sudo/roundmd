@@ -6248,30 +6248,50 @@ function renderSections() {
         <div class="input-row" style="margin-top:10px;">
           <div>
             <label>${t.ethnicity}</label>
-            <select id="pt-ethnicity" onchange="updatePatientField('ethnicity', this.value)">
-              ${t.ethnicityOpts.map(o => `<option value="${o}" ${state.patient.ethnicity === o ? 'selected' : ''}>${o}</option>`).join('')}
-            </select>
+            <input type="text" id="pt-ethnicity" list="pt-ethnicity-list"
+              value="${state.patient.ethnicity || ''}" placeholder=""
+              oninput="updatePatientField('ethnicity', this.value);"
+              onchange="saveToCustomList('pt_ethnicity', this.value);">
+            <datalist id="pt-ethnicity-list">
+              ${t.ethnicityOpts.map(o => `<option value="${o}">`).join('')}
+              ${getCustomList('pt_ethnicity').map(v => `<option value="${v}">`).join('')}
+            </datalist>
           </div>
           <div>
             <label>${t.marital}</label>
-            <select id="pt-marital" onchange="updatePatientField('marital', this.value)">
-              ${t.maritalOpts.map(o => `<option value="${o}" ${state.patient.marital === o ? 'selected' : ''}>${o}</option>`).join('')}
-            </select>
+            <input type="text" id="pt-marital" list="pt-marital-list"
+              value="${state.patient.marital || ''}" placeholder=""
+              oninput="updatePatientField('marital', this.value);"
+              onchange="saveToCustomList('pt_marital', this.value);">
+            <datalist id="pt-marital-list">
+              ${t.maritalOpts.map(o => `<option value="${o}">`).join('')}
+              ${getCustomList('pt_marital').map(v => `<option value="${v}">`).join('')}
+            </datalist>
           </div>
         </div>
         
         <div class="input-row" style="margin-top:10px;">
           <div>
             <label>${t.education}</label>
-            <select id="pt-edu" onchange="updatePatientField('education', this.value)">
-              ${t.educationOpts.map(o => `<option value="${o}" ${state.patient.education === o ? 'selected' : ''}>${o}</option>`).join('')}
-            </select>
+            <input type="text" id="pt-edu" list="pt-edu-list"
+              value="${state.patient.education || ''}" placeholder=""
+              oninput="updatePatientField('education', this.value);"
+              onchange="saveToCustomList('pt_edu', this.value);">
+            <datalist id="pt-edu-list">
+              ${t.educationOpts.map(o => `<option value="${o}">`).join('')}
+              ${getCustomList('pt_edu').map(v => `<option value="${v}">`).join('')}
+            </datalist>
           </div>
           <div>
             <label>${t.insuranceType}</label>
-            <select id="pt-insurance" onchange="updatePatientField('insuranceType', this.value)">
-              ${t.insuranceOpts.map(o => `<option value="${o}" ${state.patient.insuranceType === o ? 'selected' : ''}>${o}</option>`).join('')}
-            </select>
+            <input type="text" id="pt-insurance" list="pt-insurance-list"
+              value="${state.patient.insuranceType || ''}" placeholder=""
+              oninput="updatePatientField('insuranceType', this.value);"
+              onchange="saveToCustomList('pt_insurance', this.value);">
+            <datalist id="pt-insurance-list">
+              ${t.insuranceOpts.map(o => `<option value="${o}">`).join('')}
+              ${getCustomList('pt_insurance').map(v => `<option value="${v}">`).join('')}
+            </datalist>
           </div>
         </div>
         
@@ -6326,17 +6346,25 @@ function renderSections() {
         <div class="input-row">
           <div>
             <label>${t.hpiOnset}</label>
-            <select id="hpi-onset" onchange="updateHPIField('onset', this.value)">
-              <option value=""></option>
-              ${t.hpiOnsetOpts.map(o => `<option value="${o}" ${state.hpi.onset === o ? 'selected' : ''}>${o}</option>`).join('')}
-            </select>
+            <input type="text" id="hpi-onset" list="hpi-onset-list"
+              value="${state.hpi.onset || ''}" placeholder=""
+              oninput="updateHPIField('onset', this.value);"
+              onchange="saveToCustomList('hpi_onset', this.value);">
+            <datalist id="hpi-onset-list">
+              ${t.hpiOnsetOpts.map(o => `<option value="${o}">`).join('')}
+              ${getCustomList('hpi_onset').map(v => `<option value="${v}">`).join('')}
+            </datalist>
           </div>
           <div>
             <label>${t.hpiChar}</label>
-            <select id="hpi-char" onchange="updateHPIField('char', this.value)">
-              <option value=""></option>
-              ${t.hpiCharOpts.map(o => `<option value="${o}" ${state.hpi.char === o ? 'selected' : ''}>${o}</option>`).join('')}
-            </select>
+            <input type="text" id="hpi-char" list="hpi-char-list"
+              value="${state.hpi.char || ''}" placeholder=""
+              oninput="updateHPIField('char', this.value);"
+              onchange="saveToCustomList('hpi_char', this.value);">
+            <datalist id="hpi-char-list">
+              ${t.hpiCharOpts.map(o => `<option value="${o}">`).join('')}
+              ${getCustomList('hpi_char').map(v => `<option value="${v}">`).join('')}
+            </datalist>
           </div>
         </div>
         
@@ -6345,10 +6373,15 @@ function renderSections() {
             <label>${t.hpiDuration}</label>
             <div style="display:flex; gap:6px; align-items:center;">
               <input type="number" inputmode="decimal" inputmode="numeric" min="1" id="hpi-dur-val" value="${state.hpi.durationValue || ''}" oninput="updateHPIDurationFields(this.value, null)" style="width:70px;">
-              <select id="hpi-dur-unit" onchange="updateHPIDurationFields(null, this.value)" style="flex:1;">
-                <option value=""></option>
-                ${t.durationUnits.map(u => `<option value="${u}" ${state.hpi.durationUnit === u ? 'selected' : ''}>${u}</option>`).join('')}
-              </select>
+              <input type="text" id="hpi-dur-unit" list="hpi-dur-unit-list"
+                value="${state.hpi.durationUnit || ''}" placeholder=""
+                style="flex:1;"
+                oninput="updateHPIDurationFields(null, this.value);"
+                onchange="saveToCustomList('hpi_dur_unit', this.value);">
+              <datalist id="hpi-dur-unit-list">
+                ${t.durationUnits.map(u => `<option value="${u}">`).join('')}
+                ${getCustomList('hpi_dur_unit').map(v => `<option value="${v}">`).join('')}
+              </datalist>
             </div>
           </div>
           <div>
@@ -6685,9 +6718,14 @@ html += `
           </div>
           
           <label>${t.prenatal}</label>
-          <select onchange="updateGynObField('prenatal', this.value)">
-            ${(t.prenatalOpts||[]).map(o => `<option value="${o}" ${state.gynOb.prenatal === o ? 'selected' : ''}>${o}</option>`).join('')}
-          </select>
+          <input type="text" list="gynob-prenatal-list"
+            value="${state.gynOb.prenatal || ''}" placeholder=""
+            oninput="updateGynObField('prenatal', this.value);"
+            onchange="saveToCustomList('gynob_prenatal', this.value);">
+          <datalist id="gynob-prenatal-list">
+            ${(t.prenatalOpts||[]).map(o => `<option value="${o}">`).join('')}
+            ${getCustomList('gynob_prenatal').map(v => `<option value="${v}">`).join('')}
+          </datalist>
           
           <label>${t.currentComplications}</label>
           <textarea oninput="updateGynObField('currentComplications', this.value)">${state.gynOb.currentComplications || ''}</textarea>
@@ -6705,10 +6743,14 @@ html += `
           </div>
           <div>
             <label>${t.cycleRegularity}</label>
-            <select onchange="updateGynObField('cycleRegularity', this.value)">
-              <option value=""></option>
-              ${(t.cycleOpts||[]).map(o => `<option value="${o}" ${state.gynOb.cycleRegularity === o ? 'selected' : ''}>${o}</option>`).join('')}
-            </select>
+            <input type="text" list="gynob-cycle-list"
+              value="${state.gynOb.cycleRegularity || ''}" placeholder=""
+              oninput="updateGynObField('cycleRegularity', this.value);"
+              onchange="saveToCustomList('gynob_cycle', this.value);">
+            <datalist id="gynob-cycle-list">
+              ${(t.cycleOpts||[]).map(o => `<option value="${o}">`).join('')}
+              ${getCustomList('gynob_cycle').map(v => `<option value="${v}">`).join('')}
+            </datalist>
           </div>
         </div>
         
@@ -6732,10 +6774,14 @@ html += `
         ` : ''}
         
         <label>${t.contraception}</label>
-        <select onchange="updateGynObField('contraception', this.value)">
-          <option value=""></option>
-          ${(t.contraceptionOpts||[]).map(o => `<option value="${o}" ${state.gynOb.contraception === o ? 'selected' : ''}>${o}</option>`).join('')}
-        </select>
+        <input type="text" list="gynob-contraception-list"
+          value="${state.gynOb.contraception || ''}" placeholder=""
+          oninput="updateGynObField('contraception', this.value);"
+          onchange="saveToCustomList('gynob_contraception', this.value);">
+        <datalist id="gynob-contraception-list">
+          ${(t.contraceptionOpts||[]).map(o => `<option value="${o}">`).join('')}
+          ${getCustomList('gynob_contraception').map(v => `<option value="${v}">`).join('')}
+        </datalist>
         
         <div class="input-row" style="margin-top:10px;">
           <div>
@@ -6744,10 +6790,14 @@ html += `
           </div>
           <div>
             <label>${t.papResult}</label>
-            <select onchange="updateGynObField('papResult', this.value)">
-              <option value=""></option>
-              ${(t.papResultOpts||[]).map(o => `<option value="${o}" ${state.gynOb.papResult === o ? 'selected' : ''}>${o}</option>`).join('')}
-            </select>
+            <input type="text" list="gynob-pap-list"
+              value="${state.gynOb.papResult || ''}" placeholder=""
+              oninput="updateGynObField('papResult', this.value);"
+              onchange="saveToCustomList('gynob_pap', this.value);">
+            <datalist id="gynob-pap-list">
+              ${(t.papResultOpts||[]).map(o => `<option value="${o}">`).join('')}
+              ${getCustomList('gynob_pap').map(v => `<option value="${v}">`).join('')}
+            </datalist>
           </div>
         </div>
         
@@ -6758,20 +6808,28 @@ html += `
           </div>
           <div>
             <label>${t.mammogramResult}</label>
-            <select onchange="updateGynObField('mammogramResult', this.value)">
-              <option value=""></option>
-              ${(t.mammogramResultOpts||[]).map(o => `<option value="${o}" ${state.gynOb.mammogramResult === o ? 'selected' : ''}>${o}</option>`).join('')}
-            </select>
+            <input type="text" list="gynob-mammo-list"
+              value="${state.gynOb.mammogramResult || ''}" placeholder=""
+              oninput="updateGynObField('mammogramResult', this.value);"
+              onchange="saveToCustomList('gynob_mammo', this.value);">
+            <datalist id="gynob-mammo-list">
+              ${(t.mammogramResultOpts||[]).map(o => `<option value="${o}">`).join('')}
+              ${getCustomList('gynob_mammo').map(v => `<option value="${v}">`).join('')}
+            </datalist>
           </div>
         </div>
         
         <div class="input-row" style="margin-top:10px;">
           <div>
             <label>${t.sexuallyActive}</label>
-            <select onchange="updateGynObField('sexuallyActive', this.value)">
-              <option value=""></option>
-              ${(t.sexuallyActiveOpts||[]).map(o => `<option value="${o}" ${state.gynOb.sexuallyActive === o ? 'selected' : ''}>${o}</option>`).join('')}
-            </select>
+            <input type="text" list="gynob-sexual-list"
+              value="${state.gynOb.sexuallyActive || ''}" placeholder=""
+              oninput="updateGynObField('sexuallyActive', this.value);"
+              onchange="saveToCustomList('gynob_sexual', this.value);">
+            <datalist id="gynob-sexual-list">
+              ${(t.sexuallyActiveOpts||[]).map(o => `<option value="${o}">`).join('')}
+              ${getCustomList('gynob_sexual').map(v => `<option value="${v}">`).join('')}
+            </datalist>
           </div>
         </div>
         
@@ -6862,10 +6920,14 @@ html += `
           <div class="input-row" style="margin-top:8px;">
             <div>
               <label>${lang==='en'?'Delivery type':'Tipo de parto'}</label>
-              <select onchange="updatePedsField('delivery',this.value)">
-                <option value=""></option>
-                ${(lang==='en'?['Vaginal','Cesarean (elective)','Cesarean (emergency)','Vacuum/Forceps']:['Vaginal','Cesárea (eletiva)','Cesárea (emergência)','Fórceps/Vácuo']).map(o=>`<option value="${o}" ${state.pedsHx.delivery===o?'selected':''}>${o}</option>`).join('')}
-              </select>
+              <input type="text" list="peds-delivery-list"
+                value="${state.pedsHx.delivery || ''}" placeholder=""
+                oninput="updatePedsField('delivery', this.value);"
+                onchange="saveToCustomList('peds_delivery', this.value);">
+              <datalist id="peds-delivery-list">
+                ${(lang==='en'?['Vaginal','Cesarean (elective)','Cesarean (emergency)','Vacuum/Forceps']:['Vaginal','Cesárea (eletiva)','Cesárea (emergência)','Fórceps/Vácuo']).map(o=>`<option value="${o}">`).join('')}
+                ${getCustomList('peds_delivery').map(v => `<option value="${v}">`).join('')}
+              </datalist>
             </div>
             <div>
               <label>${lang==='en'?'NICU days':'Dias de UTI neonatal'}</label>
@@ -6891,10 +6953,14 @@ html += `
             <div class="input-row" style="margin-top:8px;">
               <div>
                 <label>${lang==='en'?'Newborn screening':'Triagem neonatal'}</label>
-                <select onchange="updatePedsField('nbScreening',this.value)">
-                  <option value=""></option>
-                  ${(lang==='en'?['Completed – normal','Completed – abnormal','Pending','Not done']:['Realizada – normal','Realizada – alterada','Pendente','Não realizada']).map(o=>`<option value="${o}" ${state.pedsHx.nbScreening===o?'selected':''}>${o}</option>`).join('')}
-                </select>
+                <input type="text" list="peds-nbscreen-list"
+                  value="${state.pedsHx.nbScreening || ''}" placeholder=""
+                  oninput="updatePedsField('nbScreening', this.value);"
+                  onchange="saveToCustomList('peds_nbscreen', this.value);">
+                <datalist id="peds-nbscreen-list">
+                  ${(lang==='en'?['Completed – normal','Completed – abnormal','Pending','Not done']:['Realizada – normal','Realizada – alterada','Pendente','Não realizada']).map(o=>`<option value="${o}">`).join('')}
+                  ${getCustomList('peds_nbscreen').map(v => `<option value="${v}">`).join('')}
+                </datalist>
               </div>
               <div style="grid-column:1/-1;">
                 <div style="font-size:12px;font-weight:700;color:var(--primary);margin-bottom:8px;">
@@ -6903,29 +6969,18 @@ html += `
 
                 <!-- Feeding type -->
                 <label>${lang==='en'?'Current feeding type':'Tipo de alimentação atual'}</label>
-                <select onchange="updatePedsField('breastfed',this.value); saveState(); renderSections();" style="margin-bottom:8px;">
-                  <option value=""></option>
+                <input type="text" list="peds-breastfed-list"
+                  value="${state.pedsHx.breastfed || ''}" placeholder=""
+                  style="margin-bottom:8px;"
+                  oninput="updatePedsField('breastfed', this.value);"
+                  onchange="saveToCustomList('peds_breastfed', this.value); saveState(); renderSections();">
+                <datalist id="peds-breastfed-list">
                   ${(lang==='en'
-                    ?[
-                      ['Exclusive breastfeeding (EBF)','≥6mo recommended; breast milk only'],
-                      ['Predominant breastfeeding','Breast milk + water/teas only'],
-                      ['Complementary breastfeeding','Breast milk + solids/formula'],
-                      ['Mixed (breast + formula)','Breast milk and formula combined'],
-                      ['Exclusive formula','No breast milk'],
-                      ['Never breastfed',''],
-                      ['Discontinued / Weaned','Breastfeeding stopped'],
-                    ]
-                    :[
-                      ['Aleitamento materno exclusivo (AME)','Recomendado até 6m; apenas leite materno'],
-                      ['Aleitamento materno predominante','Leite materno + água/chás'],
-                      ['Aleitamento materno complementado','Leite materno + sólidos/fórmula'],
-                      ['Misto (leite materno + fórmula)','Leite materno e fórmula combinados'],
-                      ['Fórmula exclusiva','Sem leite materno'],
-                      ['Nunca amamentou',''],
-                      ['Desmame / Interrompido','Aleitamento encerrado'],
-                    ]
-                  ).map(([o,tip])=>`<option value="${o}" ${state.pedsHx.breastfed===o?'selected':''} title="${tip}">${o}</option>`).join('')}
-                </select>
+                    ?['Exclusive breastfeeding (EBF)','Predominant breastfeeding','Complementary breastfeeding','Mixed (breast + formula)','Exclusive formula','Never breastfed','Discontinued / Weaned']
+                    :['Aleitamento materno exclusivo (AME)','Aleitamento materno predominante','Aleitamento materno complementado','Misto (leite materno + fórmula)','Fórmula exclusiva','Nunca amamentou','Desmame / Interrompido']
+                  ).map(o=>`<option value="${o}">`).join('')}
+                  ${getCustomList('peds_breastfed').map(v => `<option value="${v}">`).join('')}
+                </datalist>
 
                 <!-- Breastfeeding details -->
                 ${state.pedsHx.breastfed && !state.pedsHx.breastfed.includes('Fórmula exclusiva') && !state.pedsHx.breastfed.includes('Exclusive formula') && !state.pedsHx.breastfed.includes('Never') && !state.pedsHx.breastfed.includes('Nunca') ? `
@@ -6954,13 +7009,18 @@ html += `
                   <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
                     <div>
                       <label style="font-size:11px;">${lang==='en'?'Formula type':'Tipo de fórmula'}</label>
-                      <select onchange="updatePedsField('formulaType',this.value)" style="font-size:12px;">
-                        <option value=""></option>
+                      <input type="text" list="peds-formula-list"
+                        value="${state.pedsHx.formulaType || ''}" placeholder=""
+                        style="font-size:12px;"
+                        oninput="updatePedsField('formulaType', this.value);"
+                        onchange="saveToCustomList('peds_formula', this.value);">
+                      <datalist id="peds-formula-list">
                         ${(lang==='en'
                           ?['Standard cow-milk based','Partially hydrolyzed (hypoallergenic)','Extensively hydrolyzed','Amino acid-based (elemental)','Soy-based','Lactose-free','Premature / preterm formula','Follow-on / toddler milk','Goat milk-based']
                           :['Padrão à base de leite de vaca','Parcialmente hidrolisada (hipoalergênica)','Extensamente hidrolisada','À base de aminoácidos (elementar)','À base de soja','Sem lactose','Fórmula para prematuro','Fórmula de seguimento / crescimento','À base de leite de cabra']
-                        ).map(o=>`<option value="${o}" ${state.pedsHx.formulaType===o?'selected':''}>${o}</option>`).join('')}
-                      </select>
+                        ).map(o=>`<option value="${o}">`).join('')}
+                        ${getCustomList('peds_formula').map(v => `<option value="${v}">`).join('')}
+                      </datalist>
                     </div>
                     <div>
                       <label style="font-size:11px;">${lang==='en'?'Brand':'Marca'}</label>
@@ -7000,13 +7060,18 @@ html += `
                     </div>
                     <div>
                       <label style="font-size:11px;">${lang==='en'?'Introduction method':'Método de introdução'}</label>
-                      <select onchange="updatePedsField('foodIntroMethod',this.value)" style="font-size:12px;">
-                        <option value=""></option>
+                      <input type="text" list="peds-foodintro-list"
+                        value="${state.pedsHx.foodIntroMethod || ''}" placeholder=""
+                        style="font-size:12px;"
+                        oninput="updatePedsField('foodIntroMethod', this.value);"
+                        onchange="saveToCustomList('peds_foodintro', this.value);">
+                      <datalist id="peds-foodintro-list">
                         ${(lang==='en'
                           ?['Traditional (purées / mashed)','Baby-Led Weaning (BLW)','Mixed / Combined','Not yet introduced']
                           :['Tradicional (purês / amassados)','BLW (Baby-Led Weaning)','Misto / Combinado','Ainda não iniciado']
-                        ).map(o=>`<option value="${o}" ${state.pedsHx.foodIntroMethod===o?'selected':''}>${o}</option>`).join('')}
-                      </select>
+                        ).map(o=>`<option value="${o}">`).join('')}
+                        ${getCustomList('peds_foodintro').map(v => `<option value="${v}">`).join('')}
+                      </datalist>
                     </div>
                   </div>
                   <label style="font-size:11px;">${lang==='en'?'Current diet / Foods accepted':'Dieta atual / Alimentos aceitos'}</label>
@@ -7139,10 +7204,14 @@ html += `
               </div>
               <div>
                 <label>${lang==='en'?'School performance':'Desempenho escolar'}</label>
-                <select onchange="updatePedsField('schoolPerf',this.value)">
-                  <option value=""></option>
-                  ${(lang==='en'?['Good','Average','Below average','Learning difficulties','Special needs']:['Bom','Regular','Abaixo da média','Dificuldades de aprendizagem','Necessidades especiais']).map(o=>`<option value="${o}" ${state.pedsHx.schoolPerf===o?'selected':''}>${o}</option>`).join('')}
-                </select>
+                <input type="text" list="peds-schoolperf-list"
+                  value="${state.pedsHx.schoolPerf || ''}" placeholder=""
+                  oninput="updatePedsField('schoolPerf', this.value);"
+                  onchange="saveToCustomList('peds_schoolperf', this.value);">
+                <datalist id="peds-schoolperf-list">
+                  ${(lang==='en'?['Good','Average','Below average','Learning difficulties','Special needs']:['Bom','Regular','Abaixo da média','Dificuldades de aprendizagem','Necessidades especiais']).map(o=>`<option value="${o}">`).join('')}
+                  ${getCustomList('peds_schoolperf').map(v => `<option value="${v}">`).join('')}
+                </datalist>
               </div>
             </div>
             <div class="input-row" style="margin-top:8px;">
@@ -7383,18 +7452,27 @@ const FAM_DISEASE_OPTS = lang === 'en'
               </div>
               <div>
                 <label>${t.medRoute}</label>
-                <select onchange="updateMedField(${idx}, 'route', this.value)">
-                  <option value=""></option>
-                  ${t.medRouteOpts.map(o => `<option value="${o}" ${m.route === o ? 'selected' : ''}>${o}</option>`).join('')}
-                </select>
+                <input type="text" list="med-route-list-${idx}"
+                  value="${m.route || ''}" placeholder=""
+                  oninput="updateMedField(${idx}, 'route', this.value);"
+                  onchange="saveToCustomList('med_route', this.value);">
+                <datalist id="med-route-list-${idx}">
+                  ${t.medRouteOpts.map(o => `<option value="${o}">`).join('')}
+                  ${getCustomList('med_route').map(v => `<option value="${v}">`).join('')}
+                </datalist>
               </div>
             </div>
             
             <label>${t.medFreq}</label>
-            <select style="margin-top:4px;" onchange="updateMedField(${idx}, 'freq', this.value)">
-              <option value=""></option>
-              ${t.medFreqOpts.map(o => `<option value="${o}" ${m.freq === o ? 'selected' : ''}>${o}</option>`).join('')}
-            </select>
+            <input type="text" list="med-freq-list-${idx}"
+              value="${m.freq || ''}" placeholder=""
+              style="margin-top:4px;"
+              oninput="updateMedField(${idx}, 'freq', this.value);"
+              onchange="saveToCustomList('med_freq', this.value);">
+            <datalist id="med-freq-list-${idx}">
+              ${t.medFreqOpts.map(o => `<option value="${o}">`).join('')}
+              ${getCustomList('med_freq').map(v => `<option value="${v}">`).join('')}
+            </datalist>
             
 <!-- notes field hidden per user request -->
           </div>
@@ -7439,10 +7517,14 @@ const FAM_DISEASE_OPTS = lang === 'en'
         <div class="card-label">${t.socialLabel}</div>
         
         <label>${t.tobacco}</label>
-        <select onchange="updateSocialField('tobacco', this.value); switchTab(currentTab);">
-          <option value=""></option>
-          ${t.tobaccoOpts.map(o => `<option value="${o}" ${state.socialHx.tobacco === o ? 'selected' : ''}>${o}</option>`).join('')}
-        </select>
+        <input type="text" list="social-tobacco-list"
+          value="${state.socialHx.tobacco || ''}" placeholder=""
+          oninput="updateSocialField('tobacco', this.value);"
+          onchange="saveToCustomList('social_tobacco', this.value); switchTab(currentTab);">
+        <datalist id="social-tobacco-list">
+          ${t.tobaccoOpts.map(o => `<option value="${o}">`).join('')}
+          ${getCustomList('social_tobacco').map(v => `<option value="${v}">`).join('')}
+        </datalist>
         
         ${(state.socialHx.tobacco && state.socialHx.tobacco !== 'Never' && state.socialHx.tobacco !== 'Nunca fumou') ? `
           <div class="tobacco-extra">
@@ -7464,10 +7546,14 @@ const FAM_DISEASE_OPTS = lang === 'en'
             <div class="input-row" style="margin-top:10px;">
               <div>
                 <label>${t.tobaccoType}</label>
-                <select onchange="updateSocialField('tobaccoType', this.value)">
-                  <option value=""></option>
-                  ${t.tobaccoTypeOpts.map(o => `<option value="${o}" ${state.socialHx.tobaccoType === o ? 'selected' : ''}>${o}</option>`).join('')}
-                </select>
+                <input type="text" list="social-tobtype-list"
+                  value="${state.socialHx.tobaccoType || ''}" placeholder=""
+                  oninput="updateSocialField('tobaccoType', this.value);"
+                  onchange="saveToCustomList('social_tobtype', this.value);">
+                <datalist id="social-tobtype-list">
+                  ${t.tobaccoTypeOpts.map(o => `<option value="${o}">`).join('')}
+                  ${getCustomList('social_tobtype').map(v => `<option value="${v}">`).join('')}
+                </datalist>
               </div>
               ${(state.socialHx.tobacco === 'Former smoker' || state.socialHx.tobacco === 'Ex-fumante') ? `
                 <div>
@@ -7480,16 +7566,24 @@ const FAM_DISEASE_OPTS = lang === 'en'
         ` : ''}
         
         <label>${t.alcohol}</label>
-        <select onchange="updateSocialField('alcohol', this.value)">
-          <option value=""></option>
-          ${t.alcoholOpts.map(o => `<option value="${o}" ${state.socialHx.alcohol === o ? 'selected' : ''}>${o}</option>`).join('')}
-        </select>
+        <input type="text" list="social-alcohol-list"
+          value="${state.socialHx.alcohol || ''}" placeholder=""
+          oninput="updateSocialField('alcohol', this.value);"
+          onchange="saveToCustomList('social_alcohol', this.value);">
+        <datalist id="social-alcohol-list">
+          ${t.alcoholOpts.map(o => `<option value="${o}">`).join('')}
+          ${getCustomList('social_alcohol').map(v => `<option value="${v}">`).join('')}
+        </datalist>
         
         <label>${t.exercise}</label>
-        <select onchange="updateSocialField('exercise', this.value)">
-          <option value=""></option>
-          ${t.exerciseOpts.map(o => `<option value="${o}" ${state.socialHx.exercise === o ? 'selected' : ''}>${o}</option>`).join('')}
-        </select>
+        <input type="text" list="social-exercise-list"
+          value="${state.socialHx.exercise || ''}" placeholder=""
+          oninput="updateSocialField('exercise', this.value);"
+          onchange="saveToCustomList('social_exercise', this.value);">
+        <datalist id="social-exercise-list">
+          ${t.exerciseOpts.map(o => `<option value="${o}">`).join('')}
+          ${getCustomList('social_exercise').map(v => `<option value="${v}">`).join('')}
+        </datalist>
         
         <label>${t.drugs}</label>
         <select onchange="
@@ -7717,10 +7811,14 @@ const FAM_DISEASE_OPTS = lang === 'en'
           <div class="input-row" style="margin-top:10px;">
             <div>
               <label>${t.presentation}</label>
-              <select onchange="updateOBExamField('presentation', this.value)">
-                <option value=""></option>
-                ${t.presentOpts.map(o => `<option value="${o}" ${state.obExam.presentation === o ? 'selected' : ''}>${o}</option>`).join('')}
-              </select>
+              <input type="text" list="obexam-present-list"
+                value="${state.obExam.presentation || ''}" placeholder=""
+                oninput="updateOBExamField('presentation', this.value);"
+                onchange="saveToCustomList('obexam_presentation', this.value);">
+              <datalist id="obexam-present-list">
+                ${t.presentOpts.map(o => `<option value="${o}">`).join('')}
+                ${getCustomList('obexam_presentation').map(v => `<option value="${v}">`).join('')}
+              </datalist>
             </div>
             <div>
               <label>${t.obDilation}</label>
@@ -7735,10 +7833,14 @@ const FAM_DISEASE_OPTS = lang === 'en'
             </div>
             <div>
               <label>${t.obStation}</label>
-              <select onchange="updateOBExamField('station', this.value)">
-                <option value=""></option>
-                ${t.obStationOpts.map(o => `<option value="${o}" ${state.obExam.station === o ? 'selected' : ''}>${o}</option>`).join('')}
-              </select>
+              <input type="text" list="obexam-station-list"
+                value="${state.obExam.station || ''}" placeholder=""
+                oninput="updateOBExamField('station', this.value);"
+                onchange="saveToCustomList('obexam_station', this.value);">
+              <datalist id="obexam-station-list">
+                ${t.obStationOpts.map(o => `<option value="${o}">`).join('')}
+                ${getCustomList('obexam_station').map(v => `<option value="${v}">`).join('')}
+              </datalist>
             </div>
           </div>
         </div>
@@ -8612,13 +8714,17 @@ const FAM_DISEASE_OPTS = lang === 'en'
       <!-- CONDIÇÃO NA ALTA -->
       <div class="card">
         <div class="card-label">${lang==='en'?'Discharge Condition':'Condição na Alta'}</div>
-        <select onchange="updateDC('dischargeCondition',this.value)">
-          <option value=""></option>
+        <input type="text" list="dc-condition-list"
+          value="${dc.dischargeCondition || ''}" placeholder=""
+          oninput="updateDC('dischargeCondition', this.value);"
+          onchange="saveToCustomList('dc_condition', this.value);">
+        <datalist id="dc-condition-list">
           ${(lang==='en'
             ?['Stable — improved','Stable — unchanged','Improved — requires follow-up','Against medical advice (AMA)','Transferred to another facility','Referred to specialist']
             :['Estável — melhorado','Estável — inalterado','Melhorado — necessita retorno','Alta a pedido','Transferência para outro serviço','Encaminhado para especialista']
-          ).map(o=>`<option value="${o}" ${dc.dischargeCondition===o?'selected':''}>${o}</option>`).join('')}
-        </select>
+          ).map(o=>`<option value="${o}">`).join('')}
+          ${getCustomList('dc_condition').map(v => `<option value="${v}">`).join('')}
+        </datalist>
       </div>
 
       <!-- ORIENTAÇÕES DE ALTA -->
@@ -8634,22 +8740,30 @@ const FAM_DISEASE_OPTS = lang === 'en'
         </div>
         
         <label>${lang==='en'?'Activity Restrictions':'Restrição de Atividades'}</label>
-        <select onchange="updateDC('restrictions',this.value)">
-          <option value=""></option>
+        <input type="text" list="dc-restrictions-list"
+          value="${dc.restrictions || ''}" placeholder=""
+          oninput="updateDC('restrictions', this.value);"
+          onchange="saveToCustomList('dc_restrictions', this.value);">
+        <datalist id="dc-restrictions-list">
           ${(lang==='en'
             ?['No restrictions','Light activity only','No strenuous exercise for 2 weeks','No exercise for 4 weeks','Bed rest recommended','Avoid lifting > 5 kg','Avoid driving','Work restrictions — specify below']
             :['Sem restrições','Atividade leve apenas','Sem esforço físico por 2 semanas','Sem exercícios por 4 semanas','Repouso relativo recomendado','Evitar levantar peso > 5 kg','Evitar dirigir','Restrição ao trabalho — especificar abaixo']
-          ).map(o=>`<option value="${o}" ${dc.restrictions===o?'selected':''}>${o}</option>`).join('')}
-        </select>
+          ).map(o=>`<option value="${o}">`).join('')}
+          ${getCustomList('dc_restrictions').map(v => `<option value="${v}">`).join('')}
+        </datalist>
 
         <label>${lang==='en'?'Diet':'Dieta'}</label>
-        <select onchange="updateDC('diet',this.value)">
-          <option value=""></option>
+        <input type="text" list="dc-diet-list"
+          value="${dc.diet || ''}" placeholder=""
+          oninput="updateDC('diet', this.value);"
+          onchange="saveToCustomList('dc_diet', this.value);">
+        <datalist id="dc-diet-list">
           ${(lang==='en'
             ?['No dietary restrictions','Low-sodium diet','Low-fat diet','Low-carbohydrate diet','Clear liquids only','Soft diet','Diabetic diet','Renal diet','Heart-healthy diet']
             :['Sem restrição alimentar','Dieta hipossódica','Dieta hipogordurosa','Dieta low-carb','Líquidos claros apenas','Dieta pastosa','Dieta para diabéticos','Dieta renal','Dieta cardioprotetora']
-          ).map(o=>`<option value="${o}" ${dc.diet===o?'selected':''}>${o}</option>`).join('')}
-        </select>
+          ).map(o=>`<option value="${o}">`).join('')}
+          ${getCustomList('dc_diet').map(v => `<option value="${v}">`).join('')}
+        </datalist>
         
         <label>${lang==='en'?'Wound / Surgical Site Care':'Cuidados com Ferida / Sítio Cirúrgico'}</label>
         <textarea rows="2" placeholder="${lang==='en'?'Wound care instructions (if applicable)...':'Cuidados com ferida operatória (se aplicável)...'}" oninput="updateDC('woundCare',this.value)">${dc.woundCare||''}</textarea>
