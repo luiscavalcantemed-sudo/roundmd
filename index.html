@@ -8998,75 +8998,92 @@ function generateHPINarrative() {
   if (!h.complaint && !h.onset && !h.duration && !h.char && !h.location && !h.radiation && !h.severity && (!h.modify || !h.modify.length) && !h.assoc && !h.context) {
     return;
   }
+
+  function joinList(arr, conj) {
+    if (!arr || !arr.length) return '';
+    if (arr.length === 1) return arr[0];
+    return arr.slice(0, -1).join(', ') + ' ' + conj + ' ' + arr[arr.length - 1];
+  }
+
+  function isFeminine(word) {
+    if (!word) return false;
+    return /\b(dor|dispneia|tosse|náusea|febre|cefaleia|fadiga|fraqueza|tontura|constipação|diarreia|disúria|hematúria|dispepsia|otalgia|odinofagia|disfagia|artralgia|mialgia|lombalgia|cervicalgia|dorsalgia)\b/i.test(word);
+  }
+
   let sentence = "";
   if (lang === 'en') {
     let parts = [];
     if (h.complaint) {
-      parts.push(`presents with ${h.complaint.toLowerCase()}`);
+      parts.push(`presents with ${lc(h.complaint)}`);
     } else {
       parts.push("reports symptoms");
     }
-    if (h.onset) parts.push(`of ${h.onset.toLowerCase()} onset`);
-    if (h.location) parts.push(`localized to the ${lc(h.location)}`);
-    if (h.radiation && h.radiation !== 'None') parts.push(`radiating to the ${h.radiation.toLowerCase()}`);
-    if (h.duration) parts.push(`lasting for ${h.duration}`);
-    if (h.char) parts.push(`described as ${h.char.toLowerCase()}`);
-    if (h.severity) parts.push(`with a severity of ${h.severity}/10`);
-    
+    if (h.onset) parts.push(`of ${lc(h.onset)} onset`);
+    if (h.location) parts.push(`localized to ${lc(h.location)}`);
+    if (h.radiation && h.radiation !== 'None') parts.push(`radiating to ${lc(h.radiation)}`);
+    const durEn = h.durationValue && h.durationUnit
+      ? `${h.durationValue} ${_pluralizeUnit(h.durationValue, h.durationUnit)}`
+      : (h.duration || '');
+    if (durEn) parts.push(`for ${durEn}`);
+    if (h.char) parts.push(`described as ${lc(h.char)}`);
+    if (h.severity) parts.push(`severity ${h.severity}/10`);
+
     sentence = "Patient " + parts.join(", ") + ".";
-    
-    let secondParts = [];
+
+    const extraSentences = [];
     if (Array.isArray(h.modify) && h.modify.length) {
-      secondParts.push(`Symptoms are modified by: ${h.modify.map(m=>lc(m)).join(', ')}`);
+      extraSentences.push(`Modifying factors: ${joinList(h.modify.map(m=>lc(m)), 'and')}.`);
     }
     if (h.assoc) {
-      const noAssoc = h.assoc.toLowerCase().includes('no associated') || h.assoc === 'No associated symptoms';
+      const noAssoc = lc(h.assoc).includes('no associated') || lc(h.assoc) === 'no associated symptoms';
       if (noAssoc) {
-        secondParts.push('No associated symptoms reported');
+        extraSentences.push('No associated symptoms.');
       } else {
-        secondParts.push(`associated with ${h.assoc.charAt(0).toLowerCase() + h.assoc.slice(1)}`);
+        const symptoms = h.assoc.split(/,\s*/).filter(Boolean).map(s => lc(s));
+        extraSentences.push(`Associated symptoms: ${joinList(symptoms, 'and')}.`);
       }
     }
-    if (h.context) {
-      secondParts.push(`occurring in the context of ${h.context}`);
-    }
-    if (secondParts.length) {
-      sentence += " " + secondParts.join(", ") + ".";
-    }
+    if (h.context) extraSentences.push(`Context: ${h.context}.`);
+    if (extraSentences.length) sentence += ' ' + extraSentences.join(' ');
+
   } else {
+    const fem = isFeminine(h.complaint);
+    const agreeA = fem ? 'a' : 'o';
+    const agreeAda = fem ? 'ada' : 'ado';
+
     let parts = [];
     if (h.complaint) {
-      parts.push(`apresenta-se com ${h.complaint.toLowerCase()}`);
+      parts.push(`refere ${lc(h.complaint)}`);
     } else {
       parts.push("refere sintomas");
     }
-    if (h.onset) parts.push(`com início ${h.onset.toLowerCase()}`);
-    if (h.location) parts.push(`com localização em ${lc(h.location)}`);
-    if (h.radiation && h.radiation !== 'Não irradia') parts.push(`com irradiação para ${h.radiation.toLowerCase()}`);
-    if (h.duration) parts.push(`com duração de ${h.duration}`);
-    if (h.char) parts.push(`caracterizados como ${h.char.toLowerCase()}`);
+    if (h.onset) parts.push(`de início ${lc(h.onset)}`);
+    if (h.location) parts.push(`localiz${agreeAda} em ${lc(h.location)}`);
+    if (h.radiation && h.radiation !== 'Não irradia') parts.push(`com irradiação para ${lc(h.radiation)}`);
+    const durPt = h.durationValue && h.durationUnit
+      ? `${h.durationValue} ${_pluralizeUnit(h.durationValue, h.durationUnit)}`
+      : (h.duration || '');
+    if (durPt) parts.push(`há ${durPt}`);
+    if (h.char) parts.push(`de caráter ${lc(h.char)}`);
     if (h.severity) parts.push(`com intensidade ${h.severity}/10`);
-    
+
     sentence = "Paciente " + parts.join(", ") + ".";
-    
-    let secondParts = [];
+
+    const extraSentences = [];
     if (Array.isArray(h.modify) && h.modify.length) {
-      secondParts.push(`fatores modificadores: ${h.modify.map(m=>lc(m)).join(', ')}`);
+      extraSentences.push(`Fatores modificadores: ${joinList(h.modify.map(m=>lc(m)), 'e')}.`);
     }
     if (h.assoc) {
-      const noAssoc = h.assoc.toLowerCase().includes('sem sintomas') || h.assoc === 'Sem sintomas associados';
+      const noAssoc = lc(h.assoc).includes('sem sintomas') || lc(h.assoc) === 'sem sintomas associados';
       if (noAssoc) {
-        secondParts.push('sem sintomas associados');
+        extraSentences.push('Sem sintomas associados.');
       } else {
-        secondParts.push(`associados a ${h.assoc.charAt(0).toLowerCase() + h.assoc.slice(1)}`);
+        const symptoms = h.assoc.split(/,\s*/).filter(Boolean).map(s => lc(s));
+        extraSentences.push(`Associad${agreeA} a ${joinList(symptoms, 'e')}.`);
       }
     }
-    if (h.context) {
-      secondParts.push(`no contexto de ${h.context}`);
-    }
-    if (secondParts.length) {
-      sentence += " " + secondParts.join(", ") + ".";
-    }
+    if (h.context) extraSentences.push(`Contexto: ${h.context}.`);
+    if (extraSentences.length) sentence += ' ' + extraSentences.join(' ');
   }
   state.hpiNotes = sentence;
   const textarea = document.getElementById('hpi-notes');
