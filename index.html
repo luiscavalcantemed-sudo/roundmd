@@ -9063,7 +9063,15 @@ function generateHPINarrative() {
 
     const extraSentences = [];
     if (Array.isArray(h.modify) && h.modify.length) {
-      extraSentences.push(`Modifying factors: ${joinList(h.modify.map(m=>lc(m)), 'and')}.`);
+      const noMod = h.modify.every(m => /no modifying/i.test(m));
+      if (!noMod) {
+        const betterItems = h.modify.filter(m => /^better/i.test(m)).map(m => lc(m.replace(/^better with\s*/i, '')));
+        const worseItems  = h.modify.filter(m => /^worse/i.test(m)).map(m => lc(m.replace(/^worse with\s*/i, '')));
+        const modParts = [];
+        if (betterItems.length) modParts.push(`relieved by ${joinList(betterItems, 'and')}`);
+        if (worseItems.length)  modParts.push(`aggravated by ${joinList(worseItems, 'and')}`);
+        if (modParts.length) extraSentences.push(modParts.map(p => p.charAt(0).toUpperCase() + p.slice(1)).join('. ') + '.');
+      }
     }
     if (h.assoc) {
       const noAssoc = lc(h.assoc).includes('no associated') || lc(h.assoc) === 'no associated symptoms';
@@ -9102,7 +9110,15 @@ function generateHPINarrative() {
 
     const extraSentences = [];
     if (Array.isArray(h.modify) && h.modify.length) {
-      extraSentences.push(`Fatores modificadores: ${joinList(h.modify.map(m=>lc(m)), 'e')}.`);
+      const noMod = h.modify.every(m => /sem fatores/i.test(m));
+      if (!noMod) {
+        const betterItems = h.modify.filter(m => /^melhora/i.test(m)).map(m => lc(m.replace(/^melhora com\s*/i, '')));
+        const worseItems  = h.modify.filter(m => /^piora/i.test(m)).map(m => lc(m.replace(/^piora com\s*/i, '')));
+        const modParts = [];
+        if (betterItems.length) modParts.push(`melhora com ${joinList(betterItems, 'e')}`);
+        if (worseItems.length)  modParts.push(`piora com ${joinList(worseItems, 'e')}`);
+        if (modParts.length) extraSentences.push(modParts.map(p => p.charAt(0).toUpperCase() + p.slice(1)).join('. ') + '.');
+      }
     }
     if (h.assoc) {
       const noAssoc = lc(h.assoc).includes('sem sintomas') || lc(h.assoc) === 'sem sintomas associados';
