@@ -6264,37 +6264,19 @@ function renderSections() {
       <div class="card">
         <label>${lang === 'en' ? 'Primary Complaint' : 'Queixa Principal'}</label>
         <div style="display:flex; gap:8px; align-items:center; margin-bottom:12px;">
-          <select id="hpi-complaint" onchange="selectHPIComplaint(this.value)" style="flex:1;">
-            <option value=""></option>
-            ${[
-              lang === 'en' ? 'Pain' : 'Dor',
-              lang === 'en' ? 'Dyspnea' : 'Dispneia',
-              lang === 'en' ? 'Headache' : 'Cefaleia',
-              lang === 'en' ? 'Cough' : 'Tosse',
-              lang === 'en' ? 'Fever' : 'Febre',
-              lang === 'en' ? 'Diarrhea / Vomiting' : 'Diarreia / Vômitos',
-              lang === 'en' ? 'Chest Pain' : 'Dor Torácica',
-              lang === 'en' ? 'Dizziness / Syncope' : 'Tontura / Síncope',
-              lang === 'en' ? 'Dyspnea on exertion' : 'Dispneia aos esforços',
-              lang === 'en' ? 'Palpitations' : 'Palpitações',
-              lang === 'en' ? 'Abdominal Pain' : 'Dor Abdominal',
-              lang === 'en' ? 'Back Pain' : 'Lombalgia / Dorsalgia',
-              lang === 'en' ? 'Urinary symptoms' : 'Sintomas urinários',
-              lang === 'en' ? 'Edema' : 'Edema',
-              lang === 'en' ? 'Fatigue / Weakness' : 'Fadiga / Fraqueza',
-              lang === 'en' ? 'Weight loss' : 'Perda de peso',
-              lang === 'en' ? 'Other' : 'Outro'
-            ].map(o => `<option value="${o}" ${state.hpi.complaint === o ? 'selected' : ''}>${o}</option>`).join('')}
-            <option value="__other__">${lang === 'en' ? 'Type custom complaint...' : 'Digitar queixa personalizada...'}</option>
-          </select>
-        </div>
-        ${(state.hpi.complaint && !['Pain','Dor','Dyspnea','Dispneia','Headache','Cefaleia','Cough','Tosse','Fever','Febre','Diarrhea / Vomiting','Diarreia / Vômitos','Chest Pain','Dor Torácica','Dizziness / Syncope','Tontura / Síncope','Dyspnea on exertion','Dispneia aos esforços','Palpitations','Palpitações','Abdominal Pain','Dor Abdominal','Back Pain','Lombalgia / Dorsalgia','Urinary symptoms','Sintomas urinários','Edema','Fatigue / Weakness','Fadiga / Fraqueza','Weight loss','Perda de peso','Other','Outro',''].includes(state.hpi.complaint)) ? `
-          <input type="text" id="hpi-complaint-other"
-            placeholder="${lang === 'en' ? 'Describe the complaint...' : 'Descrever a queixa...'}"
+          <input type="text" id="hpi-complaint" list="hpi-complaint-list" style="flex:1;"
             value="${state.hpi.complaint || ''}"
-            oninput="updateHPIField('complaint', this.value)"
-            style="margin-bottom:12px;">
-        ` : ''}
+            placeholder="${lang === 'en' ? 'Type or select complaint...' : 'Digitar ou selecionar queixa...'}"
+            oninput="updateHPIField('complaint',this.value); generateHPINarrative();"
+            onchange="saveToCustomList('hpi_complaint',this.value);">
+          <datalist id="hpi-complaint-list">
+            ${(lang === 'en'
+              ? ['Pain','Dyspnea','Headache','Cough','Fever','Diarrhea / Vomiting','Chest Pain','Dizziness / Syncope','Dyspnea on exertion','Palpitations','Abdominal Pain','Back Pain','Urinary symptoms','Edema','Fatigue / Weakness','Weight loss','Nausea / Vomiting','Syncope','Rash','Joint pain','Confusion','Visual changes']
+              : ['Dor','Dispneia','Cefaleia','Tosse','Febre','Diarreia / Vômitos','Dor Torácica','Tontura / Síncope','Dispneia aos esforços','Palpitações','Dor Abdominal','Lombalgia / Dorsalgia','Sintomas urinários','Edema','Fadiga / Fraqueza','Perda de peso','Náuseas / Vômitos','Síncope','Exantema','Dor articular','Confusão mental','Alterações visuais']
+            ).map(o => `<option value="${o}">`).join('')}
+            ${getCustomList('hpi_complaint').map(v => `<option value="${v}">`).join('')}
+          </datalist>
+        </div>
 
         <div class="input-row">
           <div>
@@ -6340,76 +6322,72 @@ function renderSections() {
         </div>
         
         <label>${lang==='en'?'Location':'Localização'}</label>
-        <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
-          <select id="hpi-loc-select" onchange="
-            const v=this.value;
-            if(v&&v!=='__other__'){
-              updateHPIField('location',v);
-              document.getElementById('hpi-loc').value=v;
-              document.getElementById('hpi-loc').style.display='none';
-            } else if(v==='__other__'){
-              document.getElementById('hpi-loc').style.display='block';
-              document.getElementById('hpi-loc').focus();
-            }
-          " style="flex:1;" onfocus="this.size=1;">
-            <option value=""></option>
-            ${(lang==='en'
-              ?['Head','Forehead','Temporal region','Occipital','Face','Eyes','Ears','Nose','Throat','Neck','Chest (anterior)','Chest (posterior)','Left chest','Right chest','Epigastrium','Abdomen (diffuse)','Right upper quadrant','Left upper quadrant','Right lower quadrant','Left lower quadrant','Periumbilical','Hypogastrium','Lumbar / Low back','Thoracic spine','Cervical spine','Left shoulder','Right shoulder','Left arm','Right arm','Left forearm','Right forearm','Left hand','Right hand','Left hip','Right hip','Left thigh','Right thigh','Left knee','Right knee','Left leg','Right leg','Left foot','Right foot','Pelvis','Perineum','Bilateral lower limbs','Bilateral upper limbs','Diffuse / Generalized','Systemic']
-              :['Cabeça','Fronte / Região frontal','Região temporal','Occipital','Face','Olhos','Ouvidos','Nariz','Garganta','Pescoço','Tórax (anterior)','Tórax (posterior)','Tórax esquerdo','Tórax direito','Epigástrio','Abdômen (difuso)','Hipocôndrio direito','Hipocôndrio esquerdo','Fossa ilíaca direita','Fossa ilíaca esquerda','Periumbilical','Hipogástrio','Lombar / Região lombar','Coluna torácica','Coluna cervical','Ombro esquerdo','Ombro direito','Braço esquerdo','Braço direito','Antebraço esquerdo','Antebraço direito','Mão esquerda','Mão direita','Quadril esquerdo','Quadril direito','Coxa esquerda','Coxa direita','Joelho esquerdo','Joelho direito','Perna esquerda','Perna direita','Pé esquerdo','Pé direito','Pelve','Períneo','Membros inferiores bilaterais','Membros superiores bilaterais','Difuso / Generalizado','Sistêmico']
-            ).map(o=>`<option value="${o}" ${state.hpi.location===o?'selected':''}>${o}</option>`).join('')}
-            <option value="__other__">${lang==='en'?'Other (type below)':'Outro (digitar abaixo)'}</option>
-          </select>
-        </div>
-        <input type="text" id="hpi-loc"
+        <input type="text" id="hpi-loc" list="hpi-loc-list"
           value="${state.hpi.location||''}"
+          placeholder="${lang==='en'?'Type or select location...':'Digitar ou selecionar localização...'}"
           oninput="updateHPIField('location',this.value)"
-          placeholder="${lang==='en'?'Type custom location...':'Digitar localização personalizada...'}"
-          style="margin-bottom:8px;display:${(state.hpi.location&&![...(lang==='en'?['Head','Forehead','Temporal region','Occipital','Face','Eyes','Ears','Nose','Throat','Neck']:['Cabeça','Fronte / Região frontal','Região temporal','Occipital','Face','Olhos','Ouvidos','Nariz','Garganta','Pescoço']),''].includes(state.hpi.location)&&state.hpi.location.length>0)?'block':'none'};">
+          onchange="saveToCustomList('hpi_location',this.value);"
+          style="margin-bottom:8px;">
+        <datalist id="hpi-loc-list">
+          ${(lang==='en'
+            ?['Head','Forehead','Temporal region','Occipital','Face','Eyes','Ears','Nose','Throat','Neck','Chest (anterior)','Chest (posterior)','Left chest','Right chest','Epigastrium','Abdomen (diffuse)','Right upper quadrant','Left upper quadrant','Right lower quadrant','Left lower quadrant','Periumbilical','Hypogastrium','Lumbar / Low back','Thoracic spine','Cervical spine','Left shoulder','Right shoulder','Left arm','Right arm','Left forearm','Right forearm','Left hand','Right hand','Left hip','Right hip','Left thigh','Right thigh','Left knee','Right knee','Left leg','Right leg','Left foot','Right foot','Pelvis','Perineum','Bilateral lower limbs','Bilateral upper limbs','Diffuse / Generalized','Systemic']
+            :['Cabeça','Fronte / Região frontal','Região temporal','Occipital','Face','Olhos','Ouvidos','Nariz','Garganta','Pescoço','Tórax (anterior)','Tórax (posterior)','Tórax esquerdo','Tórax direito','Epigástrio','Abdômen (difuso)','Hipocôndrio direito','Hipocôndrio esquerdo','Fossa ilíaca direita','Fossa ilíaca esquerda','Periumbilical','Hipogástrio','Lombar / Região lombar','Coluna torácica','Coluna cervical','Ombro esquerdo','Ombro direito','Braço esquerdo','Braço direito','Antebraço esquerdo','Antebraço direito','Mão esquerda','Mão direita','Quadril esquerdo','Quadril direito','Coxa esquerda','Coxa direita','Joelho esquerdo','Joelho direito','Perna esquerda','Perna direita','Pé esquerdo','Pé direito','Pelve','Períneo','Membros inferiores bilaterais','Membros superiores bilaterais','Difuso / Generalizado','Sistêmico']
+          ).map(o=>`<option value="${o}">`).join('')}
+          ${getCustomList('hpi_location').map(v=>`<option value="${v}">`).join('')}
+        </datalist>
 
         <label>${lang === 'en' ? 'Radiation / Spread' : 'Irradiação'}</label>
         <div style="display:flex; gap:8px; align-items:center; margin-bottom:12px;">
-          <select id="hpi-rad-select" onchange="selectHPIRadiation(this.value)" style="flex:1;">
-            <option value=""></option>
-            ${(lang === 'en'
-              ? ['None','Left Arm','Right Arm','Jaw','Neck','Back','Left Shoulder','Right Shoulder','Groin','Epigastrium','Left Scapula','Right Scapula','Chest','Abdomen','Bilateral Arms','Both Shoulders']
-              : ['Não irradia','Braço Esquerdo','Braço Direito','Mandíbula','Pescoço','Dorso / Costas','Ombro Esquerdo','Ombro Direito','Região Inguinal','Epigástrio','Escápula Esquerda','Escápula Direita','Tórax','Abdômen','Ambos os Braços','Ambos os Ombros']
-            ).map(o => `<option value="${o}" ${state.hpi.radiation === o ? 'selected' : ''}>${o}</option>`).join('')}
-            <option value="__other__">${lang === 'en' ? 'Other (type below)' : 'Outro (digitar abaixo)'}</option>
-          </select>
-        </div>
-        ${(state.hpi.radiation && !['None','Left Arm','Right Arm','Jaw','Neck','Back','Left Shoulder','Right Shoulder','Groin','Epigastrium','Left Scapula','Right Scapula','Chest','Abdomen','Bilateral Arms','Both Shoulders','Não irradia','Braço Esquerdo','Braço Direito','Mandíbula','Pescoço','Dorso / Costas','Ombro Esquerdo','Ombro Direito','Região Inguinal','Epigástrio','Escápula Esquerda','Escápula Direita','Tórax','Abdômen','Ambos os Braços','Ambos os Ombros',''].includes(state.hpi.radiation)) ? `
-          <input type="text" id="hpi-rad-other" placeholder="${lang === 'en' ? 'Describe radiation...' : 'Descrever irradiação...'}"
+          <input type="text" id="hpi-rad" list="hpi-rad-list" style="flex:1;"
             value="${state.hpi.radiation || ''}"
-            oninput="updateHPIRadiation(this.value)"
-            style="margin-bottom:12px;">
-        ` : ''}
+            placeholder="${lang === 'en' ? 'Type or select...' : 'Digitar ou selecionar...'}"
+            oninput="updateHPIField('radiation',this.value); generateHPINarrative();"
+            onchange="saveToCustomList('hpi_radiation',this.value);">
+          <datalist id="hpi-rad-list">
+            ${(lang === 'en'
+              ? ['None','Left Arm','Right Arm','Jaw','Neck','Back','Left Shoulder','Right Shoulder','Groin','Epigastrium','Left Scapula','Right Scapula','Chest','Abdomen','Bilateral Arms','Both Shoulders','Left leg','Right leg']
+              : ['Não irradia','Braço Esquerdo','Braço Direito','Mandíbula','Pescoço','Dorso / Costas','Ombro Esquerdo','Ombro Direito','Região Inguinal','Epigástrio','Escápula Esquerda','Escápula Direita','Tórax','Abdômen','Ambos os Braços','Ambos os Ombros','Membro inferior esquerdo','Membro inferior direito']
+            ).map(o => `<option value="${o}">`).join('')}
+            ${getCustomList('hpi_radiation').map(v => `<option value="${v}">`).join('')}
+          </datalist>
+        </div>
         <label>${t.hpiModify}</label>
         <div style="margin-bottom:12px;">
-          <select id="hpi-mod-select" onchange="addHPIModifyFromSelect(this.value)">
-            <option value=""></option>
-            ${t.hpiModifyOpts.filter(o => !(Array.isArray(state.hpi.modify) && state.hpi.modify.includes(o)))
-              .map(o => `<option value="${o}">${o}</option>`).join('')}
-            <option value="__other__">${lang === 'en' ? 'Other (type below)' : 'Outro (digitar abaixo)'}</option>
-          </select>
-          ${(Array.isArray(state.hpi.modify) && state.hpi.modify.length) ? `
-            <div style="display:flex; flex-wrap:wrap; gap:6px; margin-top:8px;">
-              ${state.hpi.modify.map((f, fi) => `
-                <div style="display:flex; align-items:center; gap:4px; padding:5px 10px; border-radius:16px; background:var(--primary-light); border:1px solid var(--primary); font-size:12px; font-weight:600; color:var(--primary);">
-                  <span>${f}</span>
-                  <button onclick="removeHPIModifyFactor(${fi})" style="background:none;border:none;cursor:pointer;color:var(--primary);font-size:13px;font-weight:700;padding:0 2px;">✕</button>
-                </div>
-              `).join('')}
-            </div>
-          ` : ''}
-          <input type="text" id="hpi-mod-other" placeholder="${lang === 'en' ? 'Add custom factor...' : 'Fator personalizado...'}"
-            style="margin-top:8px; display:none;"
-            onkeydown="if(event.key==='Enter'&&this.value.trim()){addHPIModifyFreeText(this.value.trim());this.value='';this.style.display='none';}">
+          <div class="tag-container" onclick="document.getElementById('hpi-mod-input').focus()" style="cursor:text;">
+            ${(Array.isArray(state.hpi.modify) ? state.hpi.modify : []).map((f, fi) => `
+              <div class="tag" style="background:var(--primary-light);border-color:var(--primary);color:var(--primary);">
+                <span>${f}</span>
+                <button onclick="event.stopPropagation();removeHPIModifyFactor(${fi})" style="background:none;border:none;cursor:pointer;color:var(--primary);font-size:13px;font-weight:700;padding:0 2px;">✕</button>
+              </div>
+            `).join('')}
+            <input type="text" id="hpi-mod-input" list="hpi-mod-list"
+              placeholder="${lang === 'en' ? 'Type and press Enter...' : 'Digitar e pressionar Enter...'}"
+              style="border:none;outline:none;background:transparent;min-width:160px;font-size:13px;"
+              onkeydown="if(event.key==='Enter'&&this.value.trim()){const v=this.value.trim();addHPIModifyFreeText(v);saveToCustomList('hpi_modify',v);this.value='';event.preventDefault();}"
+              onchange="if(this.value.trim()){const v=this.value.trim();addHPIModifyFreeText(v);saveToCustomList('hpi_modify',v);this.value='';}">
+          </div>
+          <datalist id="hpi-mod-list">
+            ${t.hpiModifyOpts.map(o => `<option value="${o}">`).join('')}
+            ${getCustomList('hpi_modify').map(v => `<option value="${v}">`).join('')}
+          </datalist>
         </div>
         <label>${t.hpiAssoc}</label>
         <div style="margin-bottom:12px;">
-          <select onchange="addHPIAssocFromSelect(this.value)">
-            <option value=""></option>
-            <option value="${lang==='en'?'No associated symptoms':'Sem sintomas associados'}" style="font-style:italic;color:var(--primary);">${lang==='en'?'— No associated symptoms —':'— Sem sintomas associados —'}</option>
+          <div class="tag-container" onclick="document.getElementById('hpi-assoc-input').focus()" style="cursor:text;">
+            ${(state.hpi.assoc ? state.hpi.assoc.split(', ').filter(Boolean) : []).map((s, si) => `
+              <div class="tag" style="background:var(--accent-light);border-color:var(--accent);color:var(--accent);">
+                <span>${s}</span>
+                <button onclick="event.stopPropagation();removeHPIAssoc(${si})" style="background:none;border:none;cursor:pointer;color:var(--accent);font-size:13px;font-weight:700;padding:0 2px;">✕</button>
+              </div>
+            `).join('')}
+            <input type="text" id="hpi-assoc-input" list="hpi-assoc-list"
+              placeholder="${lang === 'en' ? 'Type and press Enter...' : 'Digitar e pressionar Enter...'}"
+              style="border:none;outline:none;background:transparent;min-width:160px;font-size:13px;"
+              onkeydown="if(event.key==='Enter'&&this.value.trim()){const v=this.value.trim();addHPIAssocFreeText(v);saveToCustomList('hpi_assoc',v);this.value='';event.preventDefault();}"
+              onchange="if(this.value.trim()){const v=this.value.trim();addHPIAssocFreeText(v);saveToCustomList('hpi_assoc',v);this.value='';}">
+          </div>
+          <datalist id="hpi-assoc-list">
+            <option value="${lang==='en'?'No associated symptoms':'Sem sintomas associados'}">
             ${(lang === 'en' ? [
               'Nausea','Vomiting','Diarrhea','Constipation','Fever','Chills','Night sweats',
               'Fatigue','Malaise','Weight loss','Anorexia','Dyspnea','Cough','Chest pain',
@@ -6424,25 +6402,9 @@ function renderSections() {
               'Sudorese fria','Palidez','Edema','Hematúria','Disúria','Poliúria','Polidipsia',
               'Exantema','Prurido','Icterícia','Hemoptise','Hematêmese','Melena','Enterorragia',
               'Artralgia','Mialgia','Lombalgia','Parestesia','Alterações visuais','Zumbido'
-            ]).filter(o => {
-              const cur = state.hpi.assoc ? state.hpi.assoc.split(', ') : [];
-              return !cur.includes(o);
-            }).map(o => `<option value="${o}">${o}</option>`).join('')}
-            <option value="__other__">${lang === 'en' ? 'Other (type below)' : 'Outro (digitar abaixo)'}</option>
-          </select>
-          ${state.hpi.assoc ? `
-            <div style="display:flex; flex-wrap:wrap; gap:6px; margin-top:8px;">
-              ${state.hpi.assoc.split(', ').filter(Boolean).map((s, si) => `
-                <div style="display:flex; align-items:center; gap:4px; padding:5px 10px; border-radius:16px; background:var(--accent-light); border:1px solid var(--peds-border); font-size:12px; font-weight:600; color:var(--accent);">
-                  <span>${s}</span>
-                  <button onclick="removeHPIAssoc(${si})" style="background:none;border:none;cursor:pointer;color:var(--accent);font-size:13px;font-weight:700;padding:0 2px;">✕</button>
-                </div>
-              `).join('')}
-            </div>
-          ` : ''}
-          <input type="text" id="hpi-assoc-other" placeholder="${lang === 'en' ? 'Add custom symptom...' : 'Sintoma personalizado...'}"
-            style="margin-top:8px; display:none;"
-            onkeydown="if(event.key==='Enter'&&this.value.trim()){addHPIAssocFreeText(this.value.trim());this.value='';this.style.display='none';}">
+            ]).map(o => `<option value="${o}">`).join('')}
+            ${getCustomList('hpi_assoc').map(v => `<option value="${v}">`).join('')}
+          </datalist>
         </div>
         
         <label>${t.hpiContext}</label>
@@ -7206,19 +7168,16 @@ const FAM_DISEASE_OPTS = lang === 'en'
       <div class="card">
         <div class="card-label">${t.famLabel}</div>
 
-        <!-- Dropdown + free-text entry -->
+        <!-- Typeahead entry -->
         <div style="margin-bottom:10px;">
-          <select onchange="addFamDiseaseFromSelect(this.value); this.value='';">
-            <option value=""></option>
-            ${FAM_DISEASE_OPTS
-              .filter(d => !activeFamDiseases.includes(d))
-              .map(d => `<option value="${d}">${d}</option>`).join('')}
-            <option value="__other__">${lang === 'en' ? 'Other (type below)' : 'Outro (digitar abaixo)'}</option>
-          </select>
-          <input type="text" id="fam-custom-input"
-            placeholder="${lang === 'en' ? 'Type a condition and press Enter...' : 'Digite uma condição e pressione Enter...'}"
-            style="margin-top:8px; display:none;"
-            onkeydown="if(event.key==='Enter'&&this.value.trim()){addFamDiseaseCustom(this.value.trim());this.value='';this.style.display='none';}">
+          <input type="text" id="fam-disease-input" list="fam-disease-list"
+            placeholder="${lang === 'en' ? 'Type or select condition and press Enter...' : 'Digitar ou selecionar condição e pressionar Enter...'}"
+            onkeydown="if(event.key==='Enter'&&this.value.trim()){const v=this.value.trim();addFamDiseaseCustom(v);saveToCustomList('fam_diseases',v);this.value='';event.preventDefault();}"
+            onchange="if(this.value.trim()){const v=this.value.trim();addFamDiseaseCustom(v);saveToCustomList('fam_diseases',v);this.value='';}">
+          <datalist id="fam-disease-list">
+            ${FAM_DISEASE_OPTS.filter(d => !activeFamDiseases.includes(d)).map(d => `<option value="${d}">`).join('')}
+            ${getCustomList('fam_diseases').map(v => `<option value="${v}">`).join('')}
+          </datalist>
         </div>
 
         <!-- Active disease list (expandable) -->
@@ -10525,22 +10484,19 @@ function runCG() {
 }
 
 // ════════════════════════════════════════ MED FAVORITES
-function getCustomMeds() {
-  try { return JSON.parse(localStorage.getItem('rmd_custom_meds') || '[]'); } catch { return []; }
+function getCustomList(key) {
+  try { return JSON.parse(localStorage.getItem('rmd_custom_' + key) || '[]'); } catch { return []; }
 }
-function saveCustomMed(name) {
-  if (!name) return;
-  const list = getCustomMeds();
-  if (!list.includes(name)) { list.push(name); localStorage.setItem('rmd_custom_meds', JSON.stringify(list)); }
+function saveToCustomList(key, value) {
+  if (!value || !value.trim()) return;
+  const list = getCustomList(key);
+  const v = value.trim();
+  if (!list.includes(v)) { list.push(v); localStorage.setItem('rmd_custom_' + key, JSON.stringify(list)); }
 }
-function getCustomLabs() {
-  try { return JSON.parse(localStorage.getItem('rmd_custom_labs') || '[]'); } catch { return []; }
-}
-function saveCustomLab(name) {
-  if (!name) return;
-  const list = getCustomLabs();
-  if (!list.includes(name)) { list.push(name); localStorage.setItem('rmd_custom_labs', JSON.stringify(list)); }
-}
+function getCustomMeds() { return getCustomList('meds'); }
+function saveCustomMed(name) { saveToCustomList('meds', name); }
+function getCustomLabs() { return getCustomList('labs'); }
+function saveCustomLab(name) { saveToCustomList('labs', name); }
 
 function onMedNameChange(idx, val) {
   if (!val || !state.medications[idx]) return;
