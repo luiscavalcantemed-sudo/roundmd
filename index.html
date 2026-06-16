@@ -232,10 +232,25 @@ body {
   align-items: center;
   margin: 12px;
 }
-.drafts-bar-left {
+.drafts-bar-top-row {
   display: flex;
   align-items: center;
   gap: 6px;
+  flex-wrap: wrap;
+}
+.drafts-btn-manager {
+  flex-shrink: 0;
+}
+.drafts-bar-actions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.drafts-bar-left {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  min-width: 0;
 }
 .drafts-btn {
   background: var(--primary);
@@ -1382,15 +1397,18 @@ input[type="text"].fish-input:focus {
     border-bottom: 1px solid var(--border);
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
     padding: 16px 20px;
     align-items: stretch;
   }
-  .drafts-bar-left {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 13px;
+  .drafts-bar-top-row {
+    flex-wrap: nowrap;
+  }
+  .drafts-bar-actions {
+    flex-wrap: nowrap;
+  }
+  .drafts-btn-manager {
+    width: 100%;
   }
   .drafts-btn {
     width: 100%;
@@ -1608,15 +1626,19 @@ input[type="text"].fish-input:focus {
 
 <div class="app-layout">
   <aside class="sidebar-nav">
-    <div class="drafts-bar" style="justify-content: space-between;">
-      <button class="drafts-btn" onclick="openDraftsModal()" id="drafts-btn-lbl">Patients Manager</button>
-      <div class="drafts-bar-left" style="flex:1; justify-content:center; padding: 0 10px;">
-        <svg class="icon-svg" style="width:14px;height:14px;" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
-        <span id="drafts-status" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis; font-size:11px;">Active Patient: Draft</span>
+    <div class="drafts-bar">
+      <div class="drafts-bar-top-row">
+        <button class="drafts-btn drafts-btn-manager" onclick="openDraftsModal()" id="drafts-btn-lbl">Patients Manager</button>
+        <div class="drafts-bar-actions">
+          <button class="drafts-btn" style="background: var(--border); color: var(--text); padding: 5px 10px; font-weight:bold;" onclick="createNewPatient()" id="btn-clear-sidebar-lbl" title="Create New Patient">+ New</button>
+          <button class="drafts-btn" id="btn-save-visit-lbl" style="background: var(--primary); padding: 5px 10px; font-weight:bold;" onclick="saveVisitAndNotify()" title="Save Visit to Timeline">📋 Save</button>
+          <button class="drafts-btn" id="btn-timeline-lbl" style="background: var(--accent); padding: 5px 10px; font-weight:bold; color:white;" onclick="openLongitudinalModal()" title="Patient Timeline">⏱ History</button>
+        </div>
       </div>
-      <button class="drafts-btn" style="background: var(--border); color: var(--text); padding: 5px 10px; font-weight:bold;" onclick="createNewPatient()" id="btn-clear-sidebar-lbl" title="Create New Patient">+ New</button>
-      <button class="drafts-btn" id="btn-save-visit-lbl" style="background: var(--primary); padding: 5px 10px; font-weight:bold;" onclick="saveVisitAndNotify()" title="Save Visit to Timeline">📋 Save</button>
-      <button class="drafts-btn" id="btn-timeline-lbl" style="background: var(--accent); padding: 5px 10px; font-weight:bold; color:white;" onclick="openLongitudinalModal()" title="Patient Timeline">⏱ History</button>
+      <div class="drafts-bar-left">
+        <svg class="icon-svg" style="width:14px;height:14px;flex-shrink:0;" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+        <span id="drafts-status" style="font-size:11px; word-break:break-word; overflow-wrap:break-word;">Active Patient: Draft</span>
+      </div>
     </div>
     
     <div class="nav-scroll" id="nav-tabs"></div>
@@ -3485,6 +3507,7 @@ function EMPTY() {
       nationality: '', origin: '', ethnicity: '', education: '', occupation: '',
       marital: '', religion: '', insuranceType: '', referral: ''
     },
+    oneLiner: '',
     cc: '',
     hpi: {
       complaint: '',
@@ -5426,7 +5449,10 @@ function generateClinicalNoteText() {
   const pName = state.patient.name ? (privacyShieldActive ? maskPHI(state.patient.name) : state.patient.name) : (lang === 'en' ? 'Unnamed Patient' : 'Paciente Sem Nome');
   
   let note = ``;
-  
+  if (state.oneLiner && state.oneLiner.trim()) {
+    note += `${state.oneLiner.trim()}\n${'─'.repeat(60)}\n\n`;
+  }
+
   // NOTE HEADER CONFIGURATION BY ACTIVE LAYOUT FORMAT
   if (state.noteFormat === 'soap') {
     note += `=== ${nt.soapTitle} ===\n`;
@@ -6133,6 +6159,14 @@ function renderSections() {
   // ════════════════════════════════════════ TAB 1: PATIENT IDENTIFICATION
   else if (currentTabDef.id === 1) {
     html += `<h2 class="section-title">${currentTabDef.icon} ${t.patientTitle}</h2>`;
+    html += `
+      <div class="card">
+        <label style="font-weight:700; color:var(--primary);">${lang==='en'?'One-liner (Patient Summary)':'One-liner (Resumo do Paciente)'}</label>
+        <textarea id="pt-oneliner" rows="2" placeholder="${lang==='en'?'e.g. 65yo M with HTN/DM presenting with chest pain for 2 days':'Ex: Homem de 65 anos, HAS e DM2, com dor torácica há 2 dias'}" style="resize:vertical; font-size:13px;"
+          oninput="state.oneLiner=this.value; saveState();">${state.oneLiner||''}</textarea>
+        <div style="font-size:11px; color:var(--text-muted); margin-top:4px;">${lang==='en'?'Appears at the top of all generated notes.':'Aparece no topo de todas as notas geradas.'}</div>
+      </div>
+    `;
     html += `
       <div class="card">
         <label>${t.name}</label>
@@ -8702,9 +8736,6 @@ const FAM_DISEASE_OPTS = lang === 'en'
   const _tabId = currentTabDef.id;
   if (_tabId !== 0 || currentTab > 0) {
     footerHtml += `<button class="nav-prev" onclick="switchTab(currentTab - 1)"><span class="nav-arrow">←</span> <span>${t.prev}</span></button>`;
-  }
-  if (_tabId !== 0 && _tabId !== 13) {
-    footerHtml += `<button class="btn-reset" onclick="resetSection(${_tabId})" title="${lang === 'en' ? 'Clear this section' : 'Limpar esta seção'}">${lang === 'en' ? 'Reset Section' : 'Limpar Seção'}</button>`;
   }
   if (currentTab < vt.length - 1) {
     footerHtml += `<button class="nav-next" onclick="switchTab(currentTab + 1)"><span>${t.next}</span> <span class="nav-arrow">→</span></button>`;
