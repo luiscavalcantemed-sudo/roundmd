@@ -6248,50 +6248,58 @@ function renderSections() {
         <div class="input-row" style="margin-top:10px;">
           <div>
             <label>${t.ethnicity}</label>
-            <input type="text" id="pt-ethnicity" list="pt-ethnicity-list"
-              value="${state.patient.ethnicity || ''}" placeholder=""
-              oninput="updatePatientField('ethnicity', this.value);"
-              onchange="saveToCustomList('pt_ethnicity', this.value);">
-            <datalist id="pt-ethnicity-list">
-              ${t.ethnicityOpts.map(o => `<option value="${o}">`).join('')}
-              ${getCustomList('pt_ethnicity').map(v => `<option value="${v}">`).join('')}
-            </datalist>
+            <select id="pt_ethnicity-sel" data-key="pt_ethnicity" onchange="_selChange(this)">
+              <option value=""></option>
+              ${t.ethnicityOpts.map(o => `<option value="${o}" ${state.patient.ethnicity===o?'selected':''}>${o}</option>`).join('')}
+              ${getCustomList('pt_ethnicity').map(v => `<option value="${v}" ${state.patient.ethnicity===v?'selected':''}>${v}</option>`).join('')}
+              <option value="__other__">${lang==='en'?'Other...':'Outro...'}</option>
+            </select>
+            <input type="text" id="pt_ethnicity-other" style="display:none;margin-top:4px;"
+              placeholder="${lang==='en'?'New option — press Enter':'Nova opção — pressione Enter'}"
+              onkeydown="if(event.key==='Enter')_selOtherSave('pt_ethnicity')"
+              onblur="_selOtherSave('pt_ethnicity')">
           </div>
           <div>
             <label>${t.marital}</label>
-            <input type="text" id="pt-marital" list="pt-marital-list"
-              value="${state.patient.marital || ''}" placeholder=""
-              oninput="updatePatientField('marital', this.value);"
-              onchange="saveToCustomList('pt_marital', this.value);">
-            <datalist id="pt-marital-list">
-              ${t.maritalOpts.map(o => `<option value="${o}">`).join('')}
-              ${getCustomList('pt_marital').map(v => `<option value="${v}">`).join('')}
-            </datalist>
+            <select id="pt_marital-sel" data-key="pt_marital" onchange="_selChange(this)">
+              <option value=""></option>
+              ${t.maritalOpts.map(o => `<option value="${o}" ${state.patient.marital===o?'selected':''}>${o}</option>`).join('')}
+              ${getCustomList('pt_marital').map(v => `<option value="${v}" ${state.patient.marital===v?'selected':''}>${v}</option>`).join('')}
+              <option value="__other__">${lang==='en'?'Other...':'Outro...'}</option>
+            </select>
+            <input type="text" id="pt_marital-other" style="display:none;margin-top:4px;"
+              placeholder="${lang==='en'?'New option — press Enter':'Nova opção — pressione Enter'}"
+              onkeydown="if(event.key==='Enter')_selOtherSave('pt_marital')"
+              onblur="_selOtherSave('pt_marital')">
           </div>
         </div>
         
         <div class="input-row" style="margin-top:10px;">
           <div>
             <label>${t.education}</label>
-            <input type="text" id="pt-edu" list="pt-edu-list"
-              value="${state.patient.education || ''}" placeholder=""
-              oninput="updatePatientField('education', this.value);"
-              onchange="saveToCustomList('pt_edu', this.value);">
-            <datalist id="pt-edu-list">
-              ${t.educationOpts.map(o => `<option value="${o}">`).join('')}
-              ${getCustomList('pt_edu').map(v => `<option value="${v}">`).join('')}
-            </datalist>
+            <select id="pt_edu-sel" data-key="pt_edu" onchange="_selChange(this)">
+              <option value=""></option>
+              ${t.educationOpts.map(o => `<option value="${o}" ${state.patient.education===o?'selected':''}>${o}</option>`).join('')}
+              ${getCustomList('pt_edu').map(v => `<option value="${v}" ${state.patient.education===v?'selected':''}>${v}</option>`).join('')}
+              <option value="__other__">${lang==='en'?'Other...':'Outro...'}</option>
+            </select>
+            <input type="text" id="pt_edu-other" style="display:none;margin-top:4px;"
+              placeholder="${lang==='en'?'New option — press Enter':'Nova opção — pressione Enter'}"
+              onkeydown="if(event.key==='Enter')_selOtherSave('pt_edu')"
+              onblur="_selOtherSave('pt_edu')">
           </div>
           <div>
             <label>${t.insuranceType}</label>
-            <input type="text" id="pt-insurance" list="pt-insurance-list"
-              value="${state.patient.insuranceType || ''}" placeholder=""
-              oninput="updatePatientField('insuranceType', this.value);"
-              onchange="saveToCustomList('pt_insurance', this.value);">
-            <datalist id="pt-insurance-list">
-              ${t.insuranceOpts.map(o => `<option value="${o}">`).join('')}
-              ${getCustomList('pt_insurance').map(v => `<option value="${v}">`).join('')}
-            </datalist>
+            <select id="pt_insurance-sel" data-key="pt_insurance" onchange="_selChange(this)">
+              <option value=""></option>
+              ${t.insuranceOpts.map(o => `<option value="${o}" ${state.patient.insuranceType===o?'selected':''}>${o}</option>`).join('')}
+              ${getCustomList('pt_insurance').map(v => `<option value="${v}" ${state.patient.insuranceType===v?'selected':''}>${v}</option>`).join('')}
+              <option value="__other__">${lang==='en'?'Other...':'Outro...'}</option>
+            </select>
+            <input type="text" id="pt_insurance-other" style="display:none;margin-top:4px;"
+              placeholder="${lang==='en'?'New option — press Enter':'Nova opção — pressione Enter'}"
+              onkeydown="if(event.key==='Enter')_selOtherSave('pt_insurance')"
+              onblur="_selOtherSave('pt_insurance')">
           </div>
         </div>
         
@@ -6346,25 +6354,29 @@ function renderSections() {
         <div class="input-row">
           <div>
             <label>${t.hpiOnset}</label>
-            <input type="text" id="hpi-onset" list="hpi-onset-list"
-              value="${state.hpi.onset || ''}" placeholder=""
-              oninput="updateHPIField('onset', this.value);"
-              onchange="saveToCustomList('hpi_onset', this.value);">
-            <datalist id="hpi-onset-list">
-              ${t.hpiOnsetOpts.map(o => `<option value="${o}">`).join('')}
-              ${getCustomList('hpi_onset').map(v => `<option value="${v}">`).join('')}
-            </datalist>
+            <select id="hpi_onset-sel" data-key="hpi_onset" onchange="_selChange(this)">
+              <option value=""></option>
+              ${t.hpiOnsetOpts.map(o => `<option value="${o}" ${state.hpi.onset===o?'selected':''}>${o}</option>`).join('')}
+              ${getCustomList('hpi_onset').map(v => `<option value="${v}" ${state.hpi.onset===v?'selected':''}>${v}</option>`).join('')}
+              <option value="__other__">${lang==='en'?'Other...':'Outro...'}</option>
+            </select>
+            <input type="text" id="hpi_onset-other" style="display:none;margin-top:4px;"
+              placeholder="${lang==='en'?'New option — press Enter':'Nova opção — pressione Enter'}"
+              onkeydown="if(event.key==='Enter')_selOtherSave('hpi_onset')"
+              onblur="_selOtherSave('hpi_onset')">
           </div>
           <div>
             <label>${t.hpiChar}</label>
-            <input type="text" id="hpi-char" list="hpi-char-list"
-              value="${state.hpi.char || ''}" placeholder=""
-              oninput="updateHPIField('char', this.value);"
-              onchange="saveToCustomList('hpi_char', this.value);">
-            <datalist id="hpi-char-list">
-              ${t.hpiCharOpts.map(o => `<option value="${o}">`).join('')}
-              ${getCustomList('hpi_char').map(v => `<option value="${v}">`).join('')}
-            </datalist>
+            <select id="hpi_char-sel" data-key="hpi_char" onchange="_selChange(this)">
+              <option value=""></option>
+              ${t.hpiCharOpts.map(o => `<option value="${o}" ${state.hpi.char===o?'selected':''}>${o}</option>`).join('')}
+              ${getCustomList('hpi_char').map(v => `<option value="${v}" ${state.hpi.char===v?'selected':''}>${v}</option>`).join('')}
+              <option value="__other__">${lang==='en'?'Other...':'Outro...'}</option>
+            </select>
+            <input type="text" id="hpi_char-other" style="display:none;margin-top:4px;"
+              placeholder="${lang==='en'?'New option — press Enter':'Nova opção — pressione Enter'}"
+              onkeydown="if(event.key==='Enter')_selOtherSave('hpi_char')"
+              onblur="_selOtherSave('hpi_char')">
           </div>
         </div>
         
@@ -6373,15 +6385,16 @@ function renderSections() {
             <label>${t.hpiDuration}</label>
             <div style="display:flex; gap:6px; align-items:center;">
               <input type="number" inputmode="decimal" inputmode="numeric" min="1" id="hpi-dur-val" value="${state.hpi.durationValue || ''}" oninput="updateHPIDurationFields(this.value, null)" style="width:70px;">
-              <input type="text" id="hpi-dur-unit" list="hpi-dur-unit-list"
-                value="${state.hpi.durationUnit || ''}" placeholder=""
-                style="flex:1;"
-                oninput="updateHPIDurationFields(null, this.value);"
-                onchange="saveToCustomList('hpi_dur_unit', this.value);">
-              <datalist id="hpi-dur-unit-list">
-                ${t.durationUnits.map(u => `<option value="${u}">`).join('')}
-                ${getCustomList('hpi_dur_unit').map(v => `<option value="${v}">`).join('')}
-              </datalist>
+              <select id="hpi_dur_unit-sel" data-key="hpi_dur_unit" onchange="_selChange(this)" style="flex:1;">
+                <option value=""></option>
+                ${t.durationUnits.map(u => `<option value="${u}" ${state.hpi.durationUnit===u?'selected':''}>${u}</option>`).join('')}
+                ${getCustomList('hpi_dur_unit').map(v => `<option value="${v}" ${state.hpi.durationUnit===v?'selected':''}>${v}</option>`).join('')}
+                <option value="__other__">${lang==='en'?'Other...':'Outro...'}</option>
+              </select>
+              <input type="text" id="hpi_dur_unit-other" style="display:none;margin-top:4px;flex:1;"
+                placeholder="${lang==='en'?'New unit — press Enter':'Nova unidade — pressione Enter'}"
+                onkeydown="if(event.key==='Enter')_selOtherSave('hpi_dur_unit')"
+                onblur="_selOtherSave('hpi_dur_unit')">
             </div>
           </div>
           <div>
@@ -6718,14 +6731,16 @@ html += `
           </div>
           
           <label>${t.prenatal}</label>
-          <input type="text" list="gynob-prenatal-list"
-            value="${state.gynOb.prenatal || ''}" placeholder=""
-            oninput="updateGynObField('prenatal', this.value);"
-            onchange="saveToCustomList('gynob_prenatal', this.value);">
-          <datalist id="gynob-prenatal-list">
-            ${(t.prenatalOpts||[]).map(o => `<option value="${o}">`).join('')}
-            ${getCustomList('gynob_prenatal').map(v => `<option value="${v}">`).join('')}
-          </datalist>
+          <select id="gynob_prenatal-sel" data-key="gynob_prenatal" onchange="_selChange(this)">
+            <option value=""></option>
+            ${(t.prenatalOpts||[]).map(o => `<option value="${o}" ${state.gynOb.prenatal===o?'selected':''}>${o}</option>`).join('')}
+            ${getCustomList('gynob_prenatal').map(v => `<option value="${v}" ${state.gynOb.prenatal===v?'selected':''}>${v}</option>`).join('')}
+            <option value="__other__">${lang==='en'?'Other...':'Outro...'}</option>
+          </select>
+          <input type="text" id="gynob_prenatal-other" style="display:none;margin-top:4px;"
+            placeholder="${lang==='en'?'New option — press Enter':'Nova opção — pressione Enter'}"
+            onkeydown="if(event.key==='Enter')_selOtherSave('gynob_prenatal')"
+            onblur="_selOtherSave('gynob_prenatal')">
           
           <label>${t.currentComplications}</label>
           <textarea oninput="updateGynObField('currentComplications', this.value)">${state.gynOb.currentComplications || ''}</textarea>
@@ -6743,14 +6758,16 @@ html += `
           </div>
           <div>
             <label>${t.cycleRegularity}</label>
-            <input type="text" list="gynob-cycle-list"
-              value="${state.gynOb.cycleRegularity || ''}" placeholder=""
-              oninput="updateGynObField('cycleRegularity', this.value);"
-              onchange="saveToCustomList('gynob_cycle', this.value);">
-            <datalist id="gynob-cycle-list">
-              ${(t.cycleOpts||[]).map(o => `<option value="${o}">`).join('')}
-              ${getCustomList('gynob_cycle').map(v => `<option value="${v}">`).join('')}
-            </datalist>
+            <select id="gynob_cycle-sel" data-key="gynob_cycle" onchange="_selChange(this)">
+              <option value=""></option>
+              ${(t.cycleOpts||[]).map(o => `<option value="${o}" ${state.gynOb.cycleRegularity===o?'selected':''}>${o}</option>`).join('')}
+              ${getCustomList('gynob_cycle').map(v => `<option value="${v}" ${state.gynOb.cycleRegularity===v?'selected':''}>${v}</option>`).join('')}
+              <option value="__other__">${lang==='en'?'Other...':'Outro...'}</option>
+            </select>
+            <input type="text" id="gynob_cycle-other" style="display:none;margin-top:4px;"
+              placeholder="${lang==='en'?'New option — press Enter':'Nova opção — pressione Enter'}"
+              onkeydown="if(event.key==='Enter')_selOtherSave('gynob_cycle')"
+              onblur="_selOtherSave('gynob_cycle')">
           </div>
         </div>
         
@@ -6774,14 +6791,16 @@ html += `
         ` : ''}
         
         <label>${t.contraception}</label>
-        <input type="text" list="gynob-contraception-list"
-          value="${state.gynOb.contraception || ''}" placeholder=""
-          oninput="updateGynObField('contraception', this.value);"
-          onchange="saveToCustomList('gynob_contraception', this.value);">
-        <datalist id="gynob-contraception-list">
-          ${(t.contraceptionOpts||[]).map(o => `<option value="${o}">`).join('')}
-          ${getCustomList('gynob_contraception').map(v => `<option value="${v}">`).join('')}
-        </datalist>
+        <select id="gynob_contraception-sel" data-key="gynob_contraception" onchange="_selChange(this)">
+          <option value=""></option>
+          ${(t.contraceptionOpts||[]).map(o => `<option value="${o}" ${state.gynOb.contraception===o?'selected':''}>${o}</option>`).join('')}
+          ${getCustomList('gynob_contraception').map(v => `<option value="${v}" ${state.gynOb.contraception===v?'selected':''}>${v}</option>`).join('')}
+          <option value="__other__">${lang==='en'?'Other...':'Outro...'}</option>
+        </select>
+        <input type="text" id="gynob_contraception-other" style="display:none;margin-top:4px;"
+          placeholder="${lang==='en'?'New option — press Enter':'Nova opção — pressione Enter'}"
+          onkeydown="if(event.key==='Enter')_selOtherSave('gynob_contraception')"
+          onblur="_selOtherSave('gynob_contraception')">
         
         <div class="input-row" style="margin-top:10px;">
           <div>
@@ -6790,14 +6809,16 @@ html += `
           </div>
           <div>
             <label>${t.papResult}</label>
-            <input type="text" list="gynob-pap-list"
-              value="${state.gynOb.papResult || ''}" placeholder=""
-              oninput="updateGynObField('papResult', this.value);"
-              onchange="saveToCustomList('gynob_pap', this.value);">
-            <datalist id="gynob-pap-list">
-              ${(t.papResultOpts||[]).map(o => `<option value="${o}">`).join('')}
-              ${getCustomList('gynob_pap').map(v => `<option value="${v}">`).join('')}
-            </datalist>
+            <select id="gynob_pap-sel" data-key="gynob_pap" onchange="_selChange(this)">
+              <option value=""></option>
+              ${(t.papResultOpts||[]).map(o => `<option value="${o}" ${state.gynOb.papResult===o?'selected':''}>${o}</option>`).join('')}
+              ${getCustomList('gynob_pap').map(v => `<option value="${v}" ${state.gynOb.papResult===v?'selected':''}>${v}</option>`).join('')}
+              <option value="__other__">${lang==='en'?'Other...':'Outro...'}</option>
+            </select>
+            <input type="text" id="gynob_pap-other" style="display:none;margin-top:4px;"
+              placeholder="${lang==='en'?'New option — press Enter':'Nova opção — pressione Enter'}"
+              onkeydown="if(event.key==='Enter')_selOtherSave('gynob_pap')"
+              onblur="_selOtherSave('gynob_pap')">
           </div>
         </div>
         
@@ -6808,28 +6829,32 @@ html += `
           </div>
           <div>
             <label>${t.mammogramResult}</label>
-            <input type="text" list="gynob-mammo-list"
-              value="${state.gynOb.mammogramResult || ''}" placeholder=""
-              oninput="updateGynObField('mammogramResult', this.value);"
-              onchange="saveToCustomList('gynob_mammo', this.value);">
-            <datalist id="gynob-mammo-list">
-              ${(t.mammogramResultOpts||[]).map(o => `<option value="${o}">`).join('')}
-              ${getCustomList('gynob_mammo').map(v => `<option value="${v}">`).join('')}
-            </datalist>
+            <select id="gynob_mammo-sel" data-key="gynob_mammo" onchange="_selChange(this)">
+              <option value=""></option>
+              ${(t.mammogramResultOpts||[]).map(o => `<option value="${o}" ${state.gynOb.mammogramResult===o?'selected':''}>${o}</option>`).join('')}
+              ${getCustomList('gynob_mammo').map(v => `<option value="${v}" ${state.gynOb.mammogramResult===v?'selected':''}>${v}</option>`).join('')}
+              <option value="__other__">${lang==='en'?'Other...':'Outro...'}</option>
+            </select>
+            <input type="text" id="gynob_mammo-other" style="display:none;margin-top:4px;"
+              placeholder="${lang==='en'?'New option — press Enter':'Nova opção — pressione Enter'}"
+              onkeydown="if(event.key==='Enter')_selOtherSave('gynob_mammo')"
+              onblur="_selOtherSave('gynob_mammo')">
           </div>
         </div>
         
         <div class="input-row" style="margin-top:10px;">
           <div>
             <label>${t.sexuallyActive}</label>
-            <input type="text" list="gynob-sexual-list"
-              value="${state.gynOb.sexuallyActive || ''}" placeholder=""
-              oninput="updateGynObField('sexuallyActive', this.value);"
-              onchange="saveToCustomList('gynob_sexual', this.value);">
-            <datalist id="gynob-sexual-list">
-              ${(t.sexuallyActiveOpts||[]).map(o => `<option value="${o}">`).join('')}
-              ${getCustomList('gynob_sexual').map(v => `<option value="${v}">`).join('')}
-            </datalist>
+            <select id="gynob_sexual-sel" data-key="gynob_sexual" onchange="_selChange(this)">
+              <option value=""></option>
+              ${(t.sexuallyActiveOpts||[]).map(o => `<option value="${o}" ${state.gynOb.sexuallyActive===o?'selected':''}>${o}</option>`).join('')}
+              ${getCustomList('gynob_sexual').map(v => `<option value="${v}" ${state.gynOb.sexuallyActive===v?'selected':''}>${v}</option>`).join('')}
+              <option value="__other__">${lang==='en'?'Other...':'Outro...'}</option>
+            </select>
+            <input type="text" id="gynob_sexual-other" style="display:none;margin-top:4px;"
+              placeholder="${lang==='en'?'New option — press Enter':'Nova opção — pressione Enter'}"
+              onkeydown="if(event.key==='Enter')_selOtherSave('gynob_sexual')"
+              onblur="_selOtherSave('gynob_sexual')">
           </div>
         </div>
         
@@ -6920,14 +6945,16 @@ html += `
           <div class="input-row" style="margin-top:8px;">
             <div>
               <label>${lang==='en'?'Delivery type':'Tipo de parto'}</label>
-              <input type="text" list="peds-delivery-list"
-                value="${state.pedsHx.delivery || ''}" placeholder=""
-                oninput="updatePedsField('delivery', this.value);"
-                onchange="saveToCustomList('peds_delivery', this.value);">
-              <datalist id="peds-delivery-list">
-                ${(lang==='en'?['Vaginal','Cesarean (elective)','Cesarean (emergency)','Vacuum/Forceps']:['Vaginal','Cesárea (eletiva)','Cesárea (emergência)','Fórceps/Vácuo']).map(o=>`<option value="${o}">`).join('')}
-                ${getCustomList('peds_delivery').map(v => `<option value="${v}">`).join('')}
-              </datalist>
+              <select id="peds_delivery-sel" data-key="peds_delivery" onchange="_selChange(this)">
+                <option value=""></option>
+                ${(lang==='en'?['Vaginal','Cesarean (elective)','Cesarean (emergency)','Vacuum/Forceps']:['Vaginal','Cesárea (eletiva)','Cesárea (emergência)','Fórceps/Vácuo']).map(o=>`<option value="${o}" ${state.pedsHx.delivery===o?'selected':''}>${o}</option>`).join('')}
+                ${getCustomList('peds_delivery').map(v=>`<option value="${v}" ${state.pedsHx.delivery===v?'selected':''}>${v}</option>`).join('')}
+                <option value="__other__">${lang==='en'?'Other...':'Outro...'}</option>
+              </select>
+              <input type="text" id="peds_delivery-other" style="display:none;margin-top:4px;"
+                placeholder="${lang==='en'?'New option — press Enter':'Nova opção — pressione Enter'}"
+                onkeydown="if(event.key==='Enter')_selOtherSave('peds_delivery')"
+                onblur="_selOtherSave('peds_delivery')">
             </div>
             <div>
               <label>${lang==='en'?'NICU days':'Dias de UTI neonatal'}</label>
@@ -6953,14 +6980,16 @@ html += `
             <div class="input-row" style="margin-top:8px;">
               <div>
                 <label>${lang==='en'?'Newborn screening':'Triagem neonatal'}</label>
-                <input type="text" list="peds-nbscreen-list"
-                  value="${state.pedsHx.nbScreening || ''}" placeholder=""
-                  oninput="updatePedsField('nbScreening', this.value);"
-                  onchange="saveToCustomList('peds_nbscreen', this.value);">
-                <datalist id="peds-nbscreen-list">
-                  ${(lang==='en'?['Completed – normal','Completed – abnormal','Pending','Not done']:['Realizada – normal','Realizada – alterada','Pendente','Não realizada']).map(o=>`<option value="${o}">`).join('')}
-                  ${getCustomList('peds_nbscreen').map(v => `<option value="${v}">`).join('')}
-                </datalist>
+                <select id="peds_nbscreen-sel" data-key="peds_nbscreen" onchange="_selChange(this)">
+                  <option value=""></option>
+                  ${(lang==='en'?['Completed – normal','Completed – abnormal','Pending','Not done']:['Realizada – normal','Realizada – alterada','Pendente','Não realizada']).map(o=>`<option value="${o}" ${state.pedsHx.nbScreening===o?'selected':''}>${o}</option>`).join('')}
+                  ${getCustomList('peds_nbscreen').map(v=>`<option value="${v}" ${state.pedsHx.nbScreening===v?'selected':''}>${v}</option>`).join('')}
+                  <option value="__other__">${lang==='en'?'Other...':'Outro...'}</option>
+                </select>
+                <input type="text" id="peds_nbscreen-other" style="display:none;margin-top:4px;"
+                  placeholder="${lang==='en'?'New option — press Enter':'Nova opção — pressione Enter'}"
+                  onkeydown="if(event.key==='Enter')_selOtherSave('peds_nbscreen')"
+                  onblur="_selOtherSave('peds_nbscreen')">
               </div>
               <div style="grid-column:1/-1;">
                 <div style="font-size:12px;font-weight:700;color:var(--primary);margin-bottom:8px;">
@@ -6969,18 +6998,19 @@ html += `
 
                 <!-- Feeding type -->
                 <label>${lang==='en'?'Current feeding type':'Tipo de alimentação atual'}</label>
-                <input type="text" list="peds-breastfed-list"
-                  value="${state.pedsHx.breastfed || ''}" placeholder=""
-                  style="margin-bottom:8px;"
-                  oninput="updatePedsField('breastfed', this.value);"
-                  onchange="saveToCustomList('peds_breastfed', this.value); saveState(); renderSections();">
-                <datalist id="peds-breastfed-list">
+                <select id="peds_breastfed-sel" data-key="peds_breastfed" style="margin-bottom:8px;" onchange="_selChange(this)">
+                  <option value=""></option>
                   ${(lang==='en'
                     ?['Exclusive breastfeeding (EBF)','Predominant breastfeeding','Complementary breastfeeding','Mixed (breast + formula)','Exclusive formula','Never breastfed','Discontinued / Weaned']
                     :['Aleitamento materno exclusivo (AME)','Aleitamento materno predominante','Aleitamento materno complementado','Misto (leite materno + fórmula)','Fórmula exclusiva','Nunca amamentou','Desmame / Interrompido']
-                  ).map(o=>`<option value="${o}">`).join('')}
-                  ${getCustomList('peds_breastfed').map(v => `<option value="${v}">`).join('')}
-                </datalist>
+                  ).map(o=>`<option value="${o}" ${state.pedsHx.breastfed===o?'selected':''}>${o}</option>`).join('')}
+                  ${getCustomList('peds_breastfed').map(v=>`<option value="${v}" ${state.pedsHx.breastfed===v?'selected':''}>${v}</option>`).join('')}
+                  <option value="__other__">${lang==='en'?'Other...':'Outro...'}</option>
+                </select>
+                <input type="text" id="peds_breastfed-other" style="display:none;margin-top:4px;margin-bottom:8px;"
+                  placeholder="${lang==='en'?'New option — press Enter':'Nova opção — pressione Enter'}"
+                  onkeydown="if(event.key==='Enter')_selOtherSave('peds_breastfed')"
+                  onblur="_selOtherSave('peds_breastfed')">
 
                 <!-- Breastfeeding details -->
                 ${state.pedsHx.breastfed && !state.pedsHx.breastfed.includes('Fórmula exclusiva') && !state.pedsHx.breastfed.includes('Exclusive formula') && !state.pedsHx.breastfed.includes('Never') && !state.pedsHx.breastfed.includes('Nunca') ? `
@@ -7009,18 +7039,19 @@ html += `
                   <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
                     <div>
                       <label style="font-size:11px;">${lang==='en'?'Formula type':'Tipo de fórmula'}</label>
-                      <input type="text" list="peds-formula-list"
-                        value="${state.pedsHx.formulaType || ''}" placeholder=""
-                        style="font-size:12px;"
-                        oninput="updatePedsField('formulaType', this.value);"
-                        onchange="saveToCustomList('peds_formula', this.value);">
-                      <datalist id="peds-formula-list">
+                      <select id="peds_formula-sel" data-key="peds_formula" style="font-size:12px;" onchange="_selChange(this)">
+                        <option value=""></option>
                         ${(lang==='en'
                           ?['Standard cow-milk based','Partially hydrolyzed (hypoallergenic)','Extensively hydrolyzed','Amino acid-based (elemental)','Soy-based','Lactose-free','Premature / preterm formula','Follow-on / toddler milk','Goat milk-based']
                           :['Padrão à base de leite de vaca','Parcialmente hidrolisada (hipoalergênica)','Extensamente hidrolisada','À base de aminoácidos (elementar)','À base de soja','Sem lactose','Fórmula para prematuro','Fórmula de seguimento / crescimento','À base de leite de cabra']
-                        ).map(o=>`<option value="${o}">`).join('')}
-                        ${getCustomList('peds_formula').map(v => `<option value="${v}">`).join('')}
-                      </datalist>
+                        ).map(o=>`<option value="${o}" ${state.pedsHx.formulaType===o?'selected':''}>${o}</option>`).join('')}
+                        ${getCustomList('peds_formula').map(v=>`<option value="${v}" ${state.pedsHx.formulaType===v?'selected':''}>${v}</option>`).join('')}
+                        <option value="__other__">${lang==='en'?'Other...':'Outro...'}</option>
+                      </select>
+                      <input type="text" id="peds_formula-other" style="display:none;margin-top:4px;font-size:12px;"
+                        placeholder="${lang==='en'?'New option — press Enter':'Nova opção — pressione Enter'}"
+                        onkeydown="if(event.key==='Enter')_selOtherSave('peds_formula')"
+                        onblur="_selOtherSave('peds_formula')">
                     </div>
                     <div>
                       <label style="font-size:11px;">${lang==='en'?'Brand':'Marca'}</label>
@@ -7060,18 +7091,19 @@ html += `
                     </div>
                     <div>
                       <label style="font-size:11px;">${lang==='en'?'Introduction method':'Método de introdução'}</label>
-                      <input type="text" list="peds-foodintro-list"
-                        value="${state.pedsHx.foodIntroMethod || ''}" placeholder=""
-                        style="font-size:12px;"
-                        oninput="updatePedsField('foodIntroMethod', this.value);"
-                        onchange="saveToCustomList('peds_foodintro', this.value);">
-                      <datalist id="peds-foodintro-list">
+                      <select id="peds_foodintro-sel" data-key="peds_foodintro" style="font-size:12px;" onchange="_selChange(this)">
+                        <option value=""></option>
                         ${(lang==='en'
                           ?['Traditional (purées / mashed)','Baby-Led Weaning (BLW)','Mixed / Combined','Not yet introduced']
                           :['Tradicional (purês / amassados)','BLW (Baby-Led Weaning)','Misto / Combinado','Ainda não iniciado']
-                        ).map(o=>`<option value="${o}">`).join('')}
-                        ${getCustomList('peds_foodintro').map(v => `<option value="${v}">`).join('')}
-                      </datalist>
+                        ).map(o=>`<option value="${o}" ${state.pedsHx.foodIntroMethod===o?'selected':''}>${o}</option>`).join('')}
+                        ${getCustomList('peds_foodintro').map(v=>`<option value="${v}" ${state.pedsHx.foodIntroMethod===v?'selected':''}>${v}</option>`).join('')}
+                        <option value="__other__">${lang==='en'?'Other...':'Outro...'}</option>
+                      </select>
+                      <input type="text" id="peds_foodintro-other" style="display:none;margin-top:4px;font-size:12px;"
+                        placeholder="${lang==='en'?'New option — press Enter':'Nova opção — pressione Enter'}"
+                        onkeydown="if(event.key==='Enter')_selOtherSave('peds_foodintro')"
+                        onblur="_selOtherSave('peds_foodintro')">
                     </div>
                   </div>
                   <label style="font-size:11px;">${lang==='en'?'Current diet / Foods accepted':'Dieta atual / Alimentos aceitos'}</label>
@@ -7204,14 +7236,16 @@ html += `
               </div>
               <div>
                 <label>${lang==='en'?'School performance':'Desempenho escolar'}</label>
-                <input type="text" list="peds-schoolperf-list"
-                  value="${state.pedsHx.schoolPerf || ''}" placeholder=""
-                  oninput="updatePedsField('schoolPerf', this.value);"
-                  onchange="saveToCustomList('peds_schoolperf', this.value);">
-                <datalist id="peds-schoolperf-list">
-                  ${(lang==='en'?['Good','Average','Below average','Learning difficulties','Special needs']:['Bom','Regular','Abaixo da média','Dificuldades de aprendizagem','Necessidades especiais']).map(o=>`<option value="${o}">`).join('')}
-                  ${getCustomList('peds_schoolperf').map(v => `<option value="${v}">`).join('')}
-                </datalist>
+                <select id="peds_schoolperf-sel" data-key="peds_schoolperf" onchange="_selChange(this)">
+                  <option value=""></option>
+                  ${(lang==='en'?['Good','Average','Below average','Learning difficulties','Special needs']:['Bom','Regular','Abaixo da média','Dificuldades de aprendizagem','Necessidades especiais']).map(o=>`<option value="${o}" ${state.pedsHx.schoolPerf===o?'selected':''}>${o}</option>`).join('')}
+                  ${getCustomList('peds_schoolperf').map(v=>`<option value="${v}" ${state.pedsHx.schoolPerf===v?'selected':''}>${v}</option>`).join('')}
+                  <option value="__other__">${lang==='en'?'Other...':'Outro...'}</option>
+                </select>
+                <input type="text" id="peds_schoolperf-other" style="display:none;margin-top:4px;"
+                  placeholder="${lang==='en'?'New option — press Enter':'Nova opção — pressione Enter'}"
+                  onkeydown="if(event.key==='Enter')_selOtherSave('peds_schoolperf')"
+                  onblur="_selOtherSave('peds_schoolperf')">
               </div>
             </div>
             <div class="input-row" style="margin-top:8px;">
@@ -7452,27 +7486,30 @@ const FAM_DISEASE_OPTS = lang === 'en'
               </div>
               <div>
                 <label>${t.medRoute}</label>
-                <input type="text" list="med-route-list-${idx}"
-                  value="${m.route || ''}" placeholder=""
-                  oninput="updateMedField(${idx}, 'route', this.value);"
-                  onchange="saveToCustomList('med_route', this.value);">
-                <datalist id="med-route-list-${idx}">
-                  ${t.medRouteOpts.map(o => `<option value="${o}">`).join('')}
-                  ${getCustomList('med_route').map(v => `<option value="${v}">`).join('')}
-                </datalist>
+                <select id="med_route_${idx}-sel" data-key="med_route_${idx}" onchange="_selChange(this)">
+                  <option value=""></option>
+                  ${t.medRouteOpts.map(o => `<option value="${o}" ${m.route===o?'selected':''}>${o}</option>`).join('')}
+                  ${getCustomList('med_route').map(v => `<option value="${v}" ${m.route===v?'selected':''}>${v}</option>`).join('')}
+                  <option value="__other__">${lang==='en'?'Other...':'Outro...'}</option>
+                </select>
+                <input type="text" id="med_route_${idx}-other" style="display:none;margin-top:4px;"
+                  placeholder="${lang==='en'?'New option — press Enter':'Nova opção — pressione Enter'}"
+                  onkeydown="if(event.key==='Enter')_selOtherSave('med_route_${idx}')"
+                  onblur="_selOtherSave('med_route_${idx}')">
               </div>
             </div>
             
             <label>${t.medFreq}</label>
-            <input type="text" list="med-freq-list-${idx}"
-              value="${m.freq || ''}" placeholder=""
-              style="margin-top:4px;"
-              oninput="updateMedField(${idx}, 'freq', this.value);"
-              onchange="saveToCustomList('med_freq', this.value);">
-            <datalist id="med-freq-list-${idx}">
-              ${t.medFreqOpts.map(o => `<option value="${o}">`).join('')}
-              ${getCustomList('med_freq').map(v => `<option value="${v}">`).join('')}
-            </datalist>
+            <select id="med_freq_${idx}-sel" data-key="med_freq_${idx}" style="margin-top:4px;" onchange="_selChange(this)">
+              <option value=""></option>
+              ${t.medFreqOpts.map(o => `<option value="${o}" ${m.freq===o?'selected':''}>${o}</option>`).join('')}
+              ${getCustomList('med_freq').map(v => `<option value="${v}" ${m.freq===v?'selected':''}>${v}</option>`).join('')}
+              <option value="__other__">${lang==='en'?'Other...':'Outro...'}</option>
+            </select>
+            <input type="text" id="med_freq_${idx}-other" style="display:none;margin-top:4px;"
+              placeholder="${lang==='en'?'New option — press Enter':'Nova opção — pressione Enter'}"
+              onkeydown="if(event.key==='Enter')_selOtherSave('med_freq_${idx}')"
+              onblur="_selOtherSave('med_freq_${idx}')">
             
 <!-- notes field hidden per user request -->
           </div>
@@ -7517,14 +7554,16 @@ const FAM_DISEASE_OPTS = lang === 'en'
         <div class="card-label">${t.socialLabel}</div>
         
         <label>${t.tobacco}</label>
-        <input type="text" list="social-tobacco-list"
-          value="${state.socialHx.tobacco || ''}" placeholder=""
-          oninput="updateSocialField('tobacco', this.value);"
-          onchange="saveToCustomList('social_tobacco', this.value); switchTab(currentTab);">
-        <datalist id="social-tobacco-list">
-          ${t.tobaccoOpts.map(o => `<option value="${o}">`).join('')}
-          ${getCustomList('social_tobacco').map(v => `<option value="${v}">`).join('')}
-        </datalist>
+        <select id="social_tobacco-sel" data-key="social_tobacco" onchange="_selChange(this)">
+          <option value=""></option>
+          ${t.tobaccoOpts.map(o => `<option value="${o}" ${state.socialHx.tobacco===o?'selected':''}>${o}</option>`).join('')}
+          ${getCustomList('social_tobacco').map(v => `<option value="${v}" ${state.socialHx.tobacco===v?'selected':''}>${v}</option>`).join('')}
+          <option value="__other__">${lang==='en'?'Other...':'Outro...'}</option>
+        </select>
+        <input type="text" id="social_tobacco-other" style="display:none;margin-top:4px;"
+          placeholder="${lang==='en'?'New option — press Enter':'Nova opção — pressione Enter'}"
+          onkeydown="if(event.key==='Enter')_selOtherSave('social_tobacco')"
+          onblur="_selOtherSave('social_tobacco')">
         
         ${(state.socialHx.tobacco && state.socialHx.tobacco !== 'Never' && state.socialHx.tobacco !== 'Nunca fumou') ? `
           <div class="tobacco-extra">
@@ -7546,14 +7585,16 @@ const FAM_DISEASE_OPTS = lang === 'en'
             <div class="input-row" style="margin-top:10px;">
               <div>
                 <label>${t.tobaccoType}</label>
-                <input type="text" list="social-tobtype-list"
-                  value="${state.socialHx.tobaccoType || ''}" placeholder=""
-                  oninput="updateSocialField('tobaccoType', this.value);"
-                  onchange="saveToCustomList('social_tobtype', this.value);">
-                <datalist id="social-tobtype-list">
-                  ${t.tobaccoTypeOpts.map(o => `<option value="${o}">`).join('')}
-                  ${getCustomList('social_tobtype').map(v => `<option value="${v}">`).join('')}
-                </datalist>
+                <select id="social_tobtype-sel" data-key="social_tobtype" onchange="_selChange(this)">
+                  <option value=""></option>
+                  ${t.tobaccoTypeOpts.map(o => `<option value="${o}" ${state.socialHx.tobaccoType===o?'selected':''}>${o}</option>`).join('')}
+                  ${getCustomList('social_tobtype').map(v => `<option value="${v}" ${state.socialHx.tobaccoType===v?'selected':''}>${v}</option>`).join('')}
+                  <option value="__other__">${lang==='en'?'Other...':'Outro...'}</option>
+                </select>
+                <input type="text" id="social_tobtype-other" style="display:none;margin-top:4px;"
+                  placeholder="${lang==='en'?'New option — press Enter':'Nova opção — pressione Enter'}"
+                  onkeydown="if(event.key==='Enter')_selOtherSave('social_tobtype')"
+                  onblur="_selOtherSave('social_tobtype')">
               </div>
               ${(state.socialHx.tobacco === 'Former smoker' || state.socialHx.tobacco === 'Ex-fumante') ? `
                 <div>
@@ -7566,24 +7607,28 @@ const FAM_DISEASE_OPTS = lang === 'en'
         ` : ''}
         
         <label>${t.alcohol}</label>
-        <input type="text" list="social-alcohol-list"
-          value="${state.socialHx.alcohol || ''}" placeholder=""
-          oninput="updateSocialField('alcohol', this.value);"
-          onchange="saveToCustomList('social_alcohol', this.value);">
-        <datalist id="social-alcohol-list">
-          ${t.alcoholOpts.map(o => `<option value="${o}">`).join('')}
-          ${getCustomList('social_alcohol').map(v => `<option value="${v}">`).join('')}
-        </datalist>
+        <select id="social_alcohol-sel" data-key="social_alcohol" onchange="_selChange(this)">
+          <option value=""></option>
+          ${t.alcoholOpts.map(o => `<option value="${o}" ${state.socialHx.alcohol===o?'selected':''}>${o}</option>`).join('')}
+          ${getCustomList('social_alcohol').map(v => `<option value="${v}" ${state.socialHx.alcohol===v?'selected':''}>${v}</option>`).join('')}
+          <option value="__other__">${lang==='en'?'Other...':'Outro...'}</option>
+        </select>
+        <input type="text" id="social_alcohol-other" style="display:none;margin-top:4px;"
+          placeholder="${lang==='en'?'New option — press Enter':'Nova opção — pressione Enter'}"
+          onkeydown="if(event.key==='Enter')_selOtherSave('social_alcohol')"
+          onblur="_selOtherSave('social_alcohol')">
         
         <label>${t.exercise}</label>
-        <input type="text" list="social-exercise-list"
-          value="${state.socialHx.exercise || ''}" placeholder=""
-          oninput="updateSocialField('exercise', this.value);"
-          onchange="saveToCustomList('social_exercise', this.value);">
-        <datalist id="social-exercise-list">
-          ${t.exerciseOpts.map(o => `<option value="${o}">`).join('')}
-          ${getCustomList('social_exercise').map(v => `<option value="${v}">`).join('')}
-        </datalist>
+        <select id="social_exercise-sel" data-key="social_exercise" onchange="_selChange(this)">
+          <option value=""></option>
+          ${t.exerciseOpts.map(o => `<option value="${o}" ${state.socialHx.exercise===o?'selected':''}>${o}</option>`).join('')}
+          ${getCustomList('social_exercise').map(v => `<option value="${v}" ${state.socialHx.exercise===v?'selected':''}>${v}</option>`).join('')}
+          <option value="__other__">${lang==='en'?'Other...':'Outro...'}</option>
+        </select>
+        <input type="text" id="social_exercise-other" style="display:none;margin-top:4px;"
+          placeholder="${lang==='en'?'New option — press Enter':'Nova opção — pressione Enter'}"
+          onkeydown="if(event.key==='Enter')_selOtherSave('social_exercise')"
+          onblur="_selOtherSave('social_exercise')">
         
         <label>${t.drugs}</label>
         <select onchange="
@@ -7811,14 +7856,16 @@ const FAM_DISEASE_OPTS = lang === 'en'
           <div class="input-row" style="margin-top:10px;">
             <div>
               <label>${t.presentation}</label>
-              <input type="text" list="obexam-present-list"
-                value="${state.obExam.presentation || ''}" placeholder=""
-                oninput="updateOBExamField('presentation', this.value);"
-                onchange="saveToCustomList('obexam_presentation', this.value);">
-              <datalist id="obexam-present-list">
-                ${t.presentOpts.map(o => `<option value="${o}">`).join('')}
-                ${getCustomList('obexam_presentation').map(v => `<option value="${v}">`).join('')}
-              </datalist>
+              <select id="obexam_presentation-sel" data-key="obexam_presentation" onchange="_selChange(this)">
+                <option value=""></option>
+                ${t.presentOpts.map(o => `<option value="${o}" ${state.obExam.presentation===o?'selected':''}>${o}</option>`).join('')}
+                ${getCustomList('obexam_presentation').map(v => `<option value="${v}" ${state.obExam.presentation===v?'selected':''}>${v}</option>`).join('')}
+                <option value="__other__">${lang==='en'?'Other...':'Outro...'}</option>
+              </select>
+              <input type="text" id="obexam_presentation-other" style="display:none;margin-top:4px;"
+                placeholder="${lang==='en'?'New option — press Enter':'Nova opção — pressione Enter'}"
+                onkeydown="if(event.key==='Enter')_selOtherSave('obexam_presentation')"
+                onblur="_selOtherSave('obexam_presentation')">
             </div>
             <div>
               <label>${t.obDilation}</label>
@@ -7833,14 +7880,16 @@ const FAM_DISEASE_OPTS = lang === 'en'
             </div>
             <div>
               <label>${t.obStation}</label>
-              <input type="text" list="obexam-station-list"
-                value="${state.obExam.station || ''}" placeholder=""
-                oninput="updateOBExamField('station', this.value);"
-                onchange="saveToCustomList('obexam_station', this.value);">
-              <datalist id="obexam-station-list">
-                ${t.obStationOpts.map(o => `<option value="${o}">`).join('')}
-                ${getCustomList('obexam_station').map(v => `<option value="${v}">`).join('')}
-              </datalist>
+              <select id="obexam_station-sel" data-key="obexam_station" onchange="_selChange(this)">
+                <option value=""></option>
+                ${t.obStationOpts.map(o => `<option value="${o}" ${state.obExam.station===o?'selected':''}>${o}</option>`).join('')}
+                ${getCustomList('obexam_station').map(v => `<option value="${v}" ${state.obExam.station===v?'selected':''}>${v}</option>`).join('')}
+                <option value="__other__">${lang==='en'?'Other...':'Outro...'}</option>
+              </select>
+              <input type="text" id="obexam_station-other" style="display:none;margin-top:4px;"
+                placeholder="${lang==='en'?'New option — press Enter':'Nova opção — pressione Enter'}"
+                onkeydown="if(event.key==='Enter')_selOtherSave('obexam_station')"
+                onblur="_selOtherSave('obexam_station')">
             </div>
           </div>
         </div>
@@ -8714,17 +8763,19 @@ const FAM_DISEASE_OPTS = lang === 'en'
       <!-- CONDIÇÃO NA ALTA -->
       <div class="card">
         <div class="card-label">${lang==='en'?'Discharge Condition':'Condição na Alta'}</div>
-        <input type="text" list="dc-condition-list"
-          value="${dc.dischargeCondition || ''}" placeholder=""
-          oninput="updateDC('dischargeCondition', this.value);"
-          onchange="saveToCustomList('dc_condition', this.value);">
-        <datalist id="dc-condition-list">
+        <select id="dc_condition-sel" data-key="dc_condition" onchange="_selChange(this)">
+          <option value=""></option>
           ${(lang==='en'
             ?['Stable — improved','Stable — unchanged','Improved — requires follow-up','Against medical advice (AMA)','Transferred to another facility','Referred to specialist']
             :['Estável — melhorado','Estável — inalterado','Melhorado — necessita retorno','Alta a pedido','Transferência para outro serviço','Encaminhado para especialista']
-          ).map(o=>`<option value="${o}">`).join('')}
-          ${getCustomList('dc_condition').map(v => `<option value="${v}">`).join('')}
-        </datalist>
+          ).map(o=>`<option value="${o}" ${dc.dischargeCondition===o?'selected':''}>${o}</option>`).join('')}
+          ${getCustomList('dc_condition').map(v=>`<option value="${v}" ${dc.dischargeCondition===v?'selected':''}>${v}</option>`).join('')}
+          <option value="__other__">${lang==='en'?'Other...':'Outro...'}</option>
+        </select>
+        <input type="text" id="dc_condition-other" style="display:none;margin-top:4px;"
+          placeholder="${lang==='en'?'New option — press Enter':'Nova opção — pressione Enter'}"
+          onkeydown="if(event.key==='Enter')_selOtherSave('dc_condition')"
+          onblur="_selOtherSave('dc_condition')">
       </div>
 
       <!-- ORIENTAÇÕES DE ALTA -->
@@ -8740,30 +8791,34 @@ const FAM_DISEASE_OPTS = lang === 'en'
         </div>
         
         <label>${lang==='en'?'Activity Restrictions':'Restrição de Atividades'}</label>
-        <input type="text" list="dc-restrictions-list"
-          value="${dc.restrictions || ''}" placeholder=""
-          oninput="updateDC('restrictions', this.value);"
-          onchange="saveToCustomList('dc_restrictions', this.value);">
-        <datalist id="dc-restrictions-list">
+        <select id="dc_restrictions-sel" data-key="dc_restrictions" onchange="_selChange(this)">
+          <option value=""></option>
           ${(lang==='en'
             ?['No restrictions','Light activity only','No strenuous exercise for 2 weeks','No exercise for 4 weeks','Bed rest recommended','Avoid lifting > 5 kg','Avoid driving','Work restrictions — specify below']
             :['Sem restrições','Atividade leve apenas','Sem esforço físico por 2 semanas','Sem exercícios por 4 semanas','Repouso relativo recomendado','Evitar levantar peso > 5 kg','Evitar dirigir','Restrição ao trabalho — especificar abaixo']
-          ).map(o=>`<option value="${o}">`).join('')}
-          ${getCustomList('dc_restrictions').map(v => `<option value="${v}">`).join('')}
-        </datalist>
+          ).map(o=>`<option value="${o}" ${dc.restrictions===o?'selected':''}>${o}</option>`).join('')}
+          ${getCustomList('dc_restrictions').map(v=>`<option value="${v}" ${dc.restrictions===v?'selected':''}>${v}</option>`).join('')}
+          <option value="__other__">${lang==='en'?'Other...':'Outro...'}</option>
+        </select>
+        <input type="text" id="dc_restrictions-other" style="display:none;margin-top:4px;"
+          placeholder="${lang==='en'?'New option — press Enter':'Nova opção — pressione Enter'}"
+          onkeydown="if(event.key==='Enter')_selOtherSave('dc_restrictions')"
+          onblur="_selOtherSave('dc_restrictions')">
 
         <label>${lang==='en'?'Diet':'Dieta'}</label>
-        <input type="text" list="dc-diet-list"
-          value="${dc.diet || ''}" placeholder=""
-          oninput="updateDC('diet', this.value);"
-          onchange="saveToCustomList('dc_diet', this.value);">
-        <datalist id="dc-diet-list">
+        <select id="dc_diet-sel" data-key="dc_diet" onchange="_selChange(this)">
+          <option value=""></option>
           ${(lang==='en'
             ?['No dietary restrictions','Low-sodium diet','Low-fat diet','Low-carbohydrate diet','Clear liquids only','Soft diet','Diabetic diet','Renal diet','Heart-healthy diet']
             :['Sem restrição alimentar','Dieta hipossódica','Dieta hipogordurosa','Dieta low-carb','Líquidos claros apenas','Dieta pastosa','Dieta para diabéticos','Dieta renal','Dieta cardioprotetora']
-          ).map(o=>`<option value="${o}">`).join('')}
-          ${getCustomList('dc_diet').map(v => `<option value="${v}">`).join('')}
-        </datalist>
+          ).map(o=>`<option value="${o}" ${dc.diet===o?'selected':''}>${o}</option>`).join('')}
+          ${getCustomList('dc_diet').map(v=>`<option value="${v}" ${dc.diet===v?'selected':''}>${v}</option>`).join('')}
+          <option value="__other__">${lang==='en'?'Other...':'Outro...'}</option>
+        </select>
+        <input type="text" id="dc_diet-other" style="display:none;margin-top:4px;"
+          placeholder="${lang==='en'?'New option — press Enter':'Nova opção — pressione Enter'}"
+          onkeydown="if(event.key==='Enter')_selOtherSave('dc_diet')"
+          onblur="_selOtherSave('dc_diet')">
         
         <label>${lang==='en'?'Wound / Surgical Site Care':'Cuidados com Ferida / Sítio Cirúrgico'}</label>
         <textarea rows="2" placeholder="${lang==='en'?'Wound care instructions (if applicable)...':'Cuidados com ferida operatória (se aplicável)...'}" oninput="updateDC('woundCare',this.value)">${dc.woundCare||''}</textarea>
@@ -10710,6 +10765,65 @@ function saveToCustomList(key, value) {
 }
 function getCustomMeds() { return getCustomList('meds'); }
 function saveCustomMed(name) { saveToCustomList('meds', name); }
+
+// ── SELECT + "OTHER" HELPERS ──────────────────────────────────────────────
+function _selChange(sel) {
+  var key = sel.dataset.key;
+  var otherEl = document.getElementById(key + '-other');
+  if (sel.value === '__other__') {
+    if (otherEl) { otherEl.style.display = 'block'; otherEl.focus(); }
+  } else {
+    if (otherEl) otherEl.style.display = 'none';
+    if (sel.value !== undefined) _runFieldUpdate(key, sel.value);
+  }
+}
+function _selOtherSave(key) {
+  var otherEl = document.getElementById(key + '-other');
+  if (!otherEl) return;
+  var v = otherEl.value.trim();
+  if (!v) return;
+  var saveKey = key.replace(/^med_(route|freq)_\d+$/, 'med_$1');
+  saveToCustomList(saveKey, v);
+  _runFieldUpdate(key, v);
+  renderSections();
+}
+function _runFieldUpdate(key, v) {
+  var routeM = key.match(/^med_route_(\d+)$/);
+  if (routeM) { updateMedField(parseInt(routeM[1]), 'route', v); return; }
+  var freqM = key.match(/^med_freq_(\d+)$/);
+  if (freqM) { updateMedField(parseInt(freqM[1]), 'freq', v); return; }
+  var map = {
+    pt_ethnicity:       function(){ updatePatientField('ethnicity', v); },
+    pt_marital:         function(){ updatePatientField('marital', v); },
+    pt_edu:             function(){ updatePatientField('education', v); },
+    pt_insurance:       function(){ updatePatientField('insuranceType', v); },
+    hpi_onset:          function(){ updateHPIField('onset', v); },
+    hpi_char:           function(){ updateHPIField('char', v); },
+    hpi_dur_unit:       function(){ updateHPIDurationFields(null, v); },
+    gynob_prenatal:     function(){ updateGynObField('prenatal', v); },
+    gynob_cycle:        function(){ updateGynObField('cycleRegularity', v); },
+    gynob_contraception:function(){ updateGynObField('contraception', v); },
+    gynob_pap:          function(){ updateGynObField('papResult', v); },
+    gynob_mammo:        function(){ updateGynObField('mammogramResult', v); },
+    gynob_sexual:       function(){ updateGynObField('sexuallyActive', v); },
+    peds_delivery:      function(){ updatePedsField('delivery', v); },
+    peds_nbscreen:      function(){ updatePedsField('nbScreening', v); },
+    peds_breastfed:     function(){ updatePedsField('breastfed', v); saveState(); },
+    peds_formula:       function(){ updatePedsField('formulaType', v); },
+    peds_foodintro:     function(){ updatePedsField('foodIntroMethod', v); },
+    peds_schoolperf:    function(){ updatePedsField('schoolPerf', v); },
+    social_tobacco:     function(){ updateSocialField('tobacco', v); switchTab(currentTab); },
+    social_tobtype:     function(){ updateSocialField('tobaccoType', v); },
+    social_alcohol:     function(){ updateSocialField('alcohol', v); },
+    social_exercise:    function(){ updateSocialField('exercise', v); },
+    obexam_presentation:function(){ updateOBExamField('presentation', v); },
+    obexam_station:     function(){ updateOBExamField('station', v); },
+    dc_condition:       function(){ updateDC('dischargeCondition', v); },
+    dc_restrictions:    function(){ updateDC('restrictions', v); },
+    dc_diet:            function(){ updateDC('diet', v); },
+  };
+  if (map[key]) map[key]();
+}
 function getCustomLabs() { return getCustomList('labs'); }
 function saveCustomLab(name) { saveToCustomList('labs', name); }
 
