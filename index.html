@@ -9825,7 +9825,22 @@ const LAB_UNITS = {
   'Bilirrubinas Totais e Frações': 'mg/dL',
   'Ácido Úrico': 'mg/dL', 'uric acid': 'mg/dL',
   'Vitamina B12': 'pg/mL', 'vitamin b12': 'pg/mL',
-  'Vitamina D': 'ng/mL', 'vitamin d': 'ng/mL'
+  'Vitamina D': 'ng/mL', 'vitamin d': 'ng/mL',
+  'Hemoglobina (Hb)': 'g/dL',
+  'Hematócrito (Ht)': '%',
+  'Vol. Corpuscular Médio (VCM)': 'fL',
+  'Hgb Corpuscular Média (HCM)': 'pg',
+  'Conc. Hgb Corpuscular (CHCM)': 'g/dL',
+  'Amplitude Eritrocitária (RDW)': '%',
+  'Plaquetas (PLT)': '10³/µL',
+  'Leucócitos (WBC)': '/mm³',
+  'Neutrófilos (Neut)': '/mm³',
+  'Neutrófilos %': '%',
+  'Linfócitos (Linf)': '/mm³',
+  'Linfócitos %': '%',
+  'Monócitos (Mono)': '/mm³',
+  'Eosinófilos (Eo)': '/mm³',
+  'Basófilos (Baso)': '/mm³'
 };
 
 const LAB_RANGES = {
@@ -9941,9 +9956,9 @@ function addLabKit(kitType) {
   } else if (kitType === 'urine') {
     exams = ['EAS (Urina Tipo I)', 'Urocultura'];
   } else if (kitType === 'hemograma') {
-    exams = ['Hb', 'Ht', 'VCM', 'HCM', 'CHCM', 'RDW', 'Plaquetas'];
+    exams = ['Hemoglobina (Hb)', 'Hematócrito (Ht)', 'Vol. Corpuscular Médio (VCM)', 'Hgb Corpuscular Média (HCM)', 'Conc. Hgb Corpuscular (CHCM)', 'Amplitude Eritrocitária (RDW)', 'Plaquetas (PLT)'];
   } else if (kitType === 'leucograma') {
-    exams = ['Leucócitos', 'Neutrófilos', 'Neutrófilos (%)', 'Linfócitos', 'Linfócitos (%)', 'Monócitos', 'Eosinófilos', 'Basófilos'];
+    exams = ['Leucócitos (WBC)', 'Neutrófilos (Neut)', 'Neutrófilos %', 'Linfócitos (Linf)', 'Linfócitos %', 'Monócitos (Mono)', 'Eosinófilos (Eo)', 'Basófilos (Baso)'];
   }
 
   exams.forEach(ex => {
