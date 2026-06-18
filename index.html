@@ -6336,20 +6336,19 @@ function renderSections() {
         html += `
       <div class="card">
         <label>${lang === 'en' ? 'Primary Complaint' : 'Queixa Principal'}</label>
-        <div style="display:flex; gap:8px; align-items:center; margin-bottom:12px;">
-          <input type="text" id="hpi-complaint" list="hpi-complaint-list" style="flex:1;"
-            value="${state.hpi.complaint || ''}"
-            placeholder="${lang === 'en' ? 'Type or select complaint...' : 'Digitar ou selecionar queixa...'}"
-            oninput="updateHPIField('complaint',this.value); generateHPINarrative();"
-            onchange="saveToCustomList('hpi_complaint',this.value);">
-          <datalist id="hpi-complaint-list">
-            ${(lang === 'en'
-              ? ['Pain','Dyspnea','Headache','Cough','Fever','Diarrhea / Vomiting','Chest Pain','Dizziness / Syncope','Dyspnea on exertion','Palpitations','Abdominal Pain','Back Pain','Urinary symptoms','Edema','Fatigue / Weakness','Weight loss','Nausea / Vomiting','Syncope','Rash','Joint pain','Confusion','Visual changes']
-              : ['Dor','Dispneia','Cefaleia','Tosse','Febre','Diarreia / Vômitos','Dor Torácica','Tontura / Síncope','Dispneia aos esforços','Palpitações','Dor Abdominal','Lombalgia / Dorsalgia','Sintomas urinários','Edema','Fadiga / Fraqueza','Perda de peso','Náuseas / Vômitos','Síncope','Exantema','Dor articular','Confusão mental','Alterações visuais']
-            ).map(o => `<option value="${o}">`).join('')}
-            ${getCustomList('hpi_complaint').map(v => `<option value="${v}">`).join('')}
-          </datalist>
-        </div>
+        <select id="hpi_complaint-sel" data-key="hpi_complaint" onchange="_selChange(this)" style="margin-bottom:4px;">
+          <option value=""></option>
+          ${(lang === 'en'
+            ? ['Pain','Dyspnea','Headache','Cough','Fever','Diarrhea / Vomiting','Chest Pain','Dizziness / Syncope','Dyspnea on exertion','Palpitations','Abdominal Pain','Back Pain','Urinary symptoms','Edema','Fatigue / Weakness','Weight loss','Nausea / Vomiting','Syncope','Rash','Joint pain','Confusion','Visual changes']
+            : ['Dor','Dispneia','Cefaleia','Tosse','Febre','Diarreia / Vômitos','Dor Torácica','Tontura / Síncope','Dispneia aos esforços','Palpitações','Dor Abdominal','Lombalgia / Dorsalgia','Sintomas urinários','Edema','Fadiga / Fraqueza','Perda de peso','Náuseas / Vômitos','Síncope','Exantema','Dor articular','Confusão mental','Alterações visuais']
+          ).map(o => `<option value="${o}" ${state.hpi.complaint===o?'selected':''}>${o}</option>`).join('')}
+          ${getCustomList('hpi_complaint').map(v => `<option value="${v}" ${state.hpi.complaint===v?'selected':''}>${v}</option>`).join('')}
+          <option value="__other__">${lang==='en'?'Other...':'Outro...'}</option>
+        </select>
+        <input type="text" id="hpi_complaint-other" style="display:none;margin-top:4px;margin-bottom:8px;"
+          placeholder="${lang==='en'?'New option — press Enter':'Nova opção — pressione Enter'}"
+          onkeydown="if(event.key==='Enter')_selOtherSave('hpi_complaint')"
+          onblur="_selOtherSave('hpi_complaint')">
 
         <div class="input-row">
           <div>
@@ -6413,35 +6412,34 @@ function renderSections() {
         </div>
         
         <label>${lang==='en'?'Location':'Localização'}</label>
-        <input type="text" id="hpi-loc" list="hpi-loc-list"
-          value="${state.hpi.location||''}"
-          placeholder="${lang==='en'?'Type or select location...':'Digitar ou selecionar localização...'}"
-          oninput="updateHPIField('location',this.value)"
-          onchange="saveToCustomList('hpi_location',this.value);"
-          style="margin-bottom:8px;">
-        <datalist id="hpi-loc-list">
+        <select id="hpi_location-sel" data-key="hpi_location" onchange="_selChange(this)" style="margin-bottom:4px;">
+          <option value=""></option>
           ${(lang==='en'
             ?['Head','Forehead','Temporal region','Occipital','Face','Eyes','Ears','Nose','Throat','Neck','Chest (anterior)','Chest (posterior)','Left chest','Right chest','Epigastrium','Abdomen (diffuse)','Right upper quadrant','Left upper quadrant','Right lower quadrant','Left lower quadrant','Periumbilical','Hypogastrium','Lumbar / Low back','Thoracic spine','Cervical spine','Left shoulder','Right shoulder','Left arm','Right arm','Left forearm','Right forearm','Left hand','Right hand','Left hip','Right hip','Left thigh','Right thigh','Left knee','Right knee','Left leg','Right leg','Left foot','Right foot','Pelvis','Perineum','Bilateral lower limbs','Bilateral upper limbs','Diffuse / Generalized','Systemic']
             :['Cabeça','Fronte / Região frontal','Região temporal','Occipital','Face','Olhos','Ouvidos','Nariz','Garganta','Pescoço','Tórax (anterior)','Tórax (posterior)','Tórax esquerdo','Tórax direito','Epigástrio','Abdômen (difuso)','Hipocôndrio direito','Hipocôndrio esquerdo','Fossa ilíaca direita','Fossa ilíaca esquerda','Periumbilical','Hipogástrio','Lombar / Região lombar','Coluna torácica','Coluna cervical','Ombro esquerdo','Ombro direito','Braço esquerdo','Braço direito','Antebraço esquerdo','Antebraço direito','Mão esquerda','Mão direita','Quadril esquerdo','Quadril direito','Coxa esquerda','Coxa direita','Joelho esquerdo','Joelho direito','Perna esquerda','Perna direita','Pé esquerdo','Pé direito','Pelve','Períneo','Membros inferiores bilaterais','Membros superiores bilaterais','Difuso / Generalizado','Sistêmico']
-          ).map(o=>`<option value="${o}">`).join('')}
-          ${getCustomList('hpi_location').map(v=>`<option value="${v}">`).join('')}
-        </datalist>
+          ).map(o=>`<option value="${o}" ${state.hpi.location===o?'selected':''}>${o}</option>`).join('')}
+          ${getCustomList('hpi_location').map(v=>`<option value="${v}" ${state.hpi.location===v?'selected':''}>${v}</option>`).join('')}
+          <option value="__other__">${lang==='en'?'Other...':'Outro...'}</option>
+        </select>
+        <input type="text" id="hpi_location-other" style="display:none;margin-top:4px;margin-bottom:8px;"
+          placeholder="${lang==='en'?'New option — press Enter':'Nova opção — pressione Enter'}"
+          onkeydown="if(event.key==='Enter')_selOtherSave('hpi_location')"
+          onblur="_selOtherSave('hpi_location')">
 
         <label>${lang === 'en' ? 'Radiation / Spread' : 'Irradiação'}</label>
-        <div style="display:flex; gap:8px; align-items:center; margin-bottom:12px;">
-          <input type="text" id="hpi-rad" list="hpi-rad-list" style="flex:1;"
-            value="${state.hpi.radiation || ''}"
-            placeholder="${lang === 'en' ? 'Type or select...' : 'Digitar ou selecionar...'}"
-            oninput="updateHPIField('radiation',this.value); generateHPINarrative();"
-            onchange="saveToCustomList('hpi_radiation',this.value);">
-          <datalist id="hpi-rad-list">
-            ${(lang === 'en'
-              ? ['None','Left Arm','Right Arm','Jaw','Neck','Back','Left Shoulder','Right Shoulder','Groin','Epigastrium','Left Scapula','Right Scapula','Chest','Abdomen','Bilateral Arms','Both Shoulders','Left leg','Right leg']
-              : ['Não irradia','Braço Esquerdo','Braço Direito','Mandíbula','Pescoço','Dorso / Costas','Ombro Esquerdo','Ombro Direito','Região Inguinal','Epigástrio','Escápula Esquerda','Escápula Direita','Tórax','Abdômen','Ambos os Braços','Ambos os Ombros','Membro inferior esquerdo','Membro inferior direito']
-            ).map(o => `<option value="${o}">`).join('')}
-            ${getCustomList('hpi_radiation').map(v => `<option value="${v}">`).join('')}
-          </datalist>
-        </div>
+        <select id="hpi_radiation-sel" data-key="hpi_radiation" onchange="_selChange(this)" style="margin-bottom:4px;">
+          <option value=""></option>
+          ${(lang === 'en'
+            ? ['None','Left Arm','Right Arm','Jaw','Neck','Back','Left Shoulder','Right Shoulder','Groin','Epigastrium','Left Scapula','Right Scapula','Chest','Abdomen','Bilateral Arms','Both Shoulders','Left leg','Right leg']
+            : ['Não irradia','Braço Esquerdo','Braço Direito','Mandíbula','Pescoço','Dorso / Costas','Ombro Esquerdo','Ombro Direito','Região Inguinal','Epigástrio','Escápula Esquerda','Escápula Direita','Tórax','Abdômen','Ambos os Braços','Ambos os Ombros','Membro inferior esquerdo','Membro inferior direito']
+          ).map(o => `<option value="${o}" ${state.hpi.radiation===o?'selected':''}>${o}</option>`).join('')}
+          ${getCustomList('hpi_radiation').map(v => `<option value="${v}" ${state.hpi.radiation===v?'selected':''}>${v}</option>`).join('')}
+          <option value="__other__">${lang==='en'?'Other...':'Outro...'}</option>
+        </select>
+        <input type="text" id="hpi_radiation-other" style="display:none;margin-top:4px;margin-bottom:12px;"
+          placeholder="${lang==='en'?'New option — press Enter':'Nova opção — pressione Enter'}"
+          onkeydown="if(event.key==='Enter')_selOtherSave('hpi_radiation')"
+          onblur="_selOtherSave('hpi_radiation')">
         <label>${t.hpiModify}</label>
         <div style="margin-bottom:12px;">
           <div class="tag-container" onclick="document.getElementById('hpi-mod-input').focus()" style="cursor:text;">
@@ -10797,9 +10795,12 @@ function _runFieldUpdate(key, v) {
     pt_marital:         function(){ updatePatientField('marital', v); },
     pt_edu:             function(){ updatePatientField('education', v); },
     pt_insurance:       function(){ updatePatientField('insuranceType', v); },
+    hpi_complaint:      function(){ updateHPIField('complaint', v); generateHPINarrative(); },
     hpi_onset:          function(){ updateHPIField('onset', v); },
     hpi_char:           function(){ updateHPIField('char', v); },
     hpi_dur_unit:       function(){ updateHPIDurationFields(null, v); },
+    hpi_location:       function(){ updateHPIField('location', v); },
+    hpi_radiation:      function(){ updateHPIField('radiation', v); generateHPINarrative(); },
     gynob_prenatal:     function(){ updateGynObField('prenatal', v); },
     gynob_cycle:        function(){ updateGynObField('cycleRegularity', v); },
     gynob_contraception:function(){ updateGynObField('contraception', v); },
