@@ -1752,6 +1752,18 @@ let activePmhCat = null;
 let activePshCat = null;
 const PE_SUB_CHIPS = {
   en: {
+    'General Appearance': {
+      'Ill-appearing':      ['1+', '2+', '3+', '4+'],
+      'Acutely distressed': ['1+', '2+', '3+', '4+'],
+      'Lethargic':          ['1+', '2+', '3+', '4+'],
+      'Obtunded':           ['1+', '2+', '3+', '4+'],
+      'Cachexic':           ['1+', '2+', '3+', '4+'],
+      'Dehydrated':         ['1+', '2+', '3+', '4+'],
+      'Diaphoretic':        ['1+', '2+', '3+', '4+'],
+      'Pale':               ['1+', '2+', '3+', '4+'],
+      'Jaundiced':          ['1+', '2+', '3+', '4+'],
+      'Agitated':           ['1+', '2+', '3+', '4+'],
+    },
     'Abdomen': {
       'Tenderness': ['RUQ','LUQ','RLQ','LLQ','Epigastric','Periumbilical','Left flank','Right flank','Diffuse'],
       'Rebound tenderness': ['RUQ','RLQ','LLQ','Diffuse'],
@@ -1784,6 +1796,18 @@ const PE_SUB_CHIPS = {
     },
   },
   pt: {
+    'Aspecto Geral': {
+      'Aparência de doença aguda': ['1+', '2+', '3+', '4+'],
+      'Desconforto agudo':         ['1+', '2+', '3+', '4+'],
+      'Letárgico':                 ['1+', '2+', '3+', '4+'],
+      'Comatoso':                  ['1+', '2+', '3+', '4+'],
+      'Caquético':                 ['1+', '2+', '3+', '4+'],
+      'Desidratado':               ['1+', '2+', '3+', '4+'],
+      'Diaforético':               ['1+', '2+', '3+', '4+'],
+      'Pálido':                    ['1+', '2+', '3+', '4+'],
+      'Ictérico':                  ['1+', '2+', '3+', '4+'],
+      'Agitado':                   ['1+', '2+', '3+', '4+'],
+    },
     'Abdome': {
       'Dor à palpação': ['QSD','QSE','QID','QIE','Epigástrio','Periumbilical','Flanco D','Flanco E','Difuso','Hipogástrio'],
       'Dor à descompressão': ['QSD','QID','QIE','Difuso'],
@@ -10438,11 +10462,18 @@ function openPESystemAbnormal(sys) {
       if (subDefs && subDefs.length) {
         subGroup = document.createElement('div');
         subGroup.className = 'chip-sub-group' + (isSelected ? ' open' : '');
+        const isGradeGroup = subDefs.every(s => /^\d\+$/.test(s));
         subDefs.forEach(subName => {
           const sub = document.createElement('div');
           sub.className = 'chip chip-sub';
           sub.textContent = subName;
-          sub.onclick = e => { e.stopPropagation(); sub.classList.toggle('selected'); };
+          sub.onclick = e => {
+            e.stopPropagation();
+            if (isGradeGroup) {
+              subGroup.querySelectorAll('.chip-sub').forEach(s => s.classList.remove('selected'));
+            }
+            sub.classList.toggle('selected');
+          };
           subGroup.appendChild(sub);
         });
         wrapper.appendChild(chipEl);
