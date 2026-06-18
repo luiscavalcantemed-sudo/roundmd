@@ -8076,8 +8076,23 @@ const FAM_DISEASE_OPTS = lang === 'en'
         </div>
         
         <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; margin-top: 16px;">
-          <button class="btn-macro" style="font-size: 11px; padding: 4px 8px; margin: 0; background: var(--surface-solid); color: var(--primary); border: 1px solid var(--border);" onclick="addLabKit('lipid')">
-            + Perfil Lipídico
+          <button class="btn-macro" style="font-size: 11px; padding: 4px 8px; margin: 0; background: var(--surface-solid); color: var(--primary); border: 1px solid var(--border);" onclick="addLabKit('hemograma')">
+            + Hemograma
+          </button>
+          <button class="btn-macro" style="font-size: 11px; padding: 4px 8px; margin: 0; background: var(--surface-solid); color: var(--primary); border: 1px solid var(--border);" onclick="addLabKit('leucograma')">
+            + Leucograma
+          </button>
+          <button class="btn-macro" style="font-size: 11px; padding: 4px 8px; margin: 0; background: var(--surface-solid); color: var(--primary); border: 1px solid var(--border);" onclick="addLabKit('bmp')">
+            + Painel Metabólico
+          </button>
+          <button class="btn-macro" style="font-size: 11px; padding: 4px 8px; margin: 0; background: var(--surface-solid); color: var(--primary); border: 1px solid var(--border);" onclick="addLabKit('renal')">
+            + Função Renal
+          </button>
+          <button class="btn-macro" style="font-size: 11px; padding: 4px 8px; margin: 0; background: var(--surface-solid); color: var(--primary); border: 1px solid var(--border);" onclick="addLabKit('liver_function')">
+            + Função Hepática
+          </button>
+          <button class="btn-macro" style="font-size: 11px; padding: 4px 8px; margin: 0; background: var(--surface-solid); color: var(--primary); border: 1px solid var(--border);" onclick="addLabKit('coagulograma')">
+            + Coagulograma
           </button>
           <button class="btn-macro" style="font-size: 11px; padding: 4px 8px; margin: 0; background: var(--surface-solid); color: var(--primary); border: 1px solid var(--border);" onclick="addLabKit('liver_injury')">
             + Lesão Hepática
@@ -8085,17 +8100,14 @@ const FAM_DISEASE_OPTS = lang === 'en'
           <button class="btn-macro" style="font-size: 11px; padding: 4px 8px; margin: 0; background: var(--surface-solid); color: var(--primary); border: 1px solid var(--border);" onclick="addLabKit('liver_canalicular')">
             + Enzimas Canaliculares
           </button>
-          <button class="btn-macro" style="font-size: 11px; padding: 4px 8px; margin: 0; background: var(--surface-solid); color: var(--primary); border: 1px solid var(--border);" onclick="addLabKit('liver_function')">
-            + Função Hepática
+          <button class="btn-macro" style="font-size: 11px; padding: 4px 8px; margin: 0; background: var(--surface-solid); color: var(--primary); border: 1px solid var(--border);" onclick="addLabKit('sorologias')">
+            + Sorologias
+          </button>
+          <button class="btn-macro" style="font-size: 11px; padding: 4px 8px; margin: 0; background: var(--surface-solid); color: var(--primary); border: 1px solid var(--border);" onclick="addLabKit('lipid')">
+            + Perfil Lipídico
           </button>
           <button class="btn-macro" style="font-size: 11px; padding: 4px 8px; margin: 0; background: var(--surface-solid); color: var(--primary); border: 1px solid var(--border);" onclick="addLabKit('urine')">
             + Urina 1 e Urocultura
-          </button>
-          <button class="btn-macro" style="font-size: 11px; padding: 4px 8px; margin: 0; background: var(--surface-solid); color: var(--primary); border: 1px solid var(--border);" onclick="addLabKit('hemograma')">
-            + Hemograma
-          </button>
-          <button class="btn-macro" style="font-size: 11px; padding: 4px 8px; margin: 0; background: var(--surface-solid); color: var(--primary); border: 1px solid var(--border);" onclick="addLabKit('leucograma')">
-            + Leucograma
           </button>
           <div style="flex:1"></div>
           <button class="btn-macro" style="font-size: 11px; padding: 4px 10px; margin: 0; background: var(--primary-light); color: var(--primary);" onclick="addCustomLab()">
@@ -9840,7 +9852,25 @@ const LAB_UNITS = {
   'Linfócitos %': '%',
   'Monócitos (Mono)': '/mm³',
   'Eosinófilos (Eo)': '/mm³',
-  'Basófilos (Baso)': '/mm³'
+  'Basófilos (Baso)': '/mm³',
+  'Sódio (Na+)': 'mEq/L',
+  'Potássio (K+)': 'mEq/L',
+  'Cloreto (Cl-)': 'mEq/L',
+  'Bicarbonato (HCO3-)': 'mEq/L',
+  'Ácido Úrico': 'mg/dL',
+  'Microalbuminúria': 'mg/g',
+  'Proteinúria 24h': 'mg/24h',
+  'TAP/INR': '',
+  'TTPA': 's',
+  'Fibrinogênio': 'mg/dL',
+  'Tempo de Trombina (TT)': 's',
+  'HBsAg': '',
+  'Anti-HBs': 'UI/L',
+  'Anti-HBc total': '',
+  'Anti-HCV': '',
+  'Anti-HIV 1/2 (Ag/Ac)': '',
+  'VDRL': '',
+  'Anti-HAV IgM': ''
 };
 
 const LAB_RANGES = {
@@ -9955,6 +9985,14 @@ function addLabKit(kitType) {
     exams = ['Proteínas Totais e Frações', 'Bilirrubinas Totais e Frações', 'Coagulograma'];
   } else if (kitType === 'urine') {
     exams = ['EAS (Urina Tipo I)', 'Urocultura'];
+  } else if (kitType === 'bmp') {
+    exams = ['Sódio (Na+)', 'Potássio (K+)', 'Cloreto (Cl-)', 'Bicarbonato (HCO3-)', 'Ureia', 'Creatinina', 'Glicemia'];
+  } else if (kitType === 'renal') {
+    exams = ['Ureia', 'Creatinina', 'Ácido Úrico', 'Microalbuminúria', 'Proteinúria 24h'];
+  } else if (kitType === 'coagulograma') {
+    exams = ['TAP/INR', 'TTPA', 'Fibrinogênio', 'Tempo de Trombina (TT)'];
+  } else if (kitType === 'sorologias') {
+    exams = ['HBsAg', 'Anti-HBs', 'Anti-HBc total', 'Anti-HCV', 'Anti-HIV 1/2 (Ag/Ac)', 'VDRL', 'Anti-HAV IgM'];
   } else if (kitType === 'hemograma') {
     exams = ['Hemoglobina (Hb)', 'Hematócrito (Ht)', 'Vol. Corpuscular Médio (VCM)', 'Hgb Corpuscular Média (HCM)', 'Conc. Hgb Corpuscular (CHCM)', 'Amplitude Eritrocitária (RDW)', 'Plaquetas (PLT)'];
   } else if (kitType === 'leucograma') {
