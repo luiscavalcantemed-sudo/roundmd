@@ -10753,7 +10753,7 @@ function runCG() {
 
 // ════════════════════════════════════════ MED FAVORITES
 function getCustomList(key) {
-  try { return JSON.parse(localStorage.getItem('rmd_custom_' + key) || '[]'); } catch { return []; }
+  try { return (JSON.parse(localStorage.getItem('rmd_custom_' + key) || '[]')).filter(v => v && v.trim()); } catch { return []; }
 }
 function saveToCustomList(key, value) {
   if (!value || !value.trim()) return;
