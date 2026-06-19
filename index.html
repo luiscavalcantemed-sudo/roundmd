@@ -5530,7 +5530,7 @@ function generateClinicalNoteText() {
       if(state.vitals.hr) _v.push((lang==='en'?'HR ':'FC ') + state.vitals.hr + ' bpm');
       if(state.vitals.rr) _v.push((lang==='en'?'RR ':'FR ') + state.vitals.rr + (lang==='en'?' /min':' irpm'));
       if(state.vitals.temp) _v.push('T ' + state.vitals.temp + ' °C');
-      if(state.vitals.spo2) _v.push('SpO2 ' + state.vitals.spo2 + '%');
+      if(state.vitals.spo2) _v.push('SpO2 ' + state.vitals.spo2 + '%' + _spo2Suffix());
       if(_v.length > 0) note += `• ${nt.vitals}: ${_v.join(' | ')}\n`;
     }
     
@@ -5597,7 +5597,7 @@ function generateClinicalNoteText() {
       if(state.vitals.sbp || state.vitals.dbp) _v.push((lang==='en'?'BP ':'PA ') + (state.vitals.sbp||'?') + '/' + (state.vitals.dbp||'?') + ' mmHg');
       if(state.vitals.hr) _v.push((lang==='en'?'HR ':'FC ') + state.vitals.hr + ' bpm');
       if(state.vitals.rr) _v.push((lang==='en'?'RR ':'FR ') + state.vitals.rr + (lang==='en'?' /min':' irpm'));
-      if(state.vitals.spo2) _v.push('SpO2 ' + state.vitals.spo2 + '%');
+      if(state.vitals.spo2) _v.push('SpO2 ' + state.vitals.spo2 + '%' + _spo2Suffix());
       if(_v.length > 0) note += `• ${nt.vitals}: ${_v.join(' | ')}\n`;
     }
     
@@ -5637,7 +5637,7 @@ function generateClinicalNoteText() {
       if(state.vitals.sbp || state.vitals.dbp) _v.push((lang==='en'?'BP: ':'PA: ') + (state.vitals.sbp||'?') + '/' + (state.vitals.dbp||'?'));
       if(state.vitals.hr) _v.push((lang==='en'?'HR: ':'FC: ') + state.vitals.hr);
       if(state.vitals.rr) _v.push((lang==='en'?'RR: ':'FR: ') + state.vitals.rr);
-      if(state.vitals.spo2) _v.push('SpO2: ' + state.vitals.spo2 + '%');
+      if(state.vitals.spo2) _v.push('SpO2: ' + state.vitals.spo2 + '%' + _spo2Suffix());
       if(state.vitals.temp) _v.push('Temp: ' + state.vitals.temp + ' °C');
       if(_v.length > 0) note += _v.join(' | ') + '\n\n';
     }
@@ -5873,7 +5873,7 @@ function generateClinicalNoteText() {
       if(state.vitals.hr) _vLines.push(`${nt.hr}: ${state.vitals.hr} bpm`);
       if(state.vitals.rr) _vLines.push(`${nt.rr}: ${state.vitals.rr} ${lang==='en'?'rpm':'irpm'}`);
       if(state.vitals.temp) _vLines.push(`${nt.temp}: ${state.vitals.temp} °C`);
-      if(state.vitals.spo2) _vLines.push(`• ${nt.spo2}: ${state.vitals.spo2} %`);
+      if(state.vitals.spo2) _vLines.push(`• ${nt.spo2}: ${state.vitals.spo2} %${_spo2Suffix()}`);
       if(state.vitals.glucose) _vLines.push(`• ${nt.glucose}: ${state.vitals.glucose} mg/dL`);
       if(_vLines.length > 0) note += `${nt.vitals}:\n` + _vLines.join('\n') + '\n';
       note += `${nt.physicalSys}:\n`;
@@ -5970,7 +5970,7 @@ function generateClinicalNoteText() {
     if (v.hr)   vArr.push(`${lang==='en'?'HR':'FC'}: ${v.hr} bpm`);
     if (v.rr)   vArr.push(`${lang==='en'?'RR':'FR'}: ${v.rr}/min`);
     if (v.temp) vArr.push(`${lang==='en'?'Temp':'Temp'}: ${v.temp} °C`);
-    if (v.spo2) vArr.push(`SpO₂: ${v.spo2}%`);
+    if (v.spo2) vArr.push(`SpO₂: ${v.spo2}%${_spo2Suffix(v)}`);
     note += vArr.length ? vArr.join(' | ') : na;
     note += `\n\n${lang==='en'?'DISCHARGE MEDICATIONS':'MEDICAMENTOS NA ALTA'}\n`;
     if (state.medications && state.medications.length) {
@@ -7708,13 +7708,39 @@ const FAM_DISEASE_OPTS = lang === 'en'
           <input type="text" id="drugs-pending-name" placeholder="${lang==='en'?'Substance name...':'Nome da substância...'}"
             style="display:none;font-size:13px;"
             oninput="window._pendingDrug=this.value.trim()">
+
           <label style="font-size:12px;font-weight:600;color:var(--primary);margin:0;">${lang==='en'?'Duration of use:':'Tempo de uso:'}</label>
-          <div style="display:flex;gap:6px;align-items:center;">
-            <input type="text" id="drugs-pending-duration"
-              placeholder="${lang==='en'?'e.g. 5 years, since 2018...':'ex: 5 anos, desde 2018...'}"
-              style="flex:1;font-size:13px;"
+          <input type="text" id="drugs-pending-duration"
+            placeholder="${lang==='en'?'e.g. 5 years, since 2018...':'ex: 5 anos, desde 2018...'}"
+            style="font-size:13px;">
+
+          <label style="font-size:12px;font-weight:600;color:var(--primary);margin:0;">${lang==='en'?'Frequency / Amount:':'Frequência / Quantidade:'}</label>
+          <input type="text" id="drugs-pending-freq"
+            placeholder="${lang==='en'?'e.g. weekends, 1g/day...':'ex: fins de semana, 1g/dia...'}"
+            style="font-size:13px;">
+
+          <label style="font-size:12px;font-weight:600;color:var(--primary);margin:0;">${lang==='en'?'Route of use:':'Via de uso:'}</label>
+          <select id="drugs-pending-route" style="font-size:13px;">
+            <option value=""></option>
+            ${(lang==='en'
+              ?['Oral','Smoked','Inhaled / Snorted','Intravenous','Intramuscular','Other']
+              :['Oral','Fumada','Inalada / Aspirada','Intravenosa','Intramuscular','Outra']
+            ).map(o=>`<option value="${o}">${o}</option>`).join('')}
+          </select>
+
+          <label style="font-size:12px;font-weight:600;color:var(--primary);margin:0;display:flex;align-items:center;gap:6px;">
+            <input type="checkbox" id="drugs-pending-former" onchange="document.getElementById('drugs-pending-quityear-wrap').style.display=this.checked?'block':'none';">
+            ${lang==='en'?'Former user (discontinued)':'Ex-usuário (interrompeu o uso)'}
+          </label>
+          <div id="drugs-pending-quityear-wrap" style="display:none;">
+            <input type="number" id="drugs-pending-quityear" min="1950" max="2100"
+              placeholder="${lang==='en'?'Year quit':'Ano que parou'}"
+              style="font-size:13px;">
+          </div>
+
+          <div style="display:flex;gap:6px;align-items:center;margin-top:4px;">
+            <button onclick="_commitDrug()" style="flex:1;padding:6px 12px;background:var(--primary);color:#fff;border:none;border-radius:var(--radius-sm);font-size:12px;font-weight:600;cursor:pointer;"
               onkeydown="if(event.key==='Enter'){event.preventDefault();_commitDrug();}">
-            <button onclick="_commitDrug()" style="padding:6px 12px;background:var(--primary);color:#fff;border:none;border-radius:var(--radius-sm);font-size:12px;font-weight:600;cursor:pointer;">
               ${lang==='en'?'Add':'Adicionar'}
             </button>
             <button onclick="document.getElementById('drugs-pending-row').style.display='none';" style="padding:6px 10px;background:transparent;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:12px;cursor:pointer;">✕</button>
@@ -7803,6 +7829,15 @@ const FAM_DISEASE_OPTS = lang === 'en'
             <label>${t.spo2}</label>
             <input type="number" inputmode="decimal" id="v-spo2" min="50" max="100" value="${state.vitals.spo2 || ''}" oninput="state.vitals.spo2=this.value; saveState(); updateVitalFeedback('spo2');">
             <span class="vital-indicator" id="feed-spo2"></span>
+            <select id="v-spo2-source" style="margin-top:4px;font-size:11px;" onchange="state.vitals.spo2Source=this.value; saveState(); renderSections();">
+              <option value="room_air" ${(!state.vitals.spo2Source || state.vitals.spo2Source==='room_air')?'selected':''}>${lang==='en'?'Room air':'Ar ambiente'}</option>
+              <option value="o2_support" ${state.vitals.spo2Source==='o2_support'?'selected':''}>${lang==='en'?'Oxygen support':'Suporte de O₂'}</option>
+            </select>
+            ${state.vitals.spo2Source==='o2_support' ? `
+              <input type="text" id="v-spo2-device" placeholder="${lang==='en'?'e.g. nasal cannula 2L/min':'ex: cateter nasal 2L/min'}"
+                value="${state.vitals.o2Device||''}" style="margin-top:4px;font-size:11px;"
+                oninput="state.vitals.o2Device=this.value; saveState();">
+            ` : ''}
           </div>
         </div>
         
@@ -7990,6 +8025,7 @@ const FAM_DISEASE_OPTS = lang === 'en'
   
   // ════════════════════════════════════════ TAB 11: LABORATORY & IMAGING
   else if (currentTabDef.id === 11) {
+    _syncFishboneFromLabs();
     const tLab = lang === 'en' ? 'Laboratory Exams' : 'Exames Laboratoriais';
     const tImg = lang === 'en' ? 'Imaging Exams' : 'Exames de Imagem';
     
@@ -8021,34 +8057,34 @@ const FAM_DISEASE_OPTS = lang === 'en'
               
               <div style="position: absolute; top: 12px; left: 10px; width: 65px; text-align: center;">
                 <div style="font-size:10px; color:var(--muted); line-height:1;">Na+</div>
-                <input type="text" class="fish-input" value="${state.fishbone.na || ''}" oninput="state.fishbone.na=this.value; saveState();">
+                <input type="text" class="fish-input" value="${state.fishbone.na || ''}" oninput="state.fishbone.na=this.value; _fishboneSync('na');">
               </div>
               <div style="position: absolute; top: 54px; left: 10px; width: 65px; text-align: center;">
-                <input type="text" class="fish-input" value="${state.fishbone.k || ''}" oninput="state.fishbone.k=this.value; saveState();">
+                <input type="text" class="fish-input" value="${state.fishbone.k || ''}" oninput="state.fishbone.k=this.value; _fishboneSync('k');">
                 <div style="font-size:10px; color:var(--muted); line-height:1;">K+</div>
               </div>
               
               <div style="position: absolute; top: 12px; left: 83px; width: 65px; text-align: center;">
                 <div style="font-size:10px; color:var(--muted); line-height:1;">Cl-</div>
-                <input type="text" class="fish-input" value="${state.fishbone.cl || ''}" oninput="state.fishbone.cl=this.value; saveState();">
+                <input type="text" class="fish-input" value="${state.fishbone.cl || ''}" oninput="state.fishbone.cl=this.value; _fishboneSync('cl');">
               </div>
               <div style="position: absolute; top: 54px; left: 83px; width: 65px; text-align: center;">
-                <input type="text" class="fish-input" value="${state.fishbone.co2 || ''}" oninput="state.fishbone.co2=this.value; saveState();">
+                <input type="text" class="fish-input" value="${state.fishbone.co2 || ''}" oninput="state.fishbone.co2=this.value; _fishboneSync('co2');">
                 <div style="font-size:10px; color:var(--muted); line-height:1;">HCO₃</div>
               </div>
 
               <div style="position: absolute; top: 12px; left: 153px; width: 65px; text-align: center;">
                 <div style="font-size:10px; color:var(--muted); line-height:1;">${lang === 'en' ? 'BUN' : 'Ureia'}</div>
-                <input type="text" class="fish-input" value="${state.fishbone.bun || ''}" oninput="state.fishbone.bun=this.value; saveState();">
+                <input type="text" class="fish-input" value="${state.fishbone.bun || ''}" oninput="state.fishbone.bun=this.value; _fishboneSync('bun');">
               </div>
               <div style="position: absolute; top: 54px; left: 153px; width: 65px; text-align: center;">
-                <input type="text" class="fish-input" value="${state.fishbone.cr || ''}" oninput="state.fishbone.cr=this.value; saveState();">
+                <input type="text" class="fish-input" value="${state.fishbone.cr || ''}" oninput="state.fishbone.cr=this.value; _fishboneSync('cr');">
                 <div style="font-size:10px; color:var(--muted); line-height:1;">Cr</div>
               </div>
 
               <div style="position: absolute; top: 32px; left: 228px; width: 55px; text-align: center;">
                 <div style="font-size:10px; color:var(--muted); line-height:1;">${lang === 'en' ? 'Glu' : 'Glic'}</div>
-                <input type="text" class="fish-input" value="${state.fishbone.glu || ''}" oninput="state.fishbone.glu=this.value; saveState();">
+                <input type="text" class="fish-input" value="${state.fishbone.glu || ''}" oninput="state.fishbone.glu=this.value; _fishboneSync('glu');">
               </div>
             </div>
           </div>
@@ -8071,22 +8107,22 @@ const FAM_DISEASE_OPTS = lang === 'en'
               
               <div style="position: absolute; top: 14px; left: 95px; width: 70px; text-align: center;">
                 <div style="font-size:10px; color:var(--muted); line-height:1;">${lang === 'en' ? 'Hgb' : 'Hb'}</div>
-                <input type="text" class="fish-input" value="${state.fishbone.hgb || ''}" oninput="state.fishbone.hgb=this.value; saveState();">
+                <input type="text" class="fish-input" value="${state.fishbone.hgb || ''}" oninput="state.fishbone.hgb=this.value; _fishboneSync('hgb');">
               </div>
               
               <div style="position: absolute; top: 54px; left: 95px; width: 70px; text-align: center;">
-                <input type="text" class="fish-input" value="${state.fishbone.hct || ''}" oninput="state.fishbone.hct=this.value; saveState();">
+                <input type="text" class="fish-input" value="${state.fishbone.hct || ''}" oninput="state.fishbone.hct=this.value; _fishboneSync('hct');">
                 <div style="font-size:10px; color:var(--muted); line-height:1;">${lang === 'en' ? 'Hct' : 'Ht'}</div>
               </div>
               
               <div style="position: absolute; top: 32px; left: 0px; width: 55px; text-align: center;">
                 <div style="font-size:10px; color:var(--muted); line-height:1;">${lang === 'en' ? 'WBC' : 'Leuco'}</div>
-                <input type="text" class="fish-input" value="${state.fishbone.wbc || ''}" oninput="state.fishbone.wbc=this.value; saveState();">
+                <input type="text" class="fish-input" value="${state.fishbone.wbc || ''}" oninput="state.fishbone.wbc=this.value; _fishboneSync('wbc');">
               </div>
               
               <div style="position: absolute; top: 32px; right: 0px; width: 55px; text-align: center;">
                 <div style="font-size:10px; color:var(--muted); line-height:1;">${lang === 'en' ? 'Plt' : 'Plaq'}</div>
-                <input type="text" class="fish-input" value="${state.fishbone.plt || ''}" oninput="state.fishbone.plt=this.value; saveState();">
+                <input type="text" class="fish-input" value="${state.fishbone.plt || ''}" oninput="state.fishbone.plt=this.value; _fishboneSync('plt');">
               </div>
             </div>
           </div>
@@ -8194,73 +8230,17 @@ const FAM_DISEASE_OPTS = lang === 'en'
         </datalist>
         
         <datalist id="lab-exams-list">
-          <option value="Hemograma">
-          <option value="Creatinina">
-          <option value="Ureia">
-          <option value="Sódio">
-          <option value="Potássio">
-          <option value="Glicemia">
-          <option value="HbA1c">
-          <option value="Perfil Lipídico">
-          <option value="Colesterol Total">
-          <option value="HDL">
-          <option value="LDL">
-          <option value="Triglicerídeos">
-          <option value="TSH">
-          <option value="T4 Livre">
-          <option value="PCR">
-          <option value="VHS">
-          <option value="Troponina">
-          <option value="D-Dímero">
-          <option value="AST/TGO">
-          <option value="ALT/TGP">
-          <option value="GGT">
-          <option value="Fosfatase Alcalina">
-          <option value="Bilirrubinas">
-          <option value="Albumina">
-          <option value="Proteínas Totais">
-          <option value="Coagulograma">
-          <option value="TAP/INR">
-          <option value="TTPA">
-          <option value="Fibrinogênio">
-          <option value="Ferritina">
-          <option value="Ferro Sérico">
-          <option value="Vitamina B12">
-          <option value="Ácido Fólico">
-          <option value="Vitamina D">
-          <option value="Magnésio">
-          <option value="Fósforo">
-          <option value="Cálcio">
-          <option value="Ácido Úrico">
-          <option value="Amilase">
-          <option value="Lipase">
-          <option value="CPK">
-          <option value="LDH">
-          <option value="BNP">
-          <option value="NT-proBNP">
-          <option value="EAS (Urina Tipo I)">
-          <option value="Urocultura">
-          <option value="Hemocultura">
-          <option value="Gasometria Arterial">
+          ${(lang==='en'
+            ? ['CBC','Creatinine','BUN','Sodium','Potassium','Glucose','HbA1c','Lipid Panel','Total Cholesterol','HDL','LDL','Triglycerides','TSH','Free T4','CRP','ESR','Troponin','D-dimer','AST','ALT','GGT','Alkaline Phosphatase','Bilirubin','Albumin','Total Protein','Coagulation Panel','PT/INR','aPTT','Fibrinogen','Ferritin','Serum Iron','Vitamin B12','Folic Acid','Vitamin D','Magnesium','Phosphorus','Calcium','Uric Acid','Amylase','Lipase','CPK','LDH','BNP','NT-proBNP','Urinalysis','Urine Culture','Blood Culture','Arterial Blood Gas']
+            : ['Hemograma','Creatinina','Ureia','Sódio','Potássio','Glicemia','HbA1c','Perfil Lipídico','Colesterol Total','HDL','LDL','Triglicerídeos','TSH','T4 Livre','PCR','VHS','Troponina','D-Dímero','AST/TGO','ALT/TGP','GGT','Fosfatase Alcalina','Bilirrubinas','Albumina','Proteínas Totais','Coagulograma','TAP/INR','TTPA','Fibrinogênio','Ferritina','Ferro Sérico','Vitamina B12','Ácido Fólico','Vitamina D','Magnésio','Fósforo','Cálcio','Ácido Úrico','Amilase','Lipase','CPK','LDH','BNP','NT-proBNP','EAS (Urina Tipo I)','Urocultura','Hemocultura','Gasometria Arterial']
+          ).map(o=>`<option value="${o}">`).join('\n          ')}
           ${getCustomLabs().map(n=>`<option value="${n}">`).join('\n          ')}
         </datalist>
         <datalist id="img-exams-list">
-          <option value="Raio-X de Tórax">
-          <option value="Raio-X de Abdome">
-          <option value="Raio-X de Extremidade">
-          <option value="TC de Crânio">
-          <option value="TC de Tórax">
-          <option value="TC de Abdome e Pelve">
-          <option value="RM de Crânio">
-          <option value="RM de Coluna">
-          <option value="USG Pélvica">
-          <option value="USG de Abdome Total">
-          <option value="USG de Vias Urinárias">
-          <option value="USG Doppler">
-          <option value="Ecocardiograma">
-          <option value="Eletrocardiograma (ECG)">
-          <option value="Endoscopia Digestiva Alta">
-          <option value="Colonoscopia">
+          ${(lang==='en'
+            ? ['Chest X-ray','Abdominal X-ray','Extremity X-ray','Head CT','Chest CT','Abdomen & Pelvis CT','Brain MRI','Spine MRI','Pelvic Ultrasound','Total Abdominal Ultrasound','Urinary Tract Ultrasound','Doppler Ultrasound','Echocardiogram','Electrocardiogram (ECG)','Upper GI Endoscopy','Colonoscopy']
+            : ['Raio-X de Tórax','Raio-X de Abdome','Raio-X de Extremidade','TC de Crânio','TC de Tórax','TC de Abdome e Pelve','RM de Crânio','RM de Coluna','USG Pélvica','USG de Abdome Total','USG de Vias Urinárias','USG Doppler','Ecocardiograma','Eletrocardiograma (ECG)','Endoscopia Digestiva Alta','Colonoscopia']
+          ).map(o=>`<option value="${o}">`).join('\n          ')}
         </datalist>
       </div>
       
@@ -9733,7 +9713,15 @@ function _commitDrug() {
   const name = (window._pendingDrug || '').trim();
   if (!name) return;
   const duration = (document.getElementById('drugs-pending-duration').value || '').trim();
-  const entry = duration ? name + ' (' + duration + ')' : name;
+  const freq = (document.getElementById('drugs-pending-freq').value || '').trim();
+  const route = (document.getElementById('drugs-pending-route').value || '').trim();
+  const isFormer = document.getElementById('drugs-pending-former').checked;
+  const quitYear = (document.getElementById('drugs-pending-quityear').value || '').trim();
+  const statusLabel = isFormer
+    ? (lang==='en' ? (quitYear ? 'former, quit ' + quitYear : 'former user') : (quitYear ? 'ex-usuário, parou em ' + quitYear : 'ex-usuário'))
+    : '';
+  const details = [duration, freq, route, statusLabel].filter(Boolean).join(', ');
+  const entry = details ? name + ' (' + details + ')' : name;
   const cur = (state.socialHx.drugs || '').split(', ').filter(Boolean);
   if (!cur.includes(entry)) cur.push(entry);
   state.socialHx.drugs = cur.join(', ');
@@ -9789,6 +9777,64 @@ function addProblem() {
   state.problems.push({ dx: '', plans: [''] });
   saveState();
   renderSections();
+}
+
+function _fishboneLabName(field) {
+  const m = lang==='en' ? {
+    na:'Sodium (Na+)', k:'Potassium (K+)', cl:'Chloride (Cl-)', co2:'Bicarbonate (HCO3-)',
+    bun:'BUN', cr:'Creatinine', glu:'Glucose',
+    hgb:'Hemoglobin (Hb)', hct:'Hematocrit (Hct)', wbc:'White Blood Cells (WBC)', plt:'Platelets (PLT)'
+  } : {
+    na:'Sódio (Na+)', k:'Potássio (K+)', cl:'Cloreto (Cl-)', co2:'Bicarbonato (HCO3-)',
+    bun:'Ureia', cr:'Creatinina', glu:'Glicemia',
+    hgb:'Hemoglobina (Hb)', hct:'Hematócrito (Ht)', wbc:'Leucócitos (WBC)', plt:'Plaquetas (PLT)'
+  };
+  return m[field];
+}
+const _FISHBONE_BMP_FIELDS = ['na','k','cl','co2','bun','cr','glu'];
+function _fishboneDateField(field) { return _FISHBONE_BMP_FIELDS.includes(field) ? 'bmpDate' : 'cbcDate'; }
+
+function _fishboneSync(field) {
+  if (!state.customLabs) state.customLabs = [];
+  const labName = _fishboneLabName(field);
+  if (!labName) { saveState(); return; }
+  const dateField = _fishboneDateField(field);
+  if (!state.fishbone[dateField]) state.fishbone[dateField] = _getDefaultExamDate();
+  const date = state.fishbone[dateField];
+  const val = state.fishbone[field];
+  let row = state.customLabs.find(r => r.name === labName);
+  if (!row) {
+    row = { name: labName, date: date, result: '', unit: LAB_UNITS[labName] || '', abnormal: false };
+    state.customLabs.push(row);
+  }
+  row.result = val;
+  row.date = date;
+  saveState();
+}
+
+function _parseExamDate(d) {
+  if (!d) return 0;
+  const parts = d.split('/');
+  if (parts.length !== 3) return 0;
+  const isEn = lang === 'en';
+  const mm = isEn ? parts[0] : parts[1];
+  const dd = isEn ? parts[1] : parts[0];
+  const yy = parts[2];
+  const t = new Date(`${yy}-${mm}-${dd}`).getTime();
+  return isNaN(t) ? 0 : t;
+}
+
+function _syncFishboneFromLabs() {
+  if (!state.customLabs || !state.customLabs.length) return;
+  ['na','k','cl','co2','bun','cr','glu','hgb','hct','wbc','plt'].forEach(field => {
+    const labName = _fishboneLabName(field);
+    const matches = state.customLabs.filter(r => r.name === labName && r.result);
+    if (!matches.length) return;
+    matches.sort((a,b) => _parseExamDate(b.date) - _parseExamDate(a.date));
+    const latest = matches[0];
+    state.fishbone[field] = latest.result;
+    state.fishbone[_fishboneDateField(field)] = latest.date;
+  });
 }
 
 function _getDefaultExamDate() {
@@ -9882,7 +9928,23 @@ const LAB_UNITS = {
   'Anti-HCV': '',
   'Anti-HIV 1/2 (Ag/Ac)': '',
   'VDRL': '',
-  'Anti-HAV IgM': ''
+  'Anti-HAV IgM': '',
+  'Total Cholesterol': 'mg/dL', 'Triglycerides': 'mg/dL',
+  'AST': 'U/L', 'ALT': 'U/L', 'Alkaline Phosphatase': 'U/L',
+  'Total Protein & Fractions': 'g/dL', 'Total & Fractionated Bilirubin': 'mg/dL',
+  'Uric Acid': 'mg/dL', 'Vitamin B12': 'pg/mL', 'Vitamin D': 'ng/mL',
+  'Urinalysis': '', 'Urine Culture': '',
+  'Sodium (Na+)': 'mEq/L', 'Potassium (K+)': 'mEq/L', 'Chloride (Cl-)': 'mEq/L', 'Bicarbonate (HCO3-)': 'mEq/L',
+  'BUN': 'mg/dL', 'Creatinine': 'mg/dL', 'Glucose': 'mg/dL',
+  'Microalbuminuria': 'mg/g', '24h Proteinuria': 'mg/24h',
+  'PT/INR': '', 'aPTT': 's', 'Fibrinogen': 'mg/dL', 'Thrombin Time (TT)': 's',
+  'Total Anti-HBc': '', 'Anti-HIV 1/2 (Ag/Ab)': '',
+  'Coagulation Panel': '',
+  'Hemoglobin (Hb)': 'g/dL', 'Hematocrit (Hct)': '%',
+  'Mean Corpuscular Volume (MCV)': 'fL', 'Mean Corpuscular Hgb (MCH)': 'pg', 'Mean Corpuscular Hgb Conc. (MCHC)': 'g/dL',
+  'Red Cell Distribution Width (RDW)': '%', 'Platelets (PLT)': '10³/µL',
+  'White Blood Cells (WBC)': '/mm³', 'Neutrophils': '/mm³', 'Neutrophils %': '%',
+  'Lymphocytes': '/mm³', 'Lymphocytes %': '%', 'Monocytes': '/mm³', 'Eosinophils': '/mm³', 'Basophils': '/mm³'
 };
 
 const LAB_RANGES = {
@@ -9979,48 +10041,55 @@ function updateCustomLab(idx, field, value) {
 
 
 
+const LAB_KIT_EXAMS = {
+  pt: {
+    lipid: ['Colesterol Total', 'HDL', 'LDL', 'Triglicerídeos'],
+    liver_injury: ['AST/TGO', 'ALT/TGP'],
+    liver_canalicular: ['Fosfatase Alcalina', 'GGT'],
+    liver_function: ['Proteínas Totais e Frações', 'Bilirrubinas Totais e Frações', 'Coagulograma'],
+    urine: ['EAS (Urina Tipo I)', 'Urocultura'],
+    bmp: ['Sódio (Na+)', 'Potássio (K+)', 'Cloreto (Cl-)', 'Bicarbonato (HCO3-)', 'Ureia', 'Creatinina', 'Glicemia'],
+    renal: ['Ureia', 'Creatinina', 'Ácido Úrico', 'Microalbuminúria', 'Proteinúria 24h'],
+    coagulograma: ['TAP/INR', 'TTPA', 'Fibrinogênio', 'Tempo de Trombina (TT)'],
+    sorologias: ['HBsAg', 'Anti-HBs', 'Anti-HBc total', 'Anti-HCV', 'Anti-HIV 1/2 (Ag/Ac)', 'VDRL', 'Anti-HAV IgM'],
+    hemograma: ['Hemoglobina (Hb)', 'Hematócrito (Ht)', 'Vol. Corpuscular Médio (VCM)', 'Hgb Corpuscular Média (HCM)', 'Conc. Hgb Corpuscular (CHCM)', 'Amplitude Eritrocitária (RDW)', 'Plaquetas (PLT)'],
+    leucograma: ['Leucócitos (WBC)', 'Neutrófilos (Neut)', 'Neutrófilos %', 'Linfócitos (Linf)', 'Linfócitos %', 'Monócitos (Mono)', 'Eosinófilos (Eo)', 'Basófilos (Baso)'],
+  },
+  en: {
+    lipid: ['Total Cholesterol', 'HDL', 'LDL', 'Triglycerides'],
+    liver_injury: ['AST', 'ALT'],
+    liver_canalicular: ['Alkaline Phosphatase', 'GGT'],
+    liver_function: ['Total Protein & Fractions', 'Total & Fractionated Bilirubin', 'Coagulation Panel'],
+    urine: ['Urinalysis', 'Urine Culture'],
+    bmp: ['Sodium (Na+)', 'Potassium (K+)', 'Chloride (Cl-)', 'Bicarbonate (HCO3-)', 'BUN', 'Creatinine', 'Glucose'],
+    renal: ['BUN', 'Creatinine', 'Uric Acid', 'Microalbuminuria', '24h Proteinuria'],
+    coagulograma: ['PT/INR', 'aPTT', 'Fibrinogen', 'Thrombin Time (TT)'],
+    sorologias: ['HBsAg', 'Anti-HBs', 'Total Anti-HBc', 'Anti-HCV', 'Anti-HIV 1/2 (Ag/Ab)', 'VDRL', 'Anti-HAV IgM'],
+    hemograma: ['Hemoglobin (Hb)', 'Hematocrit (Hct)', 'Mean Corpuscular Volume (MCV)', 'Mean Corpuscular Hgb (MCH)', 'Mean Corpuscular Hgb Conc. (MCHC)', 'Red Cell Distribution Width (RDW)', 'Platelets (PLT)'],
+    leucograma: ['White Blood Cells (WBC)', 'Neutrophils', 'Neutrophils %', 'Lymphocytes', 'Lymphocytes %', 'Monocytes', 'Eosinophils', 'Basophils'],
+  }
+};
+
 function addLabKit(kitType) {
   if (!state.customLabs) state.customLabs = [];
   let nextDate = state.fishbone.bmpDate || '';
   if (state.customLabs.length > 0) {
     nextDate = state.customLabs[state.customLabs.length - 1].date || nextDate;
   }
-  
-  let exams = [];
-  if (kitType === 'lipid') {
-    exams = ['Colesterol Total', 'HDL', 'LDL', 'Triglicerídeos'];
-  } else if (kitType === 'liver_injury') {
-    exams = ['AST/TGO', 'ALT/TGP'];
-  } else if (kitType === 'liver_canalicular') {
-    exams = ['Fosfatase Alcalina', 'GGT'];
-  } else if (kitType === 'liver_function') {
-    exams = ['Proteínas Totais e Frações', 'Bilirrubinas Totais e Frações', 'Coagulograma'];
-  } else if (kitType === 'urine') {
-    exams = ['EAS (Urina Tipo I)', 'Urocultura'];
-  } else if (kitType === 'bmp') {
-    exams = ['Sódio (Na+)', 'Potássio (K+)', 'Cloreto (Cl-)', 'Bicarbonato (HCO3-)', 'Ureia', 'Creatinina', 'Glicemia'];
-  } else if (kitType === 'renal') {
-    exams = ['Ureia', 'Creatinina', 'Ácido Úrico', 'Microalbuminúria', 'Proteinúria 24h'];
-  } else if (kitType === 'coagulograma') {
-    exams = ['TAP/INR', 'TTPA', 'Fibrinogênio', 'Tempo de Trombina (TT)'];
-  } else if (kitType === 'sorologias') {
-    exams = ['HBsAg', 'Anti-HBs', 'Anti-HBc total', 'Anti-HCV', 'Anti-HIV 1/2 (Ag/Ac)', 'VDRL', 'Anti-HAV IgM'];
-  } else if (kitType === 'hemograma') {
-    exams = ['Hemoglobina (Hb)', 'Hematócrito (Ht)', 'Vol. Corpuscular Médio (VCM)', 'Hgb Corpuscular Média (HCM)', 'Conc. Hgb Corpuscular (CHCM)', 'Amplitude Eritrocitária (RDW)', 'Plaquetas (PLT)'];
-  } else if (kitType === 'leucograma') {
-    exams = ['Leucócitos (WBC)', 'Neutrófilos (Neut)', 'Neutrófilos %', 'Linfócitos (Linf)', 'Linfócitos %', 'Monócitos (Mono)', 'Eosinófilos (Eo)', 'Basófilos (Baso)'];
-  }
+  if (!nextDate) nextDate = _getDefaultExamDate();
+
+  const exams = (LAB_KIT_EXAMS[lang] && LAB_KIT_EXAMS[lang][kitType]) || [];
 
   exams.forEach(ex => {
-    state.customLabs.push({ 
-      name: ex, 
-      date: nextDate, 
-      result: '', 
+    state.customLabs.push({
+      name: ex,
+      date: nextDate,
+      result: '',
       unit: LAB_UNITS[ex] || '',
-      abnormal: false 
+      abnormal: false
     });
   });
-  
+
   saveState();
   renderSections();
 }
@@ -10762,6 +10831,14 @@ function saveVisit() {
   visits.push(entry);
   saveVisits(visits);
   return visitId;
+}
+
+function _spo2Suffix(v) {
+  v = v || state.vitals;
+  if (v.spo2Source === 'o2_support') {
+    return v.o2Device ? ` (${v.o2Device})` : (lang==='en' ? ' (on O2 support)' : ' (em suporte de O₂)');
+  }
+  return lang==='en' ? ' on room air' : ' em ar ambiente';
 }
 
 function getVisitsForPatient() {
