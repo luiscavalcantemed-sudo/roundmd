@@ -8423,19 +8423,6 @@ const FAM_DISEASE_OPTS = lang === 'en'
         `).join('')}
       </div>
       <button class="btn-add" onclick="addPendencia(); return false;">${lang==='en'?'+ Add pending item':'+ Adicionar pendência'}</button>
-
-      <!-- ── ONE-LINER ─────────────────────────────────────────────────── -->
-      <div style="margin-top:28px; border-top:2px solid var(--primary); padding-top:18px;">
-        <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px; flex-wrap:wrap;">
-          <div style="font-size:14px; font-weight:700; color:var(--primary);">One-liner</div>
-          <div style="font-size:12px; color:var(--text-muted); flex:1;">${lang==='en'?'Short summary that appears at the top of all generated notes.':'Resumo breve que aparece no topo de todas as notas geradas.'}</div>
-        </div>
-        <textarea id="pt-oneliner" rows="2"
-          placeholder="${lang==='en'?'Type a short case summary…':'Digite um resumo breve do caso…'}"
-          style="resize:vertical; font-size:13px; width:100%; box-sizing:border-box;"
-          oninput="state.oneLiner=this.value; saveState();">${state.oneLiner||''}</textarea>
-      </div>
-
     `;
   }
 
@@ -8565,7 +8552,20 @@ const FAM_DISEASE_OPTS = lang === 'en'
   // ════════════════════════════════════════ TAB 13: CLINICAL NOTE OUTPUT COMPILER
   else if (currentTabDef.id === 13) {
     html += `<h2 class="section-title">${currentTabDef.icon} ${t.genTitle}</h2>`;
-    
+
+    html += `
+      <div class="card">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px; flex-wrap:wrap;">
+          <div style="font-size:14px; font-weight:700; color:var(--primary);">One-liner</div>
+          <div style="font-size:12px; color:var(--text-muted); flex:1;">${lang==='en'?'Short summary that appears at the top of all generated notes.':'Resumo breve que aparece no topo de todas as notas geradas.'}</div>
+        </div>
+        <textarea id="pt-oneliner" rows="2"
+          placeholder="${lang==='en'?'Type a short case summary…':'Digite um resumo breve do caso…'}"
+          style="resize:vertical; font-size:13px; width:100%; box-sizing:border-box;"
+          oninput="state.oneLiner=this.value; saveState(); refreshNoteOutput();">${state.oneLiner||''}</textarea>
+      </div>
+    `;
+
     // Choose Note layout formats SBAR vs SOAP vs Brief vs Comprehensive
     html += `
       <div class="card">
