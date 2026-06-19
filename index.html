@@ -6478,8 +6478,8 @@ function renderSections() {
           ${getCustomList('hpi_modify').map(v => `<option value="${v}">${v}</option>`).join('')}
           <option value="__other__">${lang==='en'?'Other...':'Outro...'}</option>
         </select>
-        <input type="text" id="hpi_modify-other" style="display:none;margin-top:4px;margin-bottom:12px;"
-          placeholder="${lang==='en'?'New option — press Enter':'Nova opção — pressione Enter'}"
+        <input type="text" id="hpi_modify-other" style="margin-top:4px;margin-bottom:12px;"
+          placeholder="${lang==='en'?'Type a new option and press Enter...':'Digite uma nova opção e pressione Enter...'}"
           onkeydown="if(event.key==='Enter')_multiSelOtherSave('hpi_modify')"
           onblur="_multiSelOtherSave('hpi_modify')">
 
@@ -6515,8 +6515,8 @@ function renderSections() {
           ${getCustomList('hpi_assoc').map(v => `<option value="${v}">${v}</option>`).join('')}
           <option value="__other__">${lang==='en'?'Other...':'Outro...'}</option>
         </select>
-        <input type="text" id="hpi_assoc-other" style="display:none;margin-top:4px;margin-bottom:12px;"
-          placeholder="${lang==='en'?'New option — press Enter':'Nova opção — pressione Enter'}"
+        <input type="text" id="hpi_assoc-other" style="margin-top:4px;margin-bottom:12px;"
+          placeholder="${lang==='en'?'Type a new option and press Enter...':'Digite uma nova opção e pressione Enter...'}"
           onkeydown="if(event.key==='Enter')_multiSelOtherSave('hpi_assoc')"
           onblur="_multiSelOtherSave('hpi_assoc')">
         
@@ -10636,11 +10636,10 @@ function _multiSelChange(sel, key) {
   var v = sel.value;
   var otherEl = document.getElementById(key + '-other');
   if (v === '__other__') {
-    if (otherEl) { otherEl.style.display = 'block'; otherEl.focus(); }
+    if (otherEl) otherEl.focus();
     sel.value = '';
     return;
   }
-  if (otherEl) otherEl.style.display = 'none';
   if (v) { _multiSelAdd(key, v); sel.value = ''; }
 }
 function _multiSelOtherSave(key) {
@@ -10651,7 +10650,6 @@ function _multiSelOtherSave(key) {
   saveToCustomList(key, v);
   _multiSelAdd(key, v);
   otherEl.value = '';
-  otherEl.style.display = 'none';
   renderSections();
 }
 function _runFieldUpdate(key, v) {
