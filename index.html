@@ -1880,69 +1880,106 @@ const COMMON_MEDS = {
       { name: 'Omega-3 (DHA/EPA)', dose: '250 mg', route: 'Oral', freq: 'Once daily', notes: 'Neurodevelopment support' },
       { name: 'Fluoride drops', dose: '0.25 mg', route: 'Oral', freq: 'Once daily', notes: 'For areas with low water fluoridation; >6 mo' },
     ],
-    'Cardiovascular': [
+    'ACE Inhibitors & ARBs': [
       { name: 'Losartan', dose: '50mg', route: 'Oral', freq: 'Once daily', notes: 'Take in the morning; monitor renal function' },
-      { name: 'Amlodipine', dose: '5mg', route: 'Oral', freq: 'Once daily', notes: 'Monitor BP; ankle edema common' },
-      { name: 'Hydrochlorothiazide', dose: '12.5mg', route: 'Oral', freq: 'Once daily', notes: 'Take in the morning' },
       { name: 'Lisinopril', dose: '10mg', route: 'Oral', freq: 'Once daily', notes: 'Monitor for cough/angioedema' },
-      { name: 'Enalapril', dose: '5mg', route: 'Oral', freq: 'Twice daily', notes: 'Monitor K+ and renal function' },
-      { name: 'Atorvastatin', dose: '40mg', route: 'Oral', freq: 'Once daily', notes: 'Take at night; monitor LFTs' },
-      { name: 'Rosuvastatin', dose: '20mg', route: 'Oral', freq: 'Once daily', notes: 'Take at night; max 40mg/day' },
-      { name: 'Aspirin', dose: '81mg', route: 'Oral', freq: 'Once daily', notes: 'Take with food' },
+      { name: 'Enalapril', dose: '5mg', route: 'Oral', freq: 'Twice daily', notes: 'Monitor K+ and renal function' }
+    ],
+    'Calcium Channel Blockers': [
+      { name: 'Amlodipine', dose: '5mg', route: 'Oral', freq: 'Once daily', notes: 'Monitor BP; ankle edema common' },
+      { name: 'Diltiazem', dose: '60mg', route: 'Oral', freq: 'Three times daily', notes: 'Avoid in HF with reduced EF' },
+      { name: 'Verapamil', dose: '80mg', route: 'Oral', freq: 'Three times daily', notes: 'Avoid with beta-blockers' },
+      { name: 'Nifedipine (long-acting)', dose: '30mg', route: 'Oral', freq: 'Once daily', notes: 'Pregnancy hypertension; tocolysis' }
+    ],
+    'Beta-Blockers': [
       { name: 'Metoprolol Succinate', dose: '25mg', route: 'Oral', freq: 'Once daily', notes: 'Take with food; do not stop abruptly' },
       { name: 'Carvedilol', dose: '6.25mg', route: 'Oral', freq: 'Twice daily', notes: 'Take with meals; titrate gradually' },
-      { name: 'Furosemide', dose: '40mg', route: 'Oral', freq: 'Once daily', notes: 'Take in the morning; monitor K+' },
-      { name: 'Spironolactone', dose: '25mg', route: 'Oral', freq: 'Once daily', notes: 'Monitor K+; avoid NSAIDs' },
       { name: 'Bisoprolol', dose: '5mg', route: 'Oral', freq: 'Once daily', notes: 'Take with food; do not stop abruptly' },
-      { name: 'Diltiazem', dose: '60mg', route: 'Oral', freq: 'Three times daily', notes: 'Avoid in HF with reduced EF' },
-      { name: 'Verapamil', dose: '80mg', route: 'Oral', freq: 'Three times daily', notes: 'Avoid with beta-blockers' }
+      { name: 'Propranolol', dose: '40mg', route: 'Oral', freq: 'Twice daily', notes: 'Migraine prophylaxis; avoid in asthma' }
     ],
-    'Anticoagulation': [
+    'Alpha-Blockers': [
+      { name: 'Tamsulosin', dose: '0.4mg', route: 'Oral', freq: 'Once daily at night', notes: 'BPH; take 30 min after same meal each day' }
+    ],
+    'Diuretics': [
+      { name: 'Hydrochlorothiazide', dose: '12.5mg', route: 'Oral', freq: 'Once daily', notes: 'Take in the morning' },
+      { name: 'Furosemide', dose: '40mg', route: 'Oral', freq: 'Once daily', notes: 'Take in the morning; monitor K+' },
+      { name: 'Spironolactone', dose: '25mg', route: 'Oral', freq: 'Once daily', notes: 'Monitor K+; avoid NSAIDs' }
+    ],
+    'Statins': [
+      { name: 'Atorvastatin', dose: '40mg', route: 'Oral', freq: 'Once daily', notes: 'Take at night; monitor LFTs' },
+      { name: 'Rosuvastatin', dose: '20mg', route: 'Oral', freq: 'Once daily', notes: 'Take at night; max 40mg/day' }
+    ],
+    'Antiplatelets': [
+      { name: 'Aspirin', dose: '81mg', route: 'Oral', freq: 'Once daily', notes: 'Take with food' },
+      { name: 'Clopidogrel', dose: '75mg', route: 'Oral', freq: 'Once daily', notes: 'Take with food; antiplatelet' },
+      { name: 'Ticagrelor', dose: '90mg', route: 'Oral', freq: 'Twice daily', notes: 'Plus aspirin 81mg; avoid >100mg aspirin' }
+    ],
+    'Anticoagulants': [
       { name: 'Warfarin', dose: '5mg', route: 'Oral', freq: 'Once daily', notes: 'Adjust per INR; target 2.0-3.0' },
       { name: 'Rivaroxaban', dose: '20mg', route: 'Oral', freq: 'Once daily', notes: 'Take with evening meal; no monitoring needed' },
       { name: 'Apixaban', dose: '5mg', route: 'Oral', freq: 'Twice daily', notes: 'No monitoring; lower bleeding risk' },
       { name: 'Dabigatran', dose: '150mg', route: 'Oral', freq: 'Twice daily', notes: 'Avoid if CrCl <30; no monitoring' },
-      { name: 'Enoxaparin', dose: '1mg/kg', route: 'Subcutaneous', freq: 'Twice daily', notes: 'Weight-based; monitor anti-Xa if renal impairment' },
-      { name: 'Clopidogrel', dose: '75mg', route: 'Oral', freq: 'Once daily', notes: 'Take with food; antiplatelet' },
-      { name: 'Ticagrelor', dose: '90mg', route: 'Oral', freq: 'Twice daily', notes: 'Plus aspirin 81mg; avoid >100mg aspirin' }
+      { name: 'Enoxaparin', dose: '1mg/kg', route: 'Subcutaneous', freq: 'Twice daily', notes: 'Weight-based; monitor anti-Xa if renal impairment' }
     ],
-    'Endocrine': [
+    'Insulins': [
+      { name: 'Insulin Glargine', dose: '10 units', route: 'Subcutaneous', freq: 'Once daily', notes: 'At bedtime; titrate per fasting glucose' },
+      { name: 'Insulin Lispro', dose: '4 units', route: 'Subcutaneous', freq: 'With meals', notes: 'Administer 15 min before meals' }
+    ],
+    'Oral Antidiabetics & GLP-1 Agonists': [
       { name: 'Metformin', dose: '500mg', route: 'Oral', freq: 'Twice daily', notes: 'Take with meals; max 2g/day' },
       { name: 'Empagliflozin', dose: '10mg', route: 'Oral', freq: 'Once daily', notes: 'Take in the morning; reduces CV events' },
       { name: 'Dapagliflozin', dose: '10mg', route: 'Oral', freq: 'Once daily', notes: 'Also used in heart failure and CKD' },
       { name: 'Semaglutide', dose: '0.25mg', route: 'Subcutaneous', freq: 'Weekly', notes: 'Titrate every 4 weeks; weight loss benefit' },
       { name: 'Liraglutide', dose: '1.2mg', route: 'Subcutaneous', freq: 'Once daily', notes: 'Inject at any time; CV benefit in T2DM' },
       { name: 'Glipizide', dose: '5mg', route: 'Oral', freq: 'Once daily', notes: 'Take 30 min before breakfast; hypoglycemia risk' },
-      { name: 'Sitagliptin', dose: '100mg', route: 'Oral', freq: 'Once daily', notes: 'Reduce dose if CKD' },
-      { name: 'Levothyroxine', dose: '50mcg', route: 'Oral', freq: 'Once daily', notes: 'Take fasting; 30 min before breakfast' },
-      { name: 'Insulin Glargine', dose: '10 units', route: 'Subcutaneous', freq: 'Once daily', notes: 'At bedtime; titrate per fasting glucose' },
-      { name: 'Insulin Lispro', dose: '4 units', route: 'Subcutaneous', freq: 'With meals', notes: 'Administer 15 min before meals' }
+      { name: 'Sitagliptin', dose: '100mg', route: 'Oral', freq: 'Once daily', notes: 'Reduce dose if CKD' }
     ],
-    'Analgesics & Anti-inflammatories': [
+    'Thyroid Agents': [
+      { name: 'Levothyroxine', dose: '50mcg', route: 'Oral', freq: 'Once daily', notes: 'Take fasting; 30 min before breakfast' }
+    ],
+    'Non-Opioid Analgesics & NSAIDs': [
       { name: 'Acetaminophen', dose: '500mg', route: 'Oral', freq: 'Every 6h as needed', notes: 'Max 3g/day (1.5g if hepatic disease)' },
       { name: 'Ibuprofen', dose: '400mg', route: 'Oral', freq: 'Every 6-8h as needed', notes: 'Take with food; avoid if renal disease or GI bleed' },
       { name: 'Naproxen', dose: '500mg', route: 'Oral', freq: 'Twice daily as needed', notes: 'Take with food; longer half-life than ibuprofen' },
-      { name: 'Celecoxib', dose: '200mg', route: 'Oral', freq: 'Once or twice daily', notes: 'COX-2 selective; lower GI risk' },
+      { name: 'Celecoxib', dose: '200mg', route: 'Oral', freq: 'Once or twice daily', notes: 'COX-2 selective; lower GI risk' }
+    ],
+    'Opioids': [
       { name: 'Tramadol', dose: '50mg', route: 'Oral', freq: 'Every 8h as needed', notes: 'For moderate/severe pain; seizure risk' },
-      { name: 'Morphine', dose: '5mg', route: 'Oral', freq: 'Every 4h as needed', notes: 'For severe pain; monitor respiratory status' },
+      { name: 'Morphine', dose: '5mg', route: 'Oral', freq: 'Every 4h as needed', notes: 'For severe pain; monitor respiratory status' }
+    ],
+    'Anticonvulsants & Neuropathic Pain Agents': [
       { name: 'Gabapentin', dose: '300mg', route: 'Oral', freq: 'Three times daily', notes: 'Neuropathic pain; titrate slowly; sedation' },
       { name: 'Pregabalin', dose: '75mg', route: 'Oral', freq: 'Twice daily', notes: 'Neuropathic pain; fibromyalgia; scheduled drug' },
-      { name: 'Amitriptyline', dose: '25mg', route: 'Oral', freq: 'Once daily at night', notes: 'Low-dose for neuropathic pain; sedation' },
+      { name: 'Carbamazepine', dose: '200mg', route: 'Oral', freq: 'Twice daily', notes: 'Epilepsy; monitor LFTs and CBC; many interactions' },
+      { name: 'Levetiracetam', dose: '500mg', route: 'Oral', freq: 'Twice daily', notes: 'Epilepsy; minimal interactions; reduce if CKD' },
+      { name: 'Valproic Acid', dose: '250mg', route: 'Oral', freq: 'Twice daily', notes: 'Epilepsy/bipolar; monitor LFTs and levels' },
+      { name: 'Phenytoin', dose: '100mg', route: 'Oral', freq: 'Three times daily', notes: 'Monitor levels; many drug interactions' },
+      { name: 'Topiramate', dose: '25mg', route: 'Oral', freq: 'Twice daily', notes: 'Migraine prophylaxis; weight loss effect' }
+    ],
+    'Systemic Corticosteroids': [
       { name: 'Prednisone', dose: '40mg', route: 'Oral', freq: 'Once daily', notes: 'With food; taper if >7 days; monitor glucose' },
-      { name: 'Dexamethasone', dose: '4mg', route: 'Oral', freq: 'Twice daily', notes: 'Potent anti-inflammatory; monitor glucose' },
+      { name: 'Dexamethasone', dose: '4mg', route: 'Oral', freq: 'Twice daily', notes: 'Potent anti-inflammatory; monitor glucose' }
+    ],
+    'Gout Agents': [
       { name: 'Colchicine', dose: '0.5mg', route: 'Oral', freq: 'Twice daily', notes: 'Gout/pericarditis; reduce dose if CKD' },
       { name: 'Allopurinol', dose: '100mg', route: 'Oral', freq: 'Once daily', notes: 'Uric acid lowering; not during acute gout flare' }
     ],
-    'Respiratory': [
+    'Bronchodilators': [
       { name: 'Albuterol (Salbutamol)', dose: '90mcg (2 puffs)', route: 'Inhaled', freq: 'Every 4h as needed', notes: 'For SOB/wheezing; rescue inhaler' },
+      { name: 'Tiotropium', dose: '18mcg (1 cap)', route: 'Inhaled', freq: 'Once daily', notes: 'COPD; long-acting anticholinergic' }
+    ],
+    'Inhaled Corticosteroid Combinations': [
       { name: 'Fluticasone/Salmeterol', dose: '100/50mcg (1 puff)', route: 'Inhaled', freq: 'Twice daily', notes: 'Rinse mouth after use; long-term controller' },
-      { name: 'Budesonide/Formoterol', dose: '160/4.5mcg (2 puffs)', route: 'Inhaled', freq: 'Twice daily', notes: 'Rinse mouth after use' },
-      { name: 'Tiotropium', dose: '18mcg (1 cap)', route: 'Inhaled', freq: 'Once daily', notes: 'COPD; long-acting anticholinergic' },
-      { name: 'Montelukast', dose: '10mg', route: 'Oral', freq: 'Once daily at night', notes: 'Asthma/rhinitis; avoid in neuropsychiatric history' },
+      { name: 'Budesonide/Formoterol', dose: '160/4.5mcg (2 puffs)', route: 'Inhaled', freq: 'Twice daily', notes: 'Rinse mouth after use' }
+    ],
+    'Leukotriene Receptor Antagonists': [
+      { name: 'Montelukast', dose: '10mg', route: 'Oral', freq: 'Once daily at night', notes: 'Asthma/rhinitis; avoid in neuropsychiatric history' }
+    ],
+    'Mucolytics & Antitussives': [
       { name: 'N-acetylcysteine', dose: '600mg', route: 'Oral', freq: 'Twice daily', notes: 'Mucolytic; COPD/bronchiectasis' },
       { name: 'Codeine/Guaifenesin', dose: '10/100mg', route: 'Oral', freq: 'Every 6h as needed', notes: 'Controlled cough; monitor for sedation' }
     ],
-    'Antimicrobials': [
+    'Antibiotics': [
       { name: 'Amoxicillin', dose: '500mg', route: 'Oral', freq: 'Three times daily', notes: 'Complete full 7-10 day course' },
       { name: 'Amoxicillin/Clavulanate', dose: '875/125mg', route: 'Oral', freq: 'Twice daily', notes: 'Take with meals to reduce GI effects' },
       { name: 'Azithromycin', dose: '500mg Day 1, then 250mg', route: 'Oral', freq: 'Once daily x 5 days', notes: 'Take 1h before or 2h after meals' },
@@ -1951,79 +1988,122 @@ const COMMON_MEDS = {
       { name: 'Nitrofurantoin', dose: '100mg', route: 'Oral', freq: 'Twice daily x 5 days', notes: 'UTI; take with food; avoid if CrCl <45' },
       { name: 'Trimethoprim/Sulfamethoxazole', dose: '160/800mg', route: 'Oral', freq: 'Twice daily', notes: 'UTI/MRSA; monitor K+ and renal function' },
       { name: 'Doxycycline', dose: '100mg', route: 'Oral', freq: 'Twice daily', notes: 'Take with food; avoid dairy; sun protection' },
-      { name: 'Metronidazole', dose: '500mg', route: 'Oral', freq: 'Three times daily', notes: 'Avoid alcohol; GI anaerobes/H.pylori' },
+      { name: 'Metronidazole', dose: '500mg', route: 'Oral', freq: 'Three times daily', notes: 'Avoid alcohol; GI anaerobes/H.pylori' }
+    ],
+    'Antifungals': [
       { name: 'Fluconazole', dose: '150mg', route: 'Oral', freq: 'Single dose', notes: 'Vaginal candidiasis; higher doses for systemic' },
+      { name: 'Clotrimazole cream 1%', dose: 'Thin layer', route: 'Topical', freq: 'Twice daily', notes: 'Fungal skin infections; 2-4 week course' }
+    ],
+    'Antivirals': [
       { name: 'Oseltamivir', dose: '75mg', route: 'Oral', freq: 'Twice daily x 5 days', notes: 'Influenza; within 48h of symptom onset' }
     ],
-    'GI & Hepatic Agents': [
+    'Antiparasitics': [
+      { name: 'Ivermectin', dose: '200mcg/kg', route: 'Oral', freq: 'Single dose; repeat in 2 weeks', notes: 'Scabies/pediculosis; take on empty stomach' }
+    ],
+    'Proton Pump Inhibitors': [
       { name: 'Omeprazole', dose: '20mg', route: 'Oral', freq: 'Once daily', notes: 'Fasting; 30 min before breakfast' },
       { name: 'Pantoprazole', dose: '40mg', route: 'Oral', freq: 'Once daily', notes: 'Fasting; 30 min before breakfast' },
-      { name: 'Esomeprazole', dose: '40mg', route: 'Oral', freq: 'Once daily', notes: 'Fasting; 30 min before breakfast' },
+      { name: 'Esomeprazole', dose: '40mg', route: 'Oral', freq: 'Once daily', notes: 'Fasting; 30 min before breakfast' }
+    ],
+    'Antiemetics & Prokinetics': [
       { name: 'Ondansetron', dose: '4mg', route: 'Oral', freq: 'Every 8h as needed', notes: 'For nausea/vomiting; avoid QT-prolonging drugs' },
       { name: 'Metoclopramide', dose: '10mg', route: 'Oral', freq: 'Three times daily before meals', notes: 'Prokinetic; avoid long-term due to tardive dyskinesia' },
-      { name: 'Domperidone', dose: '10mg', route: 'Oral', freq: 'Three times daily before meals', notes: 'Gastroparesis/nausea; monitor QTc' },
-      { name: 'Hyoscine Butylbromide', dose: '10mg', route: 'Oral', freq: 'Three times daily', notes: 'Antispasmodic; for GI cramps' },
+      { name: 'Domperidone', dose: '10mg', route: 'Oral', freq: 'Three times daily before meals', notes: 'Gastroparesis/nausea; monitor QTc' }
+    ],
+    'Antispasmodics': [
+      { name: 'Hyoscine Butylbromide', dose: '10mg', route: 'Oral', freq: 'Three times daily', notes: 'Antispasmodic; for GI cramps' }
+    ],
+    'Laxatives': [
       { name: 'Lactulose', dose: '20mL', route: 'Oral', freq: 'Twice daily', notes: 'Constipation; adjust dose per stool frequency' },
       { name: 'Polyethylene Glycol', dose: '17g', route: 'Oral', freq: 'Once daily', notes: 'Dissolve in water; for constipation' }
     ],
-    'Neurologic Agents': [
-      { name: 'Carbamazepine', dose: '200mg', route: 'Oral', freq: 'Twice daily', notes: 'Epilepsy; monitor LFTs and CBC; many interactions' },
-      { name: 'Levetiracetam', dose: '500mg', route: 'Oral', freq: 'Twice daily', notes: 'Epilepsy; minimal interactions; reduce if CKD' },
-      { name: 'Valproic Acid', dose: '250mg', route: 'Oral', freq: 'Twice daily', notes: 'Epilepsy/bipolar; monitor LFTs and levels' },
-      { name: 'Phenytoin', dose: '100mg', route: 'Oral', freq: 'Three times daily', notes: 'Monitor levels; many drug interactions' },
-      { name: 'Sumatriptan', dose: '50mg', route: 'Oral', freq: 'Once at onset; may repeat x1', notes: 'Migraine; max 200mg/day; avoid in vascular disease' },
-      { name: 'Topiramate', dose: '25mg', route: 'Oral', freq: 'Twice daily', notes: 'Migraine prophylaxis; weight loss effect' },
-      { name: 'Propranolol', dose: '40mg', route: 'Oral', freq: 'Twice daily', notes: 'Migraine prophylaxis; avoid in asthma' },
+    'Triptans': [
+      { name: 'Sumatriptan', dose: '50mg', route: 'Oral', freq: 'Once at onset; may repeat x1', notes: 'Migraine; max 200mg/day; avoid in vascular disease' }
+    ],
+    'Cholinesterase Inhibitors': [
       { name: 'Donepezil', dose: '5mg', route: 'Oral', freq: 'Once daily at night', notes: 'Alzheimer disease; GI side effects at initiation' }
     ],
-    'Psychotropic Agents': [
+    'SSRIs': [
       { name: 'Sertraline', dose: '50mg', route: 'Oral', freq: 'Once daily', notes: 'Take in the morning; taper when stopping' },
       { name: 'Escitalopram', dose: '10mg', route: 'Oral', freq: 'Once daily', notes: 'Take in the morning; max 20mg/day' },
-      { name: 'Fluoxetine', dose: '20mg', route: 'Oral', freq: 'Once daily', notes: 'Long half-life; fewer withdrawal effects' },
+      { name: 'Fluoxetine', dose: '20mg', route: 'Oral', freq: 'Once daily', notes: 'Long half-life; fewer withdrawal effects' }
+    ],
+    'SNRIs': [
       { name: 'Venlafaxine', dose: '75mg', route: 'Oral', freq: 'Once daily', notes: 'SNRI; taper slowly; monitor BP' },
-      { name: 'Duloxetine', dose: '60mg', route: 'Oral', freq: 'Once daily', notes: 'SNRI; also for neuropathic pain; monitor BP' },
-      { name: 'Mirtazapine', dose: '15mg', route: 'Oral', freq: 'Once daily at night', notes: 'Sedating; weight gain; good for insomnia/anorexia' },
-      { name: 'Quetiapine', dose: '50mg', route: 'Oral', freq: 'Once daily at night', notes: 'Antipsychotic; sedation; metabolic monitoring' },
+      { name: 'Duloxetine', dose: '60mg', route: 'Oral', freq: 'Once daily', notes: 'SNRI; also for neuropathic pain; monitor BP' }
+    ],
+    'Tricyclic Antidepressants': [
+      { name: 'Amitriptyline', dose: '25mg', route: 'Oral', freq: 'Once daily at night', notes: 'Low-dose for neuropathic pain; sedation' }
+    ],
+    'Atypical Antidepressants': [
+      { name: 'Mirtazapine', dose: '15mg', route: 'Oral', freq: 'Once daily at night', notes: 'Sedating; weight gain; good for insomnia/anorexia' }
+    ],
+    'Antipsychotics': [
+      { name: 'Quetiapine', dose: '50mg', route: 'Oral', freq: 'Once daily at night', notes: 'Antipsychotic; sedation; metabolic monitoring' }
+    ],
+    'Benzodiazepines': [
       { name: 'Alprazolam', dose: '0.25mg', route: 'Oral', freq: 'Twice daily as needed', notes: 'Short-term anxiety; dependence risk; scheduled' },
-      { name: 'Clonazepam', dose: '0.5mg', route: 'Oral', freq: 'Twice daily as needed', notes: 'Anxiety/panic; dependence risk; scheduled' },
+      { name: 'Clonazepam', dose: '0.5mg', route: 'Oral', freq: 'Twice daily as needed', notes: 'Anxiety/panic; dependence risk; scheduled' }
+    ],
+    'Mood Stabilizers': [
       { name: 'Lithium Carbonate', dose: '300mg', route: 'Oral', freq: 'Three times daily', notes: 'Bipolar disorder; monitor levels, renal, thyroid' }
     ],
-    'Obstetric & Gynecologic Agents': [
+    'Iron & Hematinic Supplements': [
       { name: 'Ferrous Sulfate', dose: '325mg', route: 'Oral', freq: 'Once daily', notes: 'Iron deficiency/pregnancy; take with vitamin C' },
-      { name: 'Folic Acid', dose: '5mg', route: 'Oral', freq: 'Once daily', notes: 'Preconception/pregnancy; neural tube prevention' },
-      { name: 'Progesterone (vaginal)', dose: '200mg', route: 'Vaginal', freq: 'Once daily at night', notes: 'Threatened abortion / IVF support' },
-      { name: 'Methyldopa', dose: '250mg', route: 'Oral', freq: 'Three times daily', notes: 'Pregnancy hypertension; first-line in pregnancy' },
-      { name: 'Nifedipine (long-acting)', dose: '30mg', route: 'Oral', freq: 'Once daily', notes: 'Pregnancy hypertension; tocolysis' },
-      { name: 'Magnesium Sulfate', dose: '4g loading then 1-2g/h', route: 'Intravenous', freq: 'Continuous infusion', notes: 'Eclampsia/preeclampsia/neuroprotection; monitor DTRs' },
-      { name: 'Oxytocin', dose: '10 units in 500mL NaCl', route: 'Intravenous', freq: 'Per protocol', notes: 'Labor induction/augmentation; monitor uterine activity' },
-      { name: 'Betamethasone', dose: '12mg', route: 'Intramuscular', freq: 'Every 24h x 2 doses', notes: 'Fetal lung maturity 24-34 weeks GA' },
+      { name: 'Folic Acid', dose: '5mg', route: 'Oral', freq: 'Once daily', notes: 'Preconception/pregnancy; neural tube prevention' }
+    ],
+    'Progestins & Hormonal Agents': [
+      { name: 'Progesterone (vaginal)', dose: '200mg', route: 'Vaginal', freq: 'Once daily at night', notes: 'Threatened abortion / IVF support' }
+    ],
+    'Centrally-Acting Antihypertensives': [
+      { name: 'Methyldopa', dose: '250mg', route: 'Oral', freq: 'Three times daily', notes: 'Pregnancy hypertension; first-line in pregnancy' }
+    ],
+    'Tocolytics': [
+      { name: 'Magnesium Sulfate', dose: '4g loading then 1-2g/h', route: 'Intravenous', freq: 'Continuous infusion', notes: 'Eclampsia/preeclampsia/neuroprotection; monitor DTRs' }
+    ],
+    'Uterotonics': [
+      { name: 'Oxytocin', dose: '10 units in 500mL NaCl', route: 'Intravenous', freq: 'Per protocol', notes: 'Labor induction/augmentation; monitor uterine activity' }
+    ],
+    'Antenatal Corticosteroids': [
+      { name: 'Betamethasone', dose: '12mg', route: 'Intramuscular', freq: 'Every 24h x 2 doses', notes: 'Fetal lung maturity 24-34 weeks GA' }
+    ],
+    'Hormonal Contraceptives': [
       { name: 'Combined OCP', dose: '30mcg EE / 150mcg LNG', route: 'Oral', freq: 'Once daily', notes: 'Take same time daily; 21+7 day schedule' },
       { name: 'Levonorgestrel IUD', dose: '52mg system', route: 'Intrauterine', freq: 'Every 5 years', notes: 'Long-acting reversible contraception' }
     ],
-    'Urologic Agents': [
-      { name: 'Tamsulosin', dose: '0.4mg', route: 'Oral', freq: 'Once daily at night', notes: 'BPH; take 30 min after same meal each day' },
-      { name: 'Finasteride', dose: '5mg', route: 'Oral', freq: 'Once daily', notes: 'BPH/androgenic alopecia; teratogenic in women' },
+    '5-Alpha Reductase Inhibitors': [
+      { name: 'Finasteride', dose: '5mg', route: 'Oral', freq: 'Once daily', notes: 'BPH/androgenic alopecia; teratogenic in women' }
+    ],
+    'Bladder Anticholinergics': [
       { name: 'Oxybutynin', dose: '5mg', route: 'Oral', freq: 'Twice daily', notes: 'Overactive bladder; anticholinergic effects' },
-      { name: 'Solifenacin', dose: '5mg', route: 'Oral', freq: 'Once daily', notes: 'Overactive bladder; less CNS side effects' },
+      { name: 'Solifenacin', dose: '5mg', route: 'Oral', freq: 'Once daily', notes: 'Overactive bladder; less CNS side effects' }
+    ],
+    'PDE5 Inhibitors': [
       { name: 'Tadalafil', dose: '5mg', route: 'Oral', freq: 'Once daily', notes: 'ED/BPH; avoid with nitrates' },
       { name: 'Sildenafil', dose: '50mg', route: 'Oral', freq: 'As needed, 1h before activity', notes: 'Erectile dysfunction; avoid with nitrates' }
     ],
-    'Dermatologic & Antihistamine Agents': [
+    'Antihistamines': [
       { name: 'Cetirizine', dose: '10mg', route: 'Oral', freq: 'Once daily', notes: 'Non-sedating antihistamine; allergic rhinitis/urticaria' },
       { name: 'Loratadine', dose: '10mg', route: 'Oral', freq: 'Once daily', notes: 'Non-sedating; use in elderly' },
       { name: 'Fexofenadine', dose: '180mg', route: 'Oral', freq: 'Once daily', notes: 'Non-sedating; avoid grapefruit juice' },
       { name: 'Diphenhydramine', dose: '25mg', route: 'Oral', freq: 'Every 6h as needed', notes: 'Sedating; first-generation; avoid in elderly' },
-      { name: 'Mometasone nasal spray', dose: '100mcg (2 sprays)', route: 'Nasal', freq: 'Once daily', notes: 'Allergic rhinitis; prime before first use' },
-      { name: 'Hydrocortisone cream 1%', dose: 'Thin layer', route: 'Topical', freq: 'Twice daily', notes: 'Mild dermatitis; avoid face and skin folds long-term' },
-      { name: 'Betamethasone cream 0.1%', dose: 'Thin layer', route: 'Topical', freq: 'Once or twice daily', notes: 'Potent steroid; limited duration to avoid atrophy' },
-      { name: 'Clotrimazole cream 1%', dose: 'Thin layer', route: 'Topical', freq: 'Twice daily', notes: 'Fungal skin infections; 2-4 week course' },
-      { name: 'Ivermectin', dose: '200mcg/kg', route: 'Oral', freq: 'Single dose; repeat in 2 weeks', notes: 'Scabies/pediculosis; take on empty stomach' }
+      { name: 'Mometasone nasal spray', dose: '100mcg (2 sprays)', route: 'Nasal', freq: 'Once daily', notes: 'Allergic rhinitis; prime before first use' }
     ],
-    'Ophthalmic & ENT Agents': [
+    'Topical Corticosteroids': [
+      { name: 'Hydrocortisone cream 1%', dose: 'Thin layer', route: 'Topical', freq: 'Twice daily', notes: 'Mild dermatitis; avoid face and skin folds long-term' },
+      { name: 'Betamethasone cream 0.1%', dose: 'Thin layer', route: 'Topical', freq: 'Once or twice daily', notes: 'Potent steroid; limited duration to avoid atrophy' }
+    ],
+    'Ophthalmic Antibiotics': [
       { name: 'Ciprofloxacin eye drops', dose: '1-2 drops', route: 'Ophthalmic', freq: 'Every 2h while awake x 2 days, then Every 4h', notes: 'Bacterial conjunctivitis/keratitis' },
-      { name: 'Tobramycin eye drops', dose: '1-2 drops', route: 'Ophthalmic', freq: 'Every 4h', notes: 'Bacterial eye infections; gram-negative coverage' },
-      { name: 'Prednisolone eye drops 1%', dose: '1-2 drops', route: 'Ophthalmic', freq: 'Every 2-4h', notes: 'Uveitis/inflammatory eye disease; DO NOT use if infectious' },
-      { name: 'Latanoprost', dose: '1 drop', route: 'Ophthalmic', freq: 'Once daily at night', notes: 'Glaucoma; iris color change possible' },
+      { name: 'Tobramycin eye drops', dose: '1-2 drops', route: 'Ophthalmic', freq: 'Every 4h', notes: 'Bacterial eye infections; gram-negative coverage' }
+    ],
+    'Ophthalmic Corticosteroids': [
+      { name: 'Prednisolone eye drops 1%', dose: '1-2 drops', route: 'Ophthalmic', freq: 'Every 2-4h', notes: 'Uveitis/inflammatory eye disease; DO NOT use if infectious' }
+    ],
+    'Glaucoma Agents': [
+      { name: 'Latanoprost', dose: '1 drop', route: 'Ophthalmic', freq: 'Once daily at night', notes: 'Glaucoma; iris color change possible' }
+    ],
+    'Otic Agents': [
       { name: 'Ciprofloxacin ear drops', dose: '3-4 drops', route: 'Otic', freq: 'Twice daily x 7 days', notes: 'Otitis externa; warm before instilling' },
       { name: 'Hydrocortisone/Acetic acid ear drops', dose: '4 drops', route: 'Otic', freq: 'Three times daily', notes: 'Otitis externa; not for perforated TM' }
     ]
@@ -2040,69 +2120,106 @@ const COMMON_MEDS = {
       { name: 'Ômega-3 (DHA/EPA)', dose: '250 mg', route: 'VO', freq: '1x ao dia', notes: 'Suporte ao neurodesenvolvimento' },
       { name: 'Flúor (gotas)', dose: '0,25 mg', route: 'VO', freq: '1x ao dia', notes: 'Áreas sem fluoretação; >6 meses' },
     ],
-    'Cardiovascular': [
+    'Inibidores da ECA e BRA': [
       { name: 'Losartana Potássica', dose: '50mg', route: 'VO', freq: '1x ao dia', notes: 'Tomar pela manhã; monitorar função renal' },
-      { name: 'Anlodipino', dose: '5mg', route: 'VO', freq: '1x ao dia', notes: 'Monitorar PA; edema maleolar comum' },
-      { name: 'Hidroclorotiazida', dose: '25mg', route: 'VO', freq: '1x ao dia', notes: 'Tomar pela manhã; diurético tiazídico' },
-      { name: 'Enalapril', dose: '5mg', route: 'VO', freq: '2x ao dia', notes: 'Monitorar potássio e função renal' },
       { name: 'Lisinopril', dose: '10mg', route: 'VO', freq: '1x ao dia', notes: 'Monitorar tosse/angioedema' },
-      { name: 'Atorvastatina', dose: '40mg', route: 'VO', freq: '1x ao dia à noite', notes: 'Tomar à noite; monitorar TGO/TGP' },
-      { name: 'Rosuvastatina', dose: '20mg', route: 'VO', freq: '1x ao dia à noite', notes: 'Tomar à noite; dose máxima 40mg/dia' },
-      { name: 'AAS', dose: '100mg', route: 'VO', freq: '1x ao dia', notes: 'Tomar com alimentos' },
+      { name: 'Enalapril', dose: '5mg', route: 'VO', freq: '2x ao dia', notes: 'Monitorar potássio e função renal' }
+    ],
+    'Bloqueadores dos Canais de Cálcio': [
+      { name: 'Anlodipino', dose: '5mg', route: 'VO', freq: '1x ao dia', notes: 'Monitorar PA; edema maleolar comum' },
+      { name: 'Diltiazem', dose: '60mg', route: 'VO', freq: '3x ao dia', notes: 'Evitar em IC com FE reduzida' },
+      { name: 'Verapamil', dose: '80mg', route: 'VO', freq: '3x ao dia', notes: 'Evitar com betabloqueadores' },
+      { name: 'Nifedipino (ação prolongada)', dose: '30mg', route: 'VO', freq: '1x ao dia', notes: 'HAS na gestação; também como tocolítico' }
+    ],
+    'Betabloqueadores': [
       { name: 'Metoprolol Succinato', dose: '25mg', route: 'VO', freq: '1x ao dia', notes: 'Tomar com alimentos; não suspender abruptamente' },
       { name: 'Carvedilol', dose: '6,25mg', route: 'VO', freq: '2x ao dia', notes: 'Tomar com as refeições; titular gradualmente' },
-      { name: 'Furosemida', dose: '40mg', route: 'VO', freq: '1x ao dia', notes: 'Tomar pela manhã; monitorar potássio' },
-      { name: 'Espironolactona', dose: '25mg', route: 'VO', freq: '1x ao dia', notes: 'Monitorar potássio; evitar AINEs' },
       { name: 'Bisoprolol', dose: '5mg', route: 'VO', freq: '1x ao dia', notes: 'Tomar com alimentos; não suspender abruptamente' },
-      { name: 'Diltiazem', dose: '60mg', route: 'VO', freq: '3x ao dia', notes: 'Evitar em IC com FE reduzida' },
-      { name: 'Verapamil', dose: '80mg', route: 'VO', freq: '3x ao dia', notes: 'Evitar com betabloqueadores' }
+      { name: 'Propranolol', dose: '40mg', route: 'VO', freq: '2x ao dia', notes: 'Profilaxia de enxaqueca; evitar em asmáticos' }
     ],
-    'Anticoagulação': [
+    'Alfabloqueadores': [
+      { name: 'Tansulosina', dose: '0,4mg', route: 'VO', freq: '1x ao dia à noite', notes: 'HBP; tomar 30 min após a mesma refeição diariamente' }
+    ],
+    'Diuréticos': [
+      { name: 'Hidroclorotiazida', dose: '25mg', route: 'VO', freq: '1x ao dia', notes: 'Tomar pela manhã; diurético tiazídico' },
+      { name: 'Furosemida', dose: '40mg', route: 'VO', freq: '1x ao dia', notes: 'Tomar pela manhã; monitorar potássio' },
+      { name: 'Espironolactona', dose: '25mg', route: 'VO', freq: '1x ao dia', notes: 'Monitorar potássio; evitar AINEs' }
+    ],
+    'Estatinas': [
+      { name: 'Atorvastatina', dose: '40mg', route: 'VO', freq: '1x ao dia à noite', notes: 'Tomar à noite; monitorar TGO/TGP' },
+      { name: 'Rosuvastatina', dose: '20mg', route: 'VO', freq: '1x ao dia à noite', notes: 'Tomar à noite; dose máxima 40mg/dia' }
+    ],
+    'Antiagregantes Plaquetários': [
+      { name: 'AAS', dose: '100mg', route: 'VO', freq: '1x ao dia', notes: 'Tomar com alimentos' },
+      { name: 'Clopidogrel', dose: '75mg', route: 'VO', freq: '1x ao dia', notes: 'Tomar com alimentos; antiagregante plaquetário' },
+      { name: 'Ticagrelor', dose: '90mg', route: 'VO', freq: '2x ao dia', notes: 'Associar AAS 100mg; evitar AAS >100mg' }
+    ],
+    'Anticoagulantes': [
       { name: 'Varfarina', dose: '5mg', route: 'VO', freq: '1x ao dia', notes: 'Ajustar conforme INR; alvo 2,0-3,0' },
       { name: 'Rivaroxabana', dose: '20mg', route: 'VO', freq: '1x ao dia', notes: 'Tomar com o jantar; sem monitoração' },
       { name: 'Apixabana', dose: '5mg', route: 'VO', freq: '2x ao dia', notes: 'Sem monitoração; menor risco de sangramento' },
       { name: 'Dabigatrana', dose: '150mg', route: 'VO', freq: '2x ao dia', notes: 'Evitar se ClCr <30; sem monitoração' },
-      { name: 'Enoxaparina', dose: '1mg/kg', route: 'SC', freq: '2x ao dia', notes: 'Dose baseada no peso; monitorar anti-Xa se DRC' },
-      { name: 'Clopidogrel', dose: '75mg', route: 'VO', freq: '1x ao dia', notes: 'Tomar com alimentos; antiagregante plaquetário' },
-      { name: 'Ticagrelor', dose: '90mg', route: 'VO', freq: '2x ao dia', notes: 'Associar AAS 100mg; evitar AAS >100mg' }
+      { name: 'Enoxaparina', dose: '1mg/kg', route: 'SC', freq: '2x ao dia', notes: 'Dose baseada no peso; monitorar anti-Xa se DRC' }
     ],
-    'Endocrinologia': [
+    'Insulinas': [
+      { name: 'Insulina Glargina', dose: '10 unidades', route: 'SC', freq: '1x ao dia ao deitar', notes: 'Titular conforme glicemia de jejum' },
+      { name: 'Insulina Lispro', dose: '4 unidades', route: 'SC', freq: 'Com as refeições', notes: 'Aplicar 15 min antes das refeições' }
+    ],
+    'Antidiabéticos Orais e Agonistas de GLP-1': [
       { name: 'Metformina', dose: '500mg', route: 'VO', freq: '2x ao dia', notes: 'Tomar com as refeições; máx. 2g/dia' },
       { name: 'Empagliflozina', dose: '10mg', route: 'VO', freq: '1x ao dia', notes: 'Tomar pela manhã; reduz eventos cardiovasculares' },
       { name: 'Dapagliflozina', dose: '10mg', route: 'VO', freq: '1x ao dia', notes: 'Também em IC e DRC' },
       { name: 'Semaglutida', dose: '0,25mg', route: 'SC', freq: 'Semanal', notes: 'Titular a cada 4 semanas; efeito na perda ponderal' },
       { name: 'Liraglutida', dose: '1,2mg', route: 'SC', freq: '1x ao dia', notes: 'Aplicar em qualquer horário; benefício CV no DM2' },
       { name: 'Gliclazida MR', dose: '30mg', route: 'VO', freq: '1x ao dia', notes: 'Tomar no café da manhã; risco de hipoglicemia' },
-      { name: 'Sitagliptina', dose: '100mg', route: 'VO', freq: '1x ao dia', notes: 'Reduzir dose se DRC' },
-      { name: 'Levotiroxina', dose: '50mcg', route: 'VO', freq: '1x ao dia', notes: 'Em jejum; 30 min antes do café da manhã' },
-      { name: 'Insulina Glargina', dose: '10 unidades', route: 'SC', freq: '1x ao dia ao deitar', notes: 'Titular conforme glicemia de jejum' },
-      { name: 'Insulina Lispro', dose: '4 unidades', route: 'SC', freq: 'Com as refeições', notes: 'Aplicar 15 min antes das refeições' }
+      { name: 'Sitagliptina', dose: '100mg', route: 'VO', freq: '1x ao dia', notes: 'Reduzir dose se DRC' }
     ],
-    'Analgésicos e Anti-inflamatórios': [
+    'Agentes Tireoidianos': [
+      { name: 'Levotiroxina', dose: '50mcg', route: 'VO', freq: '1x ao dia', notes: 'Em jejum; 30 min antes do café da manhã' }
+    ],
+    'Analgésicos Não Opioides e AINEs': [
       { name: 'Dipirona Sódica', dose: '1g', route: 'VO', freq: 'De 6/6h se necessário', notes: 'Para dor ou febre; máx. 4g/dia' },
       { name: 'Paracetamol', dose: '750mg', route: 'VO', freq: 'De 6/6h se necessário', notes: 'Máximo 3g/dia; evitar álcool' },
       { name: 'Ibuprofeno', dose: '600mg', route: 'VO', freq: 'De 8/8h se necessário', notes: 'Tomar após refeições; evitar em nefropatas/GI' },
       { name: 'Naproxeno', dose: '500mg', route: 'VO', freq: '2x ao dia se necessário', notes: 'Tomar com alimentos; meia-vida longa' },
-      { name: 'Celecoxibe', dose: '200mg', route: 'VO', freq: '1-2x ao dia', notes: 'COX-2 seletivo; menor risco GI' },
+      { name: 'Celecoxibe', dose: '200mg', route: 'VO', freq: '1-2x ao dia', notes: 'COX-2 seletivo; menor risco GI' }
+    ],
+    'Opioides': [
       { name: 'Tramadol', dose: '50mg', route: 'VO', freq: 'De 8/8h se necessário', notes: 'Dor moderada a forte; risco de convulsão' },
-      { name: 'Morfina', dose: '5mg', route: 'VO', freq: 'De 4/4h se necessário', notes: 'Dor severa; monitorar depressão respiratória' },
+      { name: 'Morfina', dose: '5mg', route: 'VO', freq: 'De 4/4h se necessário', notes: 'Dor severa; monitorar depressão respiratória' }
+    ],
+    'Anticonvulsivantes e Agentes para Dor Neuropática': [
       { name: 'Gabapentina', dose: '300mg', route: 'VO', freq: '3x ao dia', notes: 'Dor neuropática; titular lentamente; sedação' },
       { name: 'Pregabalina', dose: '75mg', route: 'VO', freq: '2x ao dia', notes: 'Dor neuropática; fibromialgia; controlado' },
-      { name: 'Amitriptilina', dose: '25mg', route: 'VO', freq: '1x ao dia à noite', notes: 'Dor neuropática; sedação; low dose' },
+      { name: 'Carbamazepina', dose: '200mg', route: 'VO', freq: '2x ao dia', notes: 'Epilepsia; monitorar TGO/TGP e hemograma; muitas interações' },
+      { name: 'Levetiracetam', dose: '500mg', route: 'VO', freq: '2x ao dia', notes: 'Epilepsia; poucas interações; reduzir em DRC' },
+      { name: 'Ácido Valpróico', dose: '250mg', route: 'VO', freq: '2x ao dia', notes: 'Epilepsia/bipolar; monitorar TGO/TGP e níveis' },
+      { name: 'Fenitoína', dose: '100mg', route: 'VO', freq: '3x ao dia', notes: 'Monitorar níveis séricos; muitas interações' },
+      { name: 'Topiramato', dose: '25mg', route: 'VO', freq: '2x ao dia', notes: 'Profilaxia de enxaqueca; efeito de perda ponderal' }
+    ],
+    'Corticoides Sistêmicos': [
       { name: 'Prednisona', dose: '40mg', route: 'VO', freq: '1x ao dia', notes: 'Com alimentos; redução gradual se >7 dias' },
-      { name: 'Dexametasona', dose: '4mg', route: 'VO', freq: '2x ao dia', notes: 'Anti-inflamatório potente; monitorar glicemia' },
+      { name: 'Dexametasona', dose: '4mg', route: 'VO', freq: '2x ao dia', notes: 'Anti-inflamatório potente; monitorar glicemia' }
+    ],
+    'Agentes para Gota': [
       { name: 'Colchicina', dose: '0,5mg', route: 'VO', freq: '2x ao dia', notes: 'Gota/pericardite; reduzir dose em DRC' },
       { name: 'Alopurinol', dose: '100mg', route: 'VO', freq: '1x ao dia', notes: 'Redutor de ácido úrico; não iniciar durante crise' }
     ],
-    'Respiratório': [
+    'Broncodilatadores': [
       { name: 'Salbutamol Aerossol', dose: '100mcg (2 jatos)', route: 'Inalação', freq: 'De 4/4h se necessário', notes: 'Broncodilatador de resgate; para dispneia/sibilância' },
+      { name: 'Tiotrópio', dose: '18mcg (1 cápsula)', route: 'Inalação', freq: '1x ao dia', notes: 'DPOC; anticolinérgico de longa ação' }
+    ],
+    'Combinações Inalatórias com Corticoide': [
       { name: 'Fluticasona + Salmeterol', dose: '125/25mcg (1 jato)', route: 'Inalação', freq: '2x ao dia', notes: 'Enxaguar a boca após o uso; controlador de longo prazo' },
-      { name: 'Budesonida + Formoterol', dose: '160/4,5mcg (2 jatos)', route: 'Inalação', freq: '2x ao dia', notes: 'Enxaguar a boca após o uso' },
-      { name: 'Tiotrópio', dose: '18mcg (1 cápsula)', route: 'Inalação', freq: '1x ao dia', notes: 'DPOC; anticolinérgico de longa ação' },
-      { name: 'Montelucaste', dose: '10mg', route: 'VO', freq: '1x ao dia à noite', notes: 'Asma/rinite; evitar em histórico neuropsiquiátrico' },
+      { name: 'Budesonida + Formoterol', dose: '160/4,5mcg (2 jatos)', route: 'Inalação', freq: '2x ao dia', notes: 'Enxaguar a boca após o uso' }
+    ],
+    'Antagonistas de Leucotrienos': [
+      { name: 'Montelucaste', dose: '10mg', route: 'VO', freq: '1x ao dia à noite', notes: 'Asma/rinite; evitar em histórico neuropsiquiátrico' }
+    ],
+    'Mucolíticos': [
       { name: 'N-acetilcisteína', dose: '600mg', route: 'VO', freq: '2x ao dia', notes: 'Mucolítico; DPOC/bronquiectasia' }
     ],
-    'Antimicrobianos': [
+    'Antibióticos': [
       { name: 'Amoxicilina', dose: '500mg', route: 'VO', freq: 'De 8/8h', notes: 'Completar curso de 7-10 dias' },
       { name: 'Amoxicilina + Clavulanato', dose: '875+125mg', route: 'VO', freq: 'De 12/12h', notes: 'Tomar com as refeições para reduzir efeitos GI' },
       { name: 'Azitromicina', dose: '500mg no D1, depois 250mg', route: 'VO', freq: '1x ao dia por 5 dias', notes: 'Tomar 1h antes ou 2h após refeição' },
@@ -2111,81 +2228,124 @@ const COMMON_MEDS = {
       { name: 'Nitrofurantoína', dose: '100mg', route: 'VO', freq: '2x ao dia por 5 dias', notes: 'ITU; tomar com alimentos; evitar se ClCr <45' },
       { name: 'Sulfametoxazol+Trimetoprim', dose: '160/800mg', route: 'VO', freq: '2x ao dia', notes: 'ITU/MRSA; monitorar K+ e função renal' },
       { name: 'Doxiciclina', dose: '100mg', route: 'VO', freq: '2x ao dia', notes: 'Tomar com alimentos; evitar laticínios; fotoproteção' },
-      { name: 'Metronidazol', dose: '500mg', route: 'VO', freq: '3x ao dia', notes: 'Evitar álcool; anaeróbios GI/H.pylori' },
+      { name: 'Metronidazol', dose: '500mg', route: 'VO', freq: '3x ao dia', notes: 'Evitar álcool; anaeróbios GI/H.pylori' }
+    ],
+    'Antifúngicos': [
       { name: 'Fluconazol', dose: '150mg', route: 'VO', freq: 'Dose única', notes: 'Candidíase vaginal; doses maiores para sistêmica' },
+      { name: 'Clotrimazol creme 1%', dose: 'Camada fina', route: 'Tópico', freq: '2x ao dia', notes: 'Micoses cutâneas; curso de 2-4 semanas' }
+    ],
+    'Antivirais': [
       { name: 'Oseltamivir', dose: '75mg', route: 'VO', freq: '2x ao dia por 5 dias', notes: 'Influenza; iniciar em até 48h dos sintomas' }
     ],
-    'Agentes Gastrointestinais e Hepáticos': [
+    'Antiparasitários': [
+      { name: 'Ivermectina', dose: '200mcg/kg', route: 'VO', freq: 'Dose única; repetir em 2 semanas', notes: 'Escabiose/pediculose; tomar em jejum' }
+    ],
+    'Inibidores da Bomba de Prótons': [
       { name: 'Omeprazol', dose: '20mg', route: 'VO', freq: '1x ao dia', notes: 'Em jejum; 30 min antes do café' },
       { name: 'Pantoprazol', dose: '40mg', route: 'VO', freq: '1x ao dia', notes: 'Em jejum; 30 min antes do café' },
-      { name: 'Esomeprazol', dose: '40mg', route: 'VO', freq: '1x ao dia', notes: 'Em jejum; 30 min antes do café' },
+      { name: 'Esomeprazol', dose: '40mg', route: 'VO', freq: '1x ao dia', notes: 'Em jejum; 30 min antes do café' }
+    ],
+    'Antieméticos e Procinéticos': [
       { name: 'Ondansetrona', dose: '4mg', route: 'VO', freq: 'De 8/8h se necessário', notes: 'Para náuseas/vômitos; cuidado com QT longo' },
       { name: 'Metoclopramida', dose: '10mg', route: 'VO', freq: '3x ao dia antes das refeições', notes: 'Procinético; evitar uso prolongado (discinesia tardia)' },
-      { name: 'Domperidona', dose: '10mg', route: 'VO', freq: '3x ao dia antes das refeições', notes: 'Gastroparesia/náuseas; monitorar QTc' },
-      { name: 'Hioscina (Butilbrometo)', dose: '10mg', route: 'VO', freq: '3x ao dia', notes: 'Espasmolítico; para cólicas GI' },
+      { name: 'Domperidona', dose: '10mg', route: 'VO', freq: '3x ao dia antes das refeições', notes: 'Gastroparesia/náuseas; monitorar QTc' }
+    ],
+    'Antiespasmódicos': [
+      { name: 'Hioscina (Butilbrometo)', dose: '10mg', route: 'VO', freq: '3x ao dia', notes: 'Espasmolítico; para cólicas GI' }
+    ],
+    'Laxantes': [
       { name: 'Lactulose', dose: '20mL', route: 'VO', freq: '2x ao dia', notes: 'Constipação; ajustar dose conforme evacuações' },
       { name: 'Polietileno Glicol', dose: '17g', route: 'VO', freq: '1x ao dia', notes: 'Dissolver em água; constipação' }
     ],
-    'Agentes Neurológicos': [
-      { name: 'Carbamazepina', dose: '200mg', route: 'VO', freq: '2x ao dia', notes: 'Epilepsia; monitorar TGO/TGP e hemograma; muitas interações' },
-      { name: 'Levetiracetam', dose: '500mg', route: 'VO', freq: '2x ao dia', notes: 'Epilepsia; poucas interações; reduzir em DRC' },
-      { name: 'Ácido Valpróico', dose: '250mg', route: 'VO', freq: '2x ao dia', notes: 'Epilepsia/bipolar; monitorar TGO/TGP e níveis' },
-      { name: 'Fenitoína', dose: '100mg', route: 'VO', freq: '3x ao dia', notes: 'Monitorar níveis séricos; muitas interações' },
-      { name: 'Sumatriptana', dose: '50mg', route: 'VO', freq: '1x ao início; repetir em 2h se necessário', notes: 'Enxaqueca; máx. 200mg/dia; evitar em doença vascular' },
-      { name: 'Topiramato', dose: '25mg', route: 'VO', freq: '2x ao dia', notes: 'Profilaxia de enxaqueca; efeito de perda ponderal' },
-      { name: 'Propranolol', dose: '40mg', route: 'VO', freq: '2x ao dia', notes: 'Profilaxia de enxaqueca; evitar em asmáticos' },
+    'Triptanos': [
+      { name: 'Sumatriptana', dose: '50mg', route: 'VO', freq: '1x ao início; repetir em 2h se necessário', notes: 'Enxaqueca; máx. 200mg/dia; evitar em doença vascular' }
+    ],
+    'Inibidores da Colinesterase': [
       { name: 'Donepezila', dose: '5mg', route: 'VO', freq: '1x ao dia à noite', notes: 'Doença de Alzheimer; efeitos GI no início' }
     ],
-    'Agentes Psicotrópicos': [
+    'ISRS': [
       { name: 'Sertralina', dose: '50mg', route: 'VO', freq: '1x ao dia', notes: 'Tomar pela manhã; desmame lento ao suspender' },
       { name: 'Escitalopram', dose: '10mg', route: 'VO', freq: '1x ao dia', notes: 'Tomar pela manhã; máx. 20mg/dia' },
-      { name: 'Fluoxetina', dose: '20mg', route: 'VO', freq: '1x ao dia', notes: 'Meia-vida longa; menos efeitos de abstinência' },
+      { name: 'Fluoxetina', dose: '20mg', route: 'VO', freq: '1x ao dia', notes: 'Meia-vida longa; menos efeitos de abstinência' }
+    ],
+    'IRSN': [
       { name: 'Venlafaxina', dose: '75mg', route: 'VO', freq: '1x ao dia', notes: 'IRSN; desmame lento; monitorar PA' },
-      { name: 'Duloxetina', dose: '60mg', route: 'VO', freq: '1x ao dia', notes: 'IRSN; também para dor neuropática; monitorar PA' },
-      { name: 'Mirtazapina', dose: '15mg', route: 'VO', freq: '1x ao dia à noite', notes: 'Sedativa; ganho de peso; boa para insônia/anorexia' },
-      { name: 'Quetiapina', dose: '50mg', route: 'VO', freq: '1x ao dia à noite', notes: 'Antipsicótico; sedação; monitoramento metabólico' },
+      { name: 'Duloxetina', dose: '60mg', route: 'VO', freq: '1x ao dia', notes: 'IRSN; também para dor neuropática; monitorar PA' }
+    ],
+    'Antidepressivos Tricíclicos': [
+      { name: 'Amitriptilina', dose: '25mg', route: 'VO', freq: '1x ao dia à noite', notes: 'Dor neuropática; sedação; low dose' }
+    ],
+    'Antidepressivos Atípicos': [
+      { name: 'Mirtazapina', dose: '15mg', route: 'VO', freq: '1x ao dia à noite', notes: 'Sedativa; ganho de peso; boa para insônia/anorexia' }
+    ],
+    'Antipsicóticos': [
+      { name: 'Quetiapina', dose: '50mg', route: 'VO', freq: '1x ao dia à noite', notes: 'Antipsicótico; sedação; monitoramento metabólico' }
+    ],
+    'Benzodiazepínicos': [
       { name: 'Alprazolam', dose: '0,25mg', route: 'VO', freq: '2x ao dia se necessário', notes: 'Ansiedade de curto prazo; risco de dependência; controlado' },
-      { name: 'Clonazepam', dose: '0,5mg', route: 'VO', freq: '2x ao dia se necessário', notes: 'Ansiedade/pânico; risco de dependência; controlado' },
+      { name: 'Clonazepam', dose: '0,5mg', route: 'VO', freq: '2x ao dia se necessário', notes: 'Ansiedade/pânico; risco de dependência; controlado' }
+    ],
+    'Estabilizadores de Humor': [
       { name: 'Carbonato de Lítio', dose: '300mg', route: 'VO', freq: '3x ao dia', notes: 'Transtorno bipolar; monitorar litemia, renal e tireóide' }
     ],
-    'Agentes Obstétricos e Ginecológicos': [
+    'Suplementos de Ferro e Hematínicos': [
       { name: 'Sulfato Ferroso', dose: '325mg', route: 'VO', freq: '1x ao dia', notes: 'Anemia/gestação; tomar com vitamina C' },
-      { name: 'Ácido Fólico', dose: '5mg', route: 'VO', freq: '1x ao dia', notes: 'Pré-concepção/gestação; prevenção de DTN' },
-      { name: 'Progesterona (vaginal)', dose: '200mg', route: 'Vaginal', freq: '1x ao dia à noite', notes: 'Ameaça de aborto/FIV; inserir à noite' },
-      { name: 'Alfametildopa', dose: '250mg', route: 'VO', freq: '3x ao dia', notes: 'HAS na gestação; primeira linha em gestantes' },
-      { name: 'Nifedipino (ação prolongada)', dose: '30mg', route: 'VO', freq: '1x ao dia', notes: 'HAS na gestação; também como tocolítico' },
-      { name: 'Sulfato de Magnésio', dose: '4g ataque, depois 1-2g/h', route: 'EV', freq: 'Infusão contínua', notes: 'Eclâmpsia/pré-eclâmpsia; monitorar reflexos e diurese' },
-      { name: 'Ocitocina', dose: '10 UI em 500mL SF', route: 'EV', freq: 'Conforme protocolo', notes: 'Indução/condução do trabalho de parto; monitorar contrações' },
-      { name: 'Betametasona', dose: '12mg', route: 'IM', freq: 'A cada 24h por 2 doses', notes: 'Maturidade pulmonar fetal 24-34 semanas de IG' },
+      { name: 'Ácido Fólico', dose: '5mg', route: 'VO', freq: '1x ao dia', notes: 'Pré-concepção/gestação; prevenção de DTN' }
+    ],
+    'Progestágenos e Agentes Hormonais': [
+      { name: 'Progesterona (vaginal)', dose: '200mg', route: 'Vaginal', freq: '1x ao dia à noite', notes: 'Ameaça de aborto/FIV; inserir à noite' }
+    ],
+    'Antihipertensivos de Ação Central': [
+      { name: 'Alfametildopa', dose: '250mg', route: 'VO', freq: '3x ao dia', notes: 'HAS na gestação; primeira linha em gestantes' }
+    ],
+    'Tocolíticos': [
+      { name: 'Sulfato de Magnésio', dose: '4g ataque, depois 1-2g/h', route: 'EV', freq: 'Infusão contínua', notes: 'Eclâmpsia/pré-eclâmpsia; monitorar reflexos e diurese' }
+    ],
+    'Uterotônicos': [
+      { name: 'Ocitocina', dose: '10 UI em 500mL SF', route: 'EV', freq: 'Conforme protocolo', notes: 'Indução/condução do trabalho de parto; monitorar contrações' }
+    ],
+    'Corticoide Antenatal': [
+      { name: 'Betametasona', dose: '12mg', route: 'IM', freq: 'A cada 24h por 2 doses', notes: 'Maturidade pulmonar fetal 24-34 semanas de IG' }
+    ],
+    'Contraceptivos Hormonais': [
       { name: 'ACO Combinado', dose: '30mcg EE / 150mcg LNG', route: 'VO', freq: '1x ao dia', notes: 'Tomar no mesmo horário; esquema 21+7 dias' },
       { name: 'SIU-LNG', dose: 'Sistema 52mg', route: 'Intrauterino', freq: 'A cada 5 anos', notes: 'LARC; eficácia >99%; pode reduzir fluxo menstrual' }
     ],
-    'Agentes Urológicos': [
-      { name: 'Tansulosina', dose: '0,4mg', route: 'VO', freq: '1x ao dia à noite', notes: 'HBP; tomar 30 min após a mesma refeição diariamente' },
-      { name: 'Finasterida', dose: '5mg', route: 'VO', freq: '1x ao dia', notes: 'HBP/alopecia androgênica; teratogênico em mulheres' },
+    'Inibidores da 5-Alfa Redutase': [
+      { name: 'Finasterida', dose: '5mg', route: 'VO', freq: '1x ao dia', notes: 'HBP/alopecia androgênica; teratogênico em mulheres' }
+    ],
+    'Anticolinérgicos Vesicais': [
       { name: 'Oxibutinina', dose: '5mg', route: 'VO', freq: '2x ao dia', notes: 'Bexiga hiperativa; efeitos anticolinérgicos' },
-      { name: 'Solifenacina', dose: '5mg', route: 'VO', freq: '1x ao dia', notes: 'Bexiga hiperativa; menos efeitos no SNC' },
+      { name: 'Solifenacina', dose: '5mg', route: 'VO', freq: '1x ao dia', notes: 'Bexiga hiperativa; menos efeitos no SNC' }
+    ],
+    'Inibidores da PDE5': [
       { name: 'Tadalafila', dose: '5mg', route: 'VO', freq: '1x ao dia', notes: 'DE/HBP; evitar com nitratos' },
       { name: 'Sildenafila', dose: '50mg', route: 'VO', freq: 'Conforme necessidade, 1h antes', notes: 'Disfunção erétil; evitar com nitratos' }
     ],
-    'Agentes Dermatológicos e Anti-histamínicos': [
+    'Anti-histamínicos': [
       { name: 'Cetirizina', dose: '10mg', route: 'VO', freq: '1x ao dia', notes: 'Anti-histamínico não sedante; rinite/urticária' },
       { name: 'Loratadina', dose: '10mg', route: 'VO', freq: '1x ao dia', notes: 'Não sedante; preferível em idosos' },
       { name: 'Fexofenadina', dose: '180mg', route: 'VO', freq: '1x ao dia', notes: 'Não sedante; evitar suco de pomelo' },
       { name: 'Difenidramina', dose: '25mg', route: 'VO', freq: 'De 6/6h se necessário', notes: 'Sedante; 1ª geração; evitar em idosos' },
-      { name: 'Mometasona spray nasal', dose: '100mcg (2 jatos)', route: 'Nasal', freq: '1x ao dia', notes: 'Rinite alérgica; preparar o frasco antes da primeira aplicação' },
-      { name: 'Hidrocortisona creme 1%', dose: 'Camada fina', route: 'Tópico', freq: '2x ao dia', notes: 'Dermatite leve; evitar face e dobras a longo prazo' },
-      { name: 'Betametasona creme 0,1%', dose: 'Camada fina', route: 'Tópico', freq: '1-2x ao dia', notes: 'Corticoide potente; tempo limitado para evitar atrofia' },
-      { name: 'Clotrimazol creme 1%', dose: 'Camada fina', route: 'Tópico', freq: '2x ao dia', notes: 'Micoses cutâneas; curso de 2-4 semanas' },
-      { name: 'Ivermectina', dose: '200mcg/kg', route: 'VO', freq: 'Dose única; repetir em 2 semanas', notes: 'Escabiose/pediculose; tomar em jejum' }
+      { name: 'Mometasona spray nasal', dose: '100mcg (2 jatos)', route: 'Nasal', freq: '1x ao dia', notes: 'Rinite alérgica; preparar o frasco antes da primeira aplicação' }
     ],
-    'Agentes Oftálmicos e ORL': [
+    'Corticoides Tópicos': [
+      { name: 'Hidrocortisona creme 1%', dose: 'Camada fina', route: 'Tópico', freq: '2x ao dia', notes: 'Dermatite leve; evitar face e dobras a longo prazo' },
+      { name: 'Betametasona creme 0,1%', dose: 'Camada fina', route: 'Tópico', freq: '1-2x ao dia', notes: 'Corticoide potente; tempo limitado para evitar atrofia' }
+    ],
+    'Antibióticos Oftálmicos': [
       { name: 'Ciprofloxacino colírio', dose: '1-2 gotas', route: 'Oftálmica', freq: 'De 2/2h acordado 2 dias, depois de 4/4h', notes: 'Conjuntivite/ceratite bacteriana' },
-      { name: 'Tobramicina colírio', dose: '1-2 gotas', route: 'Oftálmica', freq: 'De 4/4h', notes: 'Infecções oculares bacterianas; cobertura gram-negativa' },
-      { name: 'Prednisolona colírio 1%', dose: '1-2 gotas', route: 'Oftálmica', freq: 'De 2-4/4h', notes: 'Uveíte/inflamação ocular; NÃO usar se infecção ativa' },
-      { name: 'Latanoprosta', dose: '1 gota', route: 'Oftálmica', freq: '1x ao dia à noite', notes: 'Glaucoma; possível mudança da cor da íris' },
+      { name: 'Tobramicina colírio', dose: '1-2 gotas', route: 'Oftálmica', freq: 'De 4/4h', notes: 'Infecções oculares bacterianas; cobertura gram-negativa' }
+    ],
+    'Corticoides Oftálmicos': [
+      { name: 'Prednisolona colírio 1%', dose: '1-2 gotas', route: 'Oftálmica', freq: 'De 2-4/4h', notes: 'Uveíte/inflamação ocular; NÃO usar se infecção ativa' }
+    ],
+    'Agentes para Glaucoma': [
+      { name: 'Latanoprosta', dose: '1 gota', route: 'Oftálmica', freq: '1x ao dia à noite', notes: 'Glaucoma; possível mudança da cor da íris' }
+    ],
+    'Agentes Óticos': [
       { name: 'Ciprofloxacino ótico', dose: '3-4 gotas', route: 'Otológica', freq: '2x ao dia por 7 dias', notes: 'Otite externa; aquecer o frasco antes de instalar' },
-      { name: 'Hidrocortisona/Ácido Acético góticas', dose: '4 gotas', route: 'Otológica', freq: '3x ao dia', notes: 'Otite externa; não usar com membrana timpânica perfurada' }
+      { name: 'Hidrocortisona/Ácido Acético gotas', dose: '4 gotas', route: 'Otológica', freq: '3x ao dia', notes: 'Otite externa; não usar com membrana timpânica perfurada' }
     ]
   }
 };
