@@ -7637,7 +7637,7 @@ const FAM_DISEASE_OPTS = lang === 'en'
               ★ ${lang==='en'?'Favorites':'Favoritos'} (${state.medFavs.length})
             </button>
           ` : ''}
-          ${Object.keys(medsLib).map(cat => {
+          ${Object.keys(medsLib).sort((a,b) => a.localeCompare(b)).map(cat => {
             const active = activeMedCat === cat;
             return `
               <button class="pill-button ${active ? 'active' : ''}" onclick="toggleMedCat('${cat}')">
@@ -7662,7 +7662,7 @@ const FAM_DISEASE_OPTS = lang === 'en'
           </div>
         ` : activeMedCat && medsLib[activeMedCat] ? `
           <div style="background:var(--bg); border:1px solid var(--border); border-radius:var(--radius-sm); padding:10px; display:grid; grid-template-columns:repeat(auto-fill, minmax(220px, 1fr)); gap:8px;">
-            ${medsLib[activeMedCat].map(med => `
+            ${medsLib[activeMedCat].slice().sort((a,b) => a.name.localeCompare(b.name)).map(med => `
               <div class="med-cat-card"
                    onclick="addCommonMedication('${med.name}', '${med.dose}', '${med.route}', '${med.freq}', '${med.notes}')">
                 <div style="font-weight:700; font-size:12px; color:var(--text);">${med.name}</div>
@@ -7691,13 +7691,43 @@ const FAM_DISEASE_OPTS = lang === 'en'
             </div>
             
             <label>${t.medName}</label>
-            <input type="text" list="all-med-names"
-              value="${m.name||''}"
-              placeholder="${lang==='en'?'Type to search medication...':'Buscar medicamento...'}"
-              style="margin-bottom:4px;"
-              oninput="updateMedField(${idx},'name',this.value)"
-              onchange="onMedNameChange(${idx},this.value)">
-            
+            ${(() => {
+              const allCatalogNames = Object.values(medsLib).flat().map(x => x.name);
+              const customNames = getCustomMeds();
+              const isKnownMed = !!m.name && (allCatalogNames.includes(m.name) || customNames.includes(m.name));
+              const showOther = !!m.name && !isKnownMed;
+              return `
+              <select id="med_name_${idx}-sel" onchange="
+                if(this.value==='__other__'){
+                  document.getElementById('med_name_${idx}-other').style.display='block';
+                  document.getElementById('med_name_${idx}-other').focus();
+                } else {
+                  document.getElementById('med_name_${idx}-other').style.display='none';
+                  selectMedName(${idx}, this.value);
+                }
+              " style="margin-bottom:4px;">
+                <option value="" ${!m.name ? 'selected' : ''}>${lang==='en'?'Select medication...':'Selecionar medicamento...'}</option>
+                ${Object.keys(medsLib).sort((a,b) => a.localeCompare(b)).map(cat => `
+                  <optgroup label="${cat}">
+                    ${medsLib[cat].slice().sort((a,b) => a.name.localeCompare(b.name)).map(med => `<option value="${med.name}" ${m.name===med.name?'selected':''}>${med.name}</option>`).join('')}
+                  </optgroup>
+                `).join('')}
+                ${customNames.length ? `
+                  <optgroup label="${lang==='en'?'Custom':'Personalizados'}">
+                    ${customNames.slice().sort().map(n => `<option value="${n}" ${m.name===n?'selected':''}>${n}</option>`).join('')}
+                  </optgroup>
+                ` : ''}
+                <option value="__other__" ${showOther ? 'selected' : ''}>${lang==='en'?'Other (type below)...':'Outro (digitar abaixo)...'}</option>
+              </select>
+              <input type="text" id="med_name_${idx}-other" list="all-med-names"
+                value="${m.name||''}"
+                placeholder="${lang==='en'?'Type medication name...':'Digite o nome do medicamento...'}"
+                style="display:${showOther ? 'block' : 'none'};margin-bottom:4px;"
+                oninput="updateMedField(${idx},'name',this.value)"
+                onchange="onMedNameChange(${idx},this.value)">
+              `;
+            })()}
+
             <div class="input-row" style="margin-top:10px;">
               <div>
                 <label>${t.medDose}</label>
@@ -10368,8 +10398,7 @@ function _labSeverityFlag(name, resultStr) {
 
 function _labFlagHtml(name, resultStr) {
   const f = _labSeverityFlag(name, resultStr);
-  if (!f) return '';
-  if (f.level === 'normal') return `<span style="font-size:13px;color:var(--success,#15803d);">✓</span>`;
+  if (!f || f.level === 'normal') return '';
   const arrow = f.direction === 'high' ? '▲' : '▼';
   if (f.level === 'severe') {
     return `<span style="font-size:14px;font-weight:800;color:var(--danger);">${arrow}${arrow}</span>`;
