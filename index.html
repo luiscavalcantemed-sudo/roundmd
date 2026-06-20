@@ -7631,52 +7631,39 @@ const FAM_DISEASE_OPTS = lang === 'en'
           <svg class="icon-svg" style="fill:var(--primary); width:18px; height:18px;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
           <span style="font-weight:700;">${lang === 'en' ? 'Preset Medications Catalogue' : 'Catálogo de Medicamentos Frequentes'}</span>
         </div>
-        <div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:8px;">
-          ${state.medFavs && state.medFavs.length ? `
-            <button class="pill-button ${activeMedCat === '__favs__' ? 'active' : ''}" onclick="toggleMedCat('__favs__')" style="background:${activeMedCat==='__favs__'?'var(--warn)':'transparent'};border-color:var(--warn);color:${activeMedCat==='__favs__'?'white':'var(--warn)'};font-weight:700;">
-              ★ ${lang==='en'?'Favorites':'Favoritos'} (${state.medFavs.length})
-            </button>
-          ` : ''}
-          ${Object.keys(medsLib).sort((a,b) => a.localeCompare(b)).map(cat => {
-            const active = activeMedCat === cat;
-            return `
-              <button class="pill-button ${active ? 'active' : ''}" onclick="toggleMedCat('${cat}')">
-                ${cat}
+
+        ${state.medFavs && state.medFavs.length ? `
+          <div style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px;">
+            ${state.medFavs.map(med => `
+              <button class="pill-button" style="border-color:var(--warn);color:var(--warn);font-weight:600;" onclick="addCommonMedication('${med.name.replace(/'/g,"\\'")}','${(med.dose||'').replace(/'/g,"\\'")}','${(med.route||'').replace(/'/g,"\\'")}','${(med.freq||'').replace(/'/g,"\\'")}','${(med.notes||'').replace(/'/g,"\\'")}')">
+                ★ ${med.name}
               </button>
-            `;
-          }).join('')}
-        </div>
-        
-        ${activeMedCat === '__favs__' ? `
-          <div style="background:var(--bg); border:1px solid var(--warn); border-radius:var(--radius-sm); padding:10px; display:grid; grid-template-columns:repeat(auto-fill, minmax(220px, 1fr)); gap:8px; margin-bottom:8px;">
-            ${(state.medFavs||[]).length === 0 ? `<div style="color:var(--text-muted);font-size:13px;grid-column:1/-1;">${lang==='en'?'No favorites yet. Star a medication to add it here.':'Nenhum favorito ainda. Clique na estrela de um medicamento para adicionar.'}</div>` : ''}
-            ${(state.medFavs||[]).map(med => `
-              <div class="med-fav-card"
-                   onclick="addCommonMedication('${med.name}', '${med.dose}', '${med.route}', '${med.freq}', '${med.notes||''}')">
-                <div style="font-weight:700; font-size:12px; color:var(--text);">${med.name}</div>
-                <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">${med.dose} | ${med.route} | ${med.freq}</div>
-                <button onclick="event.stopPropagation();toggleMedFav('${med.name}','${med.dose}','${med.route}','${med.freq}','${med.notes||''}')"
-                  style="position:absolute;top:6px;right:6px;background:none;border:none;cursor:pointer;font-size:15px;color:var(--warn);">★</button>
-              </div>
-            `).join('')}
-          </div>
-        ` : activeMedCat && medsLib[activeMedCat] ? `
-          <div style="background:var(--bg); border:1px solid var(--border); border-radius:var(--radius-sm); padding:10px; display:grid; grid-template-columns:repeat(auto-fill, minmax(220px, 1fr)); gap:8px;">
-            ${medsLib[activeMedCat].slice().sort((a,b) => a.name.localeCompare(b.name)).map(med => `
-              <div class="med-cat-card"
-                   onclick="addCommonMedication('${med.name}', '${med.dose}', '${med.route}', '${med.freq}', '${med.notes}')">
-                <div style="font-weight:700; font-size:12px; color:var(--text);">${med.name}</div>
-                <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">${med.dose} | ${med.route} | ${med.freq}</div>
-<!-- med indications hidden -->
-                <button onclick="event.stopPropagation();toggleMedFav('${med.name}','${med.dose}','${med.route}','${med.freq}','${med.notes}')"
-                  title="${lang==='en'?'Favorite':'Favorito'}"
-                  style="position:absolute;top:6px;right:6px;background:none;border:none;cursor:pointer;font-size:15px;color:${(state.medFavs||[]).some(f=>f.name===med.name)?'var(--warn)':'var(--border)'};">★</button>
-              </div>
             `).join('')}
           </div>
         ` : ''}
+
+        <div class="input-row">
+          <div>
+            <label>${lang==='en'?'Drug class':'Classe medicamentosa'}</label>
+            <select id="med-cat-sel" onchange="toggleMedCat(this.value)">
+              <option value="" ${!activeMedCat ? 'selected' : ''}>${lang==='en'?'Select class...':'Selecionar classe...'}</option>
+              ${Object.keys(medsLib).sort((a,b) => a.localeCompare(b)).map(cat => `<option value="${cat}" ${activeMedCat===cat?'selected':''}>${cat}</option>`).join('')}
+            </select>
+          </div>
+          <div>
+            <label>${lang==='en'?'Medication':'Medicamento'}</label>
+            <select id="med-pick-sel" ${activeMedCat && medsLib[activeMedCat] ? '' : 'disabled'}>
+              <option value="">${activeMedCat && medsLib[activeMedCat] ? (lang==='en'?'Select medication...':'Selecionar medicamento...') : (lang==='en'?'Select a class first':'Selecione uma classe primeiro')}</option>
+              ${activeMedCat && medsLib[activeMedCat] ? medsLib[activeMedCat].slice().sort((a,b) => a.name.localeCompare(b.name)).map(med => `<option value="${med.name}">${med.name} — ${med.dose}</option>`).join('') : ''}
+            </select>
+          </div>
+        </div>
+        <div style="display:flex; gap:8px; margin-top:10px;">
+          <button class="btn-add" style="flex:1;" onclick="addMedFromCatalog()">+ ${lang==='en'?'Add medication':'Adicionar medicamento'}</button>
+          <button onclick="favMedFromCatalog()" title="${lang==='en'?'Favorite':'Favoritar'}" style="padding:0 14px;background:var(--surface-solid);border:1px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;font-size:16px;color:var(--warn);">★</button>
+        </div>
       </div>
-      
+
       <datalist id="all-med-names">
         ${[...new Set(Object.values(COMMON_MEDS[lang]).flat().map(m=>m.name))].sort().map(n=>`<option value="${n}">`).join('')}
         ${getCustomMeds().map(n=>`<option value="${n}">`).join('')}
@@ -9703,6 +9690,22 @@ function addCommonMedication(name, dose, route, freq, notes) {
   state.medications.push({ name, dose, route, freq, notes });
   saveState();
   renderSections();
+}
+
+function addMedFromCatalog() {
+  const sel = document.getElementById('med-pick-sel');
+  if (!sel || !sel.value || !activeMedCat) return;
+  const lib = (COMMON_MEDS[lang][activeMedCat] || []);
+  const med = lib.find(m => m.name === sel.value);
+  if (med) addCommonMedication(med.name, med.dose, med.route, med.freq, med.notes);
+}
+
+function favMedFromCatalog() {
+  const sel = document.getElementById('med-pick-sel');
+  if (!sel || !sel.value || !activeMedCat) return;
+  const lib = (COMMON_MEDS[lang][activeMedCat] || []);
+  const med = lib.find(m => m.name === sel.value);
+  if (med) toggleMedFav(med.name, med.dose, med.route, med.freq, med.notes || '');
 }
 function updatePHField(listKey, idx, field, val) {
   state[listKey][idx][field] = val;
