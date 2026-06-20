@@ -1747,6 +1747,7 @@ const SVG = {
 let lang = 'en';
 let activeMedCat = null;
 let _fhcOpenForm = null;
+let _fhcOpenPanel = null;
 let activeCalcSection = null;
 let activePmhCat = null;
 let activePshCat = null;
@@ -3787,7 +3788,6 @@ function EMPTY() {
     includeNormalPE: true,
     medFavs: [],
     calcs: {},
-    safetyChecklist: {},
     routineOrders: [],
     _antOpen: { pmh: true, psh: true, gyn: true, peds: true, fam: true }
   };
@@ -8616,24 +8616,6 @@ const FAM_DISEASE_OPTS = lang === 'en'
       </div>
       <button class="btn-add" style="margin-bottom:8px;" onclick="addChronicProblem()">+ ${lang==='en'?'Add Chronic Problem':'Adicionar Problema Crônico'}</button>
 
-      <!-- ── CHECKLIST FAST-HUGBIDS-CHAMP ────────────────────────────── -->
-      ${impSection(lang==='en'?'Safety Checklist (FAST-HUGBIDS-CHAMP)':'Checklist de Segurança (FAST-HUGBIDS-CHAMP)', 'var(--success, #15803d)')}
-      <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(240px, 1fr)); gap:8px; margin-bottom:8px;">
-        ${SAFETY_DOMAINS[lang].map(d => {
-          const st = (state.safetyChecklist || {})[d.key];
-          return `
-            <div style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px 10px;background:var(--surface-solid);">
-              <div style="font-size:12px;font-weight:600;margin-bottom:6px;">${d.label}</div>
-              <div style="display:flex;gap:4px;">
-                <button onclick="setSafetyItem('${d.key}','complete')" style="flex:1;padding:4px 0;font-size:10px;font-weight:700;border-radius:5px;cursor:pointer;border:1px solid ${st==='complete'?'var(--success,#15803d)':'var(--border)'};background:${st==='complete'?'var(--success,#15803d)':'transparent'};color:${st==='complete'?'#fff':'var(--text-muted)'};">${lang==='en'?'Done':'Completo'}</button>
-                <button onclick="setSafetyItem('${d.key}','na')" style="flex:1;padding:4px 0;font-size:10px;font-weight:700;border-radius:5px;cursor:pointer;border:1px solid ${st==='na'?'var(--text-muted)':'var(--border)'};background:${st==='na'?'var(--text-muted)':'transparent'};color:${st==='na'?'#fff':'var(--text-muted)'};">N/A</button>
-                <button onclick="setSafetyItem('${d.key}','incomplete')" style="flex:1;padding:4px 0;font-size:10px;font-weight:700;border-radius:5px;cursor:pointer;border:1px solid ${st==='incomplete'?'var(--danger)':'var(--border)'};background:${st==='incomplete'?'var(--danger)':'transparent'};color:${st==='incomplete'?'#fff':'var(--text-muted)'};">${lang==='en'?'Incomplete':'Incompleto'}</button>
-              </div>
-            </div>
-          `;
-        }).join('')}
-      </div>
-
       ${(() => {
         const antibioticKw = ['cilina','micina','azol','ciclina','floxacin','floxacino','cefa','penem','vancomicina','vancomycin'];
         const abxList = (state.medications||[]).map((m,mi)=>({m,mi})).filter(x => antibioticKw.some(k => (x.m.name||'').toLowerCase().includes(k)));
@@ -8697,7 +8679,7 @@ const FAM_DISEASE_OPTS = lang === 'en'
       <button class="btn-add" style="margin-bottom:8px;" onclick="addDDx(); return false;">${lang==='en'?'+ Add differential':'+ Adicionar diferencial'}</button>
 
       <!-- ── PRESCRIÇÃO (FAST-HUG-CHAMP) ──────────────────────────────── -->
-      ${impSection('℞ ' + (lang==='en'?'Prescription (FAST-HUG-CHAMP)':'Prescrição (FAST-HUG-CHAMP)'), 'var(--primary)')}
+      ${impSection(lang==='en'?'Prescription (FAST-HUG-CHAMP)':'Prescrição (FAST-HUG-CHAMP)', 'var(--primary)')}
       ${FHC_DOMAINS[lang].map(d => {
         const domain = d.key;
         const presets = FHC_PRESETS[lang][domain] || { meds: [], orders: [] };
@@ -8713,7 +8695,7 @@ const FAM_DISEASE_OPTS = lang === 'en'
             <div style="margin-bottom:8px;">
               ${domainMeds.map(({m,mi}) => `
                 <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;background:var(--bg);border-radius:6px;padding:6px 10px;margin-bottom:4px;">
-                  <span style="font-size:12px;">℞ <strong>${m.name||''}</strong> ${m.dose||''} — ${m.route||''} ${m.freq||''}</span>
+                  <span style="font-size:12px;"><strong>${m.name||''}</strong> ${m.dose||''} — ${m.route||''} ${m.freq||''}</span>
                   <button class="btn-sm-del" onclick="removeMedication(${mi})">✕</button>
                 </div>
               `).join('')}
@@ -8726,49 +8708,54 @@ const FAM_DISEASE_OPTS = lang === 'en'
             </div>
           ` : ''}
 
-          <div class="input-row">
-            <div>
-              <label style="font-size:11px;">${lang==='en'?'Medication':'Medicação'}</label>
-              <select onchange="selectFhcMed('${domain}', this.value)">
-                <option value="">${lang==='en'?'Select...':'Selecionar...'}</option>
-                ${presets.meds.map(m => `<option value="${m.name}">${m.name} — ${m.dose}</option>`).join('')}
-                ${customMeds.length ? `<optgroup label="${lang==='en'?'Custom':'Personalizados'}">${customMeds.map(m => `<option value="${m.name}">${m.name} — ${m.dose}</option>`).join('')}</optgroup>` : ''}
-                <option value="__other__">${lang==='en'?'Other (add new)...':'Outro (adicionar novo)...'}</option>
-              </select>
-              ${_fhcOpenForm === domain + '-med' ? `
-                <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px;margin-top:6px;">
-                  <input type="text" id="fhc-med-name-${domain}" placeholder="${lang==='en'?'Medication name...':'Nome do medicamento...'}" style="margin-bottom:4px;font-size:12px;">
-                  <div class="input-row">
-                    <input type="text" id="fhc-med-dose-${domain}" placeholder="${lang==='en'?'Dose':'Dose'}" style="font-size:12px;">
-                    <input type="text" id="fhc-med-route-${domain}" placeholder="${lang==='en'?'Route':'Via'}" style="font-size:12px;">
+          ${_fhcOpenPanel === domain ? `
+            <div class="input-row">
+              <div>
+                <label style="font-size:11px;">${lang==='en'?'Medication':'Medicação'}</label>
+                <select onchange="selectFhcMed('${domain}', this.value)">
+                  <option value="">${lang==='en'?'Select...':'Selecionar...'}</option>
+                  ${presets.meds.map(m => `<option value="${m.name}">${m.name} — ${m.dose}, ${m.route}, ${m.freq}</option>`).join('')}
+                  ${customMeds.length ? `<optgroup label="${lang==='en'?'Custom':'Personalizados'}">${customMeds.map(m => `<option value="${m.name}">${m.name} — ${m.dose}</option>`).join('')}</optgroup>` : ''}
+                  <option value="__other__">${lang==='en'?'Other (add new)...':'Outro (adicionar novo)...'}</option>
+                </select>
+                ${_fhcOpenForm === domain + '-med' ? `
+                  <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px;margin-top:6px;">
+                    <input type="text" id="fhc-med-name-${domain}" placeholder="${lang==='en'?'Medication name...':'Nome do medicamento...'}" style="margin-bottom:4px;font-size:12px;">
+                    <div class="input-row">
+                      <input type="text" id="fhc-med-dose-${domain}" placeholder="${lang==='en'?'Dose':'Dose'}" style="font-size:12px;">
+                      <input type="text" id="fhc-med-route-${domain}" placeholder="${lang==='en'?'Route':'Via'}" style="font-size:12px;">
+                    </div>
+                    <input type="text" id="fhc-med-freq-${domain}" placeholder="${lang==='en'?'Frequency':'Frequência'}" style="margin-top:4px;margin-bottom:6px;font-size:12px;">
+                    <div style="display:flex;gap:6px;">
+                      <button class="btn-add" style="flex:1;margin:0;font-size:11px;padding:5px 0;" onclick="addFhcMedCustom('${domain}')">${lang==='en'?'Add':'Adicionar'}</button>
+                      <button style="padding:5px 10px;background:transparent;border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:11px;" onclick="toggleFhcForm(null)">${lang==='en'?'Cancel':'Cancelar'}</button>
+                    </div>
                   </div>
-                  <input type="text" id="fhc-med-freq-${domain}" placeholder="${lang==='en'?'Frequency':'Frequência'}" style="margin-top:4px;margin-bottom:6px;font-size:12px;">
-                  <div style="display:flex;gap:6px;">
-                    <button class="btn-add" style="flex:1;margin:0;font-size:11px;padding:5px 0;" onclick="addFhcMedCustom('${domain}')">${lang==='en'?'Add':'Adicionar'}</button>
-                    <button style="padding:5px 10px;background:transparent;border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:11px;" onclick="toggleFhcForm(null)">${lang==='en'?'Cancel':'Cancelar'}</button>
+                ` : ''}
+              </div>
+              <div>
+                <label style="font-size:11px;">${lang==='en'?'Routine order':'Conduta'}</label>
+                <select onchange="selectFhcOrder('${domain}', this.value)">
+                  <option value="">${lang==='en'?'Select...':'Selecionar...'}</option>
+                  ${presets.orders.map(o => `<option value="${o}">${o}</option>`).join('')}
+                  ${customOrders.length ? `<optgroup label="${lang==='en'?'Custom':'Personalizados'}">${customOrders.map(o => `<option value="${o}">${o}</option>`).join('')}</optgroup>` : ''}
+                  <option value="__other__">${lang==='en'?'Other (add new)...':'Outro (adicionar novo)...'}</option>
+                </select>
+                ${_fhcOpenForm === domain + '-order' ? `
+                  <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px;margin-top:6px;">
+                    <input type="text" id="fhc-order-text-${domain}" placeholder="${lang==='en'?'New routine order...':'Nova conduta...'}" style="margin-bottom:6px;font-size:12px;">
+                    <div style="display:flex;gap:6px;">
+                      <button class="btn-add" style="flex:1;margin:0;font-size:11px;padding:5px 0;" onclick="addFhcOrderCustom('${domain}')">${lang==='en'?'Add':'Adicionar'}</button>
+                      <button style="padding:5px 10px;background:transparent;border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:11px;" onclick="toggleFhcForm(null)">${lang==='en'?'Cancel':'Cancelar'}</button>
+                    </div>
                   </div>
-                </div>
-              ` : ''}
+                ` : ''}
+              </div>
             </div>
-            <div>
-              <label style="font-size:11px;">${lang==='en'?'Routine order':'Conduta'}</label>
-              <select onchange="selectFhcOrder('${domain}', this.value)">
-                <option value="">${lang==='en'?'Select...':'Selecionar...'}</option>
-                ${presets.orders.map(o => `<option value="${o}">${o}</option>`).join('')}
-                ${customOrders.length ? `<optgroup label="${lang==='en'?'Custom':'Personalizados'}">${customOrders.map(o => `<option value="${o}">${o}</option>`).join('')}</optgroup>` : ''}
-                <option value="__other__">${lang==='en'?'Other (add new)...':'Outro (adicionar novo)...'}</option>
-              </select>
-              ${_fhcOpenForm === domain + '-order' ? `
-                <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px;margin-top:6px;">
-                  <input type="text" id="fhc-order-text-${domain}" placeholder="${lang==='en'?'New routine order...':'Nova conduta...'}" style="margin-bottom:6px;font-size:12px;">
-                  <div style="display:flex;gap:6px;">
-                    <button class="btn-add" style="flex:1;margin:0;font-size:11px;padding:5px 0;" onclick="addFhcOrderCustom('${domain}')">${lang==='en'?'Add':'Adicionar'}</button>
-                    <button style="padding:5px 10px;background:transparent;border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:11px;" onclick="toggleFhcForm(null)">${lang==='en'?'Cancel':'Cancelar'}</button>
-                  </div>
-                </div>
-              ` : ''}
-            </div>
-          </div>
+            <button style="margin-top:8px;background:transparent;border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:11px;padding:5px 12px;color:var(--text-muted);" onclick="toggleFhcPanel('${domain}')">${lang==='en'?'Done':'Concluído'}</button>
+          ` : `
+            <button class="btn-add" style="margin-top:0;font-size:12px;padding:6px 14px;" onclick="toggleFhcPanel('${domain}')">+ ${lang==='en'?'Add item':'Adicionar item'}</button>
+          `}
         </div>
         `;
       }).join('')}
@@ -10240,32 +10227,6 @@ function checkSafetyAlerts() {
   return alerts;
 }
 
-const SAFETY_DOMAINS = {
-  en: [
-    {key:'feeding', label:'Feeding'}, {key:'analgesia', label:'Analgesia'}, {key:'sedation', label:'Sedation / Sleep'},
-    {key:'vte', label:'VTE Thromboprophylaxis'}, {key:'hob', label:'Head of Bed Elevation'}, {key:'gipx', label:'GI / Ulcer Prophylaxis'},
-    {key:'glucose', label:'Glucose Control'}, {key:'bowel', label:'Bowel Regimen'}, {key:'devices', label:'Indwelling Devices Review'},
-    {key:'delirium', label:'Delirium Prevention'}, {key:'stewardship', label:'Antimicrobial Stewardship'},
-    {key:'chronic', label:'Chronic Disease Meds Continued'}, {key:'handoff', label:'Handoff / Transitions'},
-    {key:'ade', label:'Adverse Drug Event Screening'}, {key:'monitoring', label:'Therapeutic Monitoring'}, {key:'education', label:'Patient Education'}
-  ],
-  pt: [
-    {key:'feeding', label:'Alimentação'}, {key:'analgesia', label:'Analgesia'}, {key:'sedation', label:'Sedação / Sono'},
-    {key:'vte', label:'Tromboprofilaxia (TVP)'}, {key:'hob', label:'Cabeceira Elevada'}, {key:'gipx', label:'Profilaxia de Úlcera / GI'},
-    {key:'glucose', label:'Controle Glicêmico'}, {key:'bowel', label:'Regime Intestinal'}, {key:'devices', label:'Revisão de Dispositivos Invasivos'},
-    {key:'delirium', label:'Prevenção de Delirium'}, {key:'stewardship', label:'Stewardship Antimicrobiano'},
-    {key:'chronic', label:'Manutenção de Medicações Crônicas'}, {key:'handoff', label:'Handoff / Transição de Cuidado'},
-    {key:'ade', label:'Triagem de Eventos Adversos'}, {key:'monitoring', label:'Monitorização Terapêutica'}, {key:'education', label:'Educação do Paciente'}
-  ]
-};
-
-function setSafetyItem(key, status) {
-  if (!state.safetyChecklist) state.safetyChecklist = {};
-  state.safetyChecklist[key] = (state.safetyChecklist[key] === status) ? null : status;
-  saveState();
-  renderSections();
-}
-
 const FHC_DOMAINS = {
   en: [
     {key:'feeding', label:'Feeding'},
@@ -10299,32 +10260,165 @@ const FHC_DOMAINS = {
 
 const FHC_PRESETS = {
   en: {
-    feeding: { meds: [{name:'Oral Nutritional Supplement', dose:'1 bottle', route:'Oral', freq:'Twice daily'}], orders: ['Regular oral diet','Enteral tube feeding','NPO (fasting)','Soft / pureed diet','Low-sodium diet'] },
-    analgesia: { meds: [{name:'Acetaminophen', dose:'750mg', route:'Oral', freq:'Every 6h as needed'},{name:'Tramadol', dose:'50mg', route:'Oral', freq:'Every 8h as needed'},{name:'Morphine', dose:'5mg', route:'Oral', freq:'Every 4h as needed'}], orders: ['Pain assessment every shift (numeric scale)'] },
-    sedation: { meds: [], orders: ['Sleep hygiene — minimize nighttime stimulation','Avoid unnecessary nighttime awakenings','Assess need for sedative'] },
-    thromboprophylaxis: { meds: [{name:'Enoxaparin', dose:'40mg', route:'Subcutaneous', freq:'Once daily'},{name:'Unfractionated Heparin', dose:'5000 units', route:'Subcutaneous', freq:'Every 8h'}], orders: ['Mechanical prophylaxis (compression stockings/IPC)','Reassess VTE risk daily'] },
-    hob: { meds: [], orders: ['Head of bed elevated 30-45°','Positioning for aspiration prevention'] },
-    ulcer: { meds: [{name:'Omeprazole', dose:'40mg', route:'Oral', freq:'Once daily'},{name:'Pantoprazole', dose:'40mg', route:'Intravenous', freq:'Once daily'}], orders: ['Reassess indication for GI prophylaxis daily'] },
-    glucose: { meds: [{name:'Regular Insulin', dose:'Per protocol', route:'Subcutaneous', freq:'Per glucose check'},{name:'NPH Insulin', dose:'Per protocol', route:'Subcutaneous', freq:'1-2x daily'}], orders: ['Capillary glucose monitoring every 6h'] },
-    chronic: { meds: [], orders: ['Continue chronic home medications','Review adherence to chronic treatment'] },
-    handoff: { meds: [], orders: ['Medication reconciliation on admission','Discharge planning from day one','Structured handoff (SBAR)'] },
-    ade: { meds: [], orders: ['Drug-drug interaction screening','Renal/hepatic dose adjustment per function','Verify allergies before prescribing'] },
-    monitoring: { meds: [], orders: ['Electrolyte monitoring with diuretics','INR monitoring with warfarin','Serum level for vancomycin/aminoglycoside','Serial renal function'] },
-    education: { meds: [], orders: ['Medication counseling provided','Teach-back completed','Written materials provided','Follow-up appointment scheduled'] }
+    feeding: {
+      meds: [
+        {name:'Oral Nutritional Supplement', dose:'1 bottle', route:'Oral', freq:'Twice daily'},
+        {name:'Polymeric Enteral Formula', dose:'1.0 kcal/mL', route:'Enteral', freq:'Continuous/per protocol'},
+        {name:'High-Calorie Enteral Formula', dose:'1.5 kcal/mL', route:'Enteral', freq:'Continuous/per protocol'},
+        {name:'Protein Module', dose:'1 scoop', route:'Oral/Enteral', freq:'Once daily'},
+        {name:'B-Complex Vitamins', dose:'1 tablet', route:'Oral', freq:'Once daily'},
+        {name:'Zinc Sulfate', dose:'220mg', route:'Oral', freq:'Once daily'}
+      ],
+      orders: ['Regular oral diet','Enteral tube feeding','NPO (fasting)','Soft / pureed diet','Clear liquid diet','Low-sodium diet','Diabetic diet','Renal diet','High-calorie/high-protein diet','Dietitian/nutrition consult']
+    },
+    analgesia: {
+      meds: [
+        {name:'Acetaminophen', dose:'750mg', route:'Oral', freq:'Every 6h as needed'},
+        {name:'Ibuprofen', dose:'600mg', route:'Oral', freq:'Every 8h as needed'},
+        {name:'Ketoprofen', dose:'100mg', route:'Intravenous', freq:'Every 12h'},
+        {name:'Tramadol', dose:'50mg', route:'Oral/IV', freq:'Every 8h as needed'},
+        {name:'Morphine', dose:'5mg', route:'IV/Oral', freq:'Every 4h as needed'},
+        {name:'Codeine', dose:'30mg', route:'Oral', freq:'Every 6h as needed'},
+        {name:'Gabapentin', dose:'300mg', route:'Oral', freq:'Every 8h'},
+        {name:'Amitriptyline', dose:'25mg', route:'Oral', freq:'Once daily at night'},
+        {name:'Dexamethasone (neuropathic/oncologic pain)', dose:'4mg', route:'Intravenous', freq:'Once daily'}
+      ],
+      orders: ['Pain assessment every shift (numeric scale)','Multimodal analgesia','Consider regional block','Reassess analgesic ladder']
+    },
+    sedation: {
+      meds: [
+        {name:'Zolpidem (avoid in elderly)', dose:'5-10mg', route:'Oral', freq:'Once daily at night'},
+        {name:'Trazodone', dose:'50mg', route:'Oral', freq:'Once daily at night'},
+        {name:'Melatonin', dose:'3mg', route:'Oral', freq:'Once daily at night'},
+        {name:'Quetiapine (low-dose sedation)', dose:'25mg', route:'Oral', freq:'Once daily at night'},
+        {name:'Dexmedetomidine (ICU per protocol)', dose:'Per protocol', route:'Intravenous', freq:'Continuous infusion'}
+      ],
+      orders: ['Sleep hygiene — minimize nighttime stimulation','Avoid unnecessary nighttime awakenings','Assess need for sedative','Reduce nighttime light/noise','Discontinue deliriogenic sedatives if possible']
+    },
+    thromboprophylaxis: {
+      meds: [
+        {name:'Enoxaparin', dose:'40mg', route:'Subcutaneous', freq:'Once daily'},
+        {name:'Enoxaparin (renal adjustment)', dose:'20mg', route:'Subcutaneous', freq:'Once daily'},
+        {name:'Unfractionated Heparin', dose:'5000 units', route:'Subcutaneous', freq:'Every 8h'},
+        {name:'Fondaparinux', dose:'2.5mg', route:'Subcutaneous', freq:'Once daily'},
+        {name:'Rivaroxaban (extended prophylaxis)', dose:'10mg', route:'Oral', freq:'Once daily'}
+      ],
+      orders: ['Mechanical prophylaxis (compression stockings)','Intermittent pneumatic compression','Reassess VTE risk daily (Padua/Caprini)','Early mobilization','Document contraindication if applicable']
+    },
+    hob: { meds: [], orders: ['Head of bed elevated 30-45°','Positioning for aspiration prevention','Lateral decubitus if aspiration risk','Reassess positioning every shift'] },
+    ulcer: {
+      meds: [
+        {name:'Omeprazole', dose:'40mg', route:'Oral', freq:'Once daily'},
+        {name:'Pantoprazole', dose:'40mg', route:'Intravenous', freq:'Once daily'},
+        {name:'Esomeprazole', dose:'40mg', route:'Oral', freq:'Once daily'},
+        {name:'Ranitidine', dose:'50mg', route:'Intravenous', freq:'Every 8h'},
+        {name:'Sucralfate', dose:'1g', route:'Oral', freq:'Every 6h'}
+      ],
+      orders: ['Reassess indication for GI prophylaxis daily','Discontinue if low risk','Evaluate risk factors (mechanical ventilation, coagulopathy, high-dose steroids)']
+    },
+    glucose: {
+      meds: [
+        {name:'Regular Insulin', dose:'Per protocol', route:'Subcutaneous', freq:'Per glucose check'},
+        {name:'NPH Insulin', dose:'Per protocol', route:'Subcutaneous', freq:'1-2x daily'},
+        {name:'Insulin Glargine', dose:'10 units', route:'Subcutaneous', freq:'Once daily'},
+        {name:'Insulin Lispro', dose:'Per meal', route:'Subcutaneous', freq:'With meals'},
+        {name:'Metformin (if already on home therapy, renal function permitting)', dose:'500mg', route:'Oral', freq:'Twice daily'}
+      ],
+      orders: ['Capillary glucose monitoring every 6h','Glucose check before meals and at bedtime','Hypoglycemia protocol','Individualized glycemic target']
+    },
+    chronic: {
+      meds: [
+        {name:'Losartan', dose:'50mg', route:'Oral', freq:'Once daily'},
+        {name:'Metoprolol Succinate', dose:'25mg', route:'Oral', freq:'Once daily'},
+        {name:'Atorvastatin', dose:'40mg', route:'Oral', freq:'Once daily at night'}
+      ],
+      orders: ['Continue chronic home medications','Review adherence to chronic treatment','Optimize antihypertensive therapy','Optimize heart failure therapy (ACEi/ARB, beta-blocker, MRA)','Maintenance bronchodilator for COPD/asthma']
+    },
+    handoff: { meds: [], orders: ['Medication reconciliation on admission','Medication reconciliation on discharge','Discharge planning from day one','Structured handoff (SBAR)','Contact caregiver/family','Schedule outpatient follow-up'] },
+    ade: { meds: [], orders: ['Drug-drug interaction screening','Renal dose adjustment per eGFR','Hepatic dose adjustment per liver function','Verify allergies before prescribing','Review polypharmacy in elderly','Assess for deprescribing opportunities'] },
+    monitoring: { meds: [], orders: ['Electrolyte monitoring with diuretics','INR monitoring with warfarin','Serum vancomycin level','Serum aminoglycoside level','Serial renal function','Serial liver function','Serial CBC','Digoxin level if on digoxin'] },
+    education: { meds: [], orders: ['Medication counseling provided','Teach-back completed','Written materials provided','Follow-up appointment scheduled','Warning signs education','Dietary counseling','Inhaler/device technique education'] }
   },
   pt: {
-    feeding: { meds: [{name:'Suplemento Nutricional Oral', dose:'1 frasco', route:'VO', freq:'2x ao dia'}], orders: ['Dieta oral livre','Dieta enteral por sonda','Jejum (NPO)','Dieta pastosa/branda','Dieta hipossódica'] },
-    analgesia: { meds: [{name:'Dipirona Sódica', dose:'1g', route:'VO', freq:'De 6/6h se necessário'},{name:'Paracetamol', dose:'750mg', route:'VO', freq:'De 6/6h se necessário'},{name:'Tramadol', dose:'50mg', route:'VO', freq:'De 8/8h se necessário'},{name:'Morfina', dose:'5mg', route:'VO', freq:'De 4/4h se necessário'}], orders: ['Avaliação de dor a cada turno (escala numérica)'] },
-    sedation: { meds: [], orders: ['Higiene do sono — reduzir estímulos noturnos','Evitar despertares noturnos desnecessários','Avaliar necessidade de sedativo'] },
-    thromboprophylaxis: { meds: [{name:'Enoxaparina', dose:'40mg', route:'SC', freq:'1x ao dia'},{name:'Heparina Não Fracionada', dose:'5000 UI', route:'SC', freq:'De 8/8h'}], orders: ['Profilaxia mecânica (meias de compressão/compressão pneumática)','Reavaliar risco de TVP diariamente'] },
-    hob: { meds: [], orders: ['Cabeceira elevada 30-45°','Posicionamento para prevenção de aspiração'] },
-    ulcer: { meds: [{name:'Omeprazol', dose:'40mg', route:'VO', freq:'1x ao dia'},{name:'Pantoprazol', dose:'40mg', route:'EV', freq:'1x ao dia'}], orders: ['Reavaliar indicação de profilaxia gástrica diariamente'] },
-    glucose: { meds: [{name:'Insulina Regular', dose:'Conforme protocolo', route:'SC', freq:'Conforme HGT'},{name:'Insulina NPH', dose:'Conforme protocolo', route:'SC', freq:'1-2x ao dia'}], orders: ['Monitorização de glicemia capilar (HGT) de 6/6h'] },
-    chronic: { meds: [], orders: ['Manter medicações de uso crônico','Revisar adesão ao tratamento crônico'] },
-    handoff: { meds: [], orders: ['Reconciliação medicamentosa na admissão','Planejamento de alta desde o primeiro dia','Passagem de caso estruturada (SBAR)'] },
-    ade: { meds: [], orders: ['Triagem de interações medicamentosas','Ajuste de dose renal/hepática conforme função','Verificar alergias antes de prescrever'] },
-    monitoring: { meds: [], orders: ['Monitorização de eletrólitos com diuréticos','INR com warfarina','Nível sérico de vancomicina/aminoglicosídeo','Função renal seriada'] },
-    education: { meds: [], orders: ['Orientação sobre medicações em uso','Teach-back realizado','Material escrito fornecido','Agendamento de retorno'] }
+    feeding: {
+      meds: [
+        {name:'Suplemento Nutricional Oral', dose:'1 frasco', route:'VO', freq:'2x ao dia'},
+        {name:'Fórmula Enteral Polimérica', dose:'1,0 kcal/mL', route:'Enteral', freq:'Contínuo/conforme protocolo'},
+        {name:'Fórmula Enteral Hipercalórica', dose:'1,5 kcal/mL', route:'Enteral', freq:'Contínuo/conforme protocolo'},
+        {name:'Módulo de Proteína', dose:'1 medida', route:'VO/Enteral', freq:'1x ao dia'},
+        {name:'Complexo Vitamínico B', dose:'1 comprimido', route:'VO', freq:'1x ao dia'},
+        {name:'Sulfato de Zinco', dose:'220mg', route:'VO', freq:'1x ao dia'}
+      ],
+      orders: ['Dieta oral livre','Dieta enteral por sonda','Jejum (NPO)','Dieta pastosa/branda','Dieta líquida','Dieta hipossódica','Dieta para diabéticos','Dieta renal','Dieta hipercalórica/hiperproteica','Avaliação por nutricionista']
+    },
+    analgesia: {
+      meds: [
+        {name:'Dipirona Sódica', dose:'1g', route:'VO', freq:'De 6/6h se necessário'},
+        {name:'Paracetamol', dose:'750mg', route:'VO', freq:'De 6/6h se necessário'},
+        {name:'Ibuprofeno', dose:'600mg', route:'VO', freq:'De 8/8h se necessário'},
+        {name:'Cetoprofeno', dose:'100mg', route:'EV', freq:'De 12/12h'},
+        {name:'Tramadol', dose:'50mg', route:'VO/EV', freq:'De 8/8h se necessário'},
+        {name:'Morfina', dose:'5mg', route:'EV/VO', freq:'De 4/4h se necessário'},
+        {name:'Codeína', dose:'30mg', route:'VO', freq:'De 6/6h se necessário'},
+        {name:'Gabapentina', dose:'300mg', route:'VO', freq:'De 8/8h'},
+        {name:'Amitriptilina', dose:'25mg', route:'VO', freq:'1x ao dia à noite'},
+        {name:'Dexametasona (dor oncológica/neuropática)', dose:'4mg', route:'EV', freq:'1x ao dia'}
+      ],
+      orders: ['Avaliação de dor a cada turno (escala numérica)','Analgesia multimodal','Considerar bloqueio regional','Reavaliar escada analgésica']
+    },
+    sedation: {
+      meds: [
+        {name:'Zolpidem (evitar em idosos)', dose:'5-10mg', route:'VO', freq:'1x ao dia à noite'},
+        {name:'Trazodona', dose:'50mg', route:'VO', freq:'1x ao dia à noite'},
+        {name:'Melatonina', dose:'3mg', route:'VO', freq:'1x ao dia à noite'},
+        {name:'Quetiapina (sedação leve)', dose:'25mg', route:'VO', freq:'1x ao dia à noite'},
+        {name:'Dexmedetomidina (UTI conforme protocolo)', dose:'Conforme protocolo', route:'EV', freq:'Infusão contínua'}
+      ],
+      orders: ['Higiene do sono — reduzir estímulos noturnos','Evitar despertares noturnos desnecessários','Avaliar necessidade de sedativo','Reduzir luz e ruído no período noturno','Suspender sedativos deliriogênicos se possível']
+    },
+    thromboprophylaxis: {
+      meds: [
+        {name:'Enoxaparina', dose:'40mg', route:'SC', freq:'1x ao dia'},
+        {name:'Enoxaparina (ajuste renal)', dose:'20mg', route:'SC', freq:'1x ao dia'},
+        {name:'Heparina Não Fracionada', dose:'5000 UI', route:'SC', freq:'De 8/8h'},
+        {name:'Fondaparinux', dose:'2,5mg', route:'SC', freq:'1x ao dia'},
+        {name:'Rivaroxabana (profilaxia estendida)', dose:'10mg', route:'VO', freq:'1x ao dia'}
+      ],
+      orders: ['Profilaxia mecânica (meias de compressão)','Compressão pneumática intermitente','Reavaliar risco de TVP diariamente (Padua/Caprini)','Mobilização precoce','Documentar contraindicação se aplicável']
+    },
+    hob: { meds: [], orders: ['Cabeceira elevada 30-45°','Posicionamento para prevenção de aspiração','Decúbito lateral se risco de aspiração','Reavaliar posicionamento a cada turno'] },
+    ulcer: {
+      meds: [
+        {name:'Omeprazol', dose:'40mg', route:'VO', freq:'1x ao dia'},
+        {name:'Pantoprazol', dose:'40mg', route:'EV', freq:'1x ao dia'},
+        {name:'Esomeprazol', dose:'40mg', route:'VO', freq:'1x ao dia'},
+        {name:'Ranitidina', dose:'50mg', route:'EV', freq:'De 8/8h'},
+        {name:'Sucralfato', dose:'1g', route:'VO', freq:'De 6/6h'}
+      ],
+      orders: ['Reavaliar indicação de profilaxia gástrica diariamente','Suspender se baixo risco','Avaliar fatores de risco (ventilação mecânica, coagulopatia, corticoide em alta dose)']
+    },
+    glucose: {
+      meds: [
+        {name:'Insulina Regular', dose:'Conforme protocolo', route:'SC', freq:'Conforme HGT'},
+        {name:'Insulina NPH', dose:'Conforme protocolo', route:'SC', freq:'1-2x ao dia'},
+        {name:'Insulina Glargina', dose:'10 unidades', route:'SC', freq:'1x ao dia'},
+        {name:'Insulina Lispro', dose:'Conforme refeição', route:'SC', freq:'Nas refeições'},
+        {name:'Metformina (se já em uso domiciliar e função renal preservada)', dose:'500mg', route:'VO', freq:'2x ao dia'}
+      ],
+      orders: ['Monitorização de glicemia capilar (HGT) de 6/6h','HGT antes das refeições e ao deitar','Protocolo de hipoglicemia','Meta glicêmica individualizada']
+    },
+    chronic: {
+      meds: [
+        {name:'Losartana Potássica', dose:'50mg', route:'VO', freq:'1x ao dia'},
+        {name:'Metoprolol Succinato', dose:'25mg', route:'VO', freq:'1x ao dia'},
+        {name:'Atorvastatina', dose:'40mg', route:'VO', freq:'1x ao dia à noite'}
+      ],
+      orders: ['Manter medicações de uso crônico','Revisar adesão ao tratamento crônico','Otimizar anti-hipertensivos','Otimizar terapia para insuficiência cardíaca (IECA/BRA, betabloqueador, espironolactona)','Broncodilatador de manutenção para DPOC/asma']
+    },
+    handoff: { meds: [], orders: ['Reconciliação medicamentosa na admissão','Reconciliação medicamentosa na alta','Planejamento de alta desde o primeiro dia','Passagem de caso estruturada (SBAR)','Contato com cuidador/família','Agendamento de retorno ambulatorial'] },
+    ade: { meds: [], orders: ['Triagem de interações medicamentosas','Ajuste de dose renal conforme TFG','Ajuste de dose hepática conforme função','Verificar alergias antes de prescrever','Revisar polifarmácia em idosos','Avaliar oportunidades de desprescrição'] },
+    monitoring: { meds: [], orders: ['Monitorização de eletrólitos com diuréticos','INR diário com warfarina','Nível sérico de vancomicina','Nível sérico de aminoglicosídeo','Função renal seriada','Função hepática seriada','Hemograma seriado','Digoxinemia se em uso de digoxina'] },
+    education: { meds: [], orders: ['Orientação sobre medicações em uso','Teach-back realizado','Material escrito fornecido','Agendamento de retorno','Orientação sobre sinais de alarme','Orientação nutricional','Orientação sobre uso correto de inalador/dispositivos'] }
   }
 };
 
@@ -10341,6 +10435,12 @@ function saveFhcCustomMed(domain, med) {
 
 function toggleFhcForm(key) {
   _fhcOpenForm = (_fhcOpenForm === key) ? null : key;
+  renderSections();
+}
+
+function toggleFhcPanel(domain) {
+  _fhcOpenPanel = (_fhcOpenPanel === domain) ? null : domain;
+  _fhcOpenForm = null;
   renderSections();
 }
 
