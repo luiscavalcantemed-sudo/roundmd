@@ -8384,7 +8384,7 @@ const FAM_DISEASE_OPTS = lang === 'en'
                 ${!confirmed ? `<button onclick="setLabDateToday(${idx})" title="${lang==='en'?'Use today':'Usar hoje'}" style="flex-shrink:0; padding:3px 6px; font-size:10px; font-weight:700; background:var(--primary); color:#fff; border:none; border-radius:3px; cursor:pointer;">${lang==='en'?'Today':'Hoje'}</button>` : ''}
               </div>
               <div style="flex: 1;">
-                <input type="text" id="lab-result-${idx}" inputmode="decimal" list="lab-result-options" value="${exam.result || ''}" ${confirmed ? '' : 'disabled'} oninput="updateCustomLab(${idx}, 'result', this.value)" placeholder="${confirmed ? (lang === 'en' ? 'Value...' : 'Valor...') : (lang==='en'?'Confirm date first':'Confirme a data')}" style="padding: 4px 6px; font-size: 12px; width:100%; box-sizing:border-box; background:transparent; border:none; border-bottom:1px solid var(--border); border-radius:0; color: ${exam.abnormal ? 'var(--danger)' : 'inherit'}; font-weight: ${exam.abnormal ? '700' : 'normal'}; ${confirmed ? '' : 'opacity:0.5;'}">
+                <input type="text" id="lab-result-${idx}" inputmode="${_isQualitativeLab(exam.name) ? 'text' : 'decimal'}" list="${_isQualitativeLab(exam.name) ? 'lab-result-options-qual' : ''}" value="${exam.result || ''}" ${confirmed ? '' : 'disabled'} oninput="updateCustomLab(${idx}, 'result', this.value)" placeholder="${confirmed ? (lang === 'en' ? 'Value...' : 'Valor...') : (lang==='en'?'Confirm date first':'Confirme a data')}" style="padding: 4px 6px; font-size: 12px; width:100%; box-sizing:border-box; background:transparent; border:none; border-bottom:1px solid var(--border); border-radius:0; color: ${exam.abnormal ? 'var(--danger)' : 'inherit'}; font-weight: ${exam.abnormal ? '700' : 'normal'}; ${confirmed ? '' : 'opacity:0.5;'}">
                 ${confirmed ? (() => { const rng = exam.name ? LAB_RANGES[exam.name.toLowerCase().trim()] : null; const val = exam.result ? parseFloat(exam.result.replace(',','.')) : NaN; if (!rng || isNaN(val)) return exam.abnormal ? '<span style="font-size:10px;font-weight:700;color:var(--danger);">▲</span>' : ''; if (val < rng.min) return `<span style="font-size:10px;font-weight:700;color:var(--danger);">▼ ${rng.min}–${rng.max}</span>`; if (val > rng.max) return `<span style="font-size:10px;font-weight:700;color:var(--danger);">▲ ${rng.min}–${rng.max}</span>`; return `<span style="font-size:10px;color:var(--success,#15803d);">✓ ${rng.min}–${rng.max}</span>`; })() : ''}
               </div>
               <div style="flex: 0.8;">
@@ -8416,13 +8416,11 @@ const FAM_DISEASE_OPTS = lang === 'en'
           <option value="mm/h">
           <option value="%">
         </datalist>
-        <datalist id="lab-result-options">
-          <option value="Positivo">
-          <option value="Negativo">
-          <option value="Reagente">
-          <option value="Não Reagente">
-          <option value="Normal">
-          <option value="Anormal">
+        <datalist id="lab-result-options-qual">
+          ${(lang==='en'
+            ? ['Positive','Negative','Reactive','Non-reactive','Indeterminate','Detected','Not detected']
+            : ['Positivo','Negativo','Reagente','Não Reagente','Indeterminado','Detectável','Não Detectável']
+          ).map(o=>`<option value="${o}">`).join('\n          ')}
         </datalist>
         
         <datalist id="lab-exams-list">
@@ -10235,6 +10233,17 @@ const LAB_RANGES = {
   'alp': { min: 40, max: 120 },
   'uric acid': { min: 3.5, max: 7.2 }
 };
+
+const QUALITATIVE_LAB_KEYWORDS = [
+  'hbsag', 'anti-hbs', 'anti-hbc', 'anti-hcv', 'anti-hiv', 'vdrl', 'anti-hav',
+  'urocultura', 'urine culture', 'hemocultura', 'blood culture',
+  'rpr', 'widal', 'coombs', 'beta-hcg qualitativo', 'covid', 'influenza', 'estreptococo'
+];
+function _isQualitativeLab(name) {
+  if (!name) return false;
+  const n = name.toLowerCase();
+  return QUALITATIVE_LAB_KEYWORDS.some(k => n.includes(k));
+}
 
 function checkLabAbnormal(name, resultStr) {
   if (!name || !resultStr) return false;
