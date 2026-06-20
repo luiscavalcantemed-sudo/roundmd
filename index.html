@@ -1746,7 +1746,7 @@ const SVG = {
 
 let lang = 'en';
 let activeMedCat = null;
-let _rxFormOpenKey = null;
+let _fhcOpenForm = null;
 let activeCalcSection = null;
 let activePmhCat = null;
 let activePshCat = null;
@@ -3788,6 +3788,7 @@ function EMPTY() {
     medFavs: [],
     calcs: {},
     safetyChecklist: {},
+    routineOrders: [],
     _antOpen: { pmh: true, psh: true, gyn: true, peds: true, fam: true }
   };
 }
@@ -8546,8 +8547,6 @@ const FAM_DISEASE_OPTS = lang === 'en'
       const updFn  = isAcute ? `updateProblemField(${idx},'dx',this.value)` : `updateChronicProblemField(${idx},'dx',this.value)`;
       const updPl  = isAcute ? (pi) => `updatePlanItem(${idx},${pi},this.value)` : (pi) => `updateChronicPlanItem(${idx},${pi},this.value)`;
       const remPl  = isAcute ? (pi) => `removePlanItem(${idx},${pi})` : (pi) => `removeChronicPlanItem(${idx},${pi})`;
-      const rxKey = (isAcute ? 'acute' : 'chronic') + '-' + idx;
-      const linkedMeds = p.dx ? state.medications.map((m,mi)=>({m,mi})).filter(x => x.m.linkedDx === p.dx) : [];
       return `
         <div style="border:1px solid var(--border);border-left:4px solid ${color};border-radius:var(--radius);padding:14px 16px;margin-bottom:12px;background:var(--surface-solid);">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
@@ -8575,36 +8574,6 @@ const FAM_DISEASE_OPTS = lang === 'en'
             </div>
           `).join('')}
           <button class="btn-add" style="margin-top:6px;margin-bottom:0;font-size:12px;padding:6px 14px;" onclick="${addFn}">+ ${lang==='en'?'Add item':'Adicionar item'}</button>
-
-          <div style="margin-top:12px;border-top:1px solid var(--border);padding-top:10px;">
-            <span style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;">℞ ${lang==='en'?'Prescription':'Prescrição'}</span>
-            ${linkedMeds.length ? `
-              <div style="margin-top:6px;">
-                ${linkedMeds.map(({m,mi}) => `
-                  <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;background:var(--bg);border-radius:6px;padding:6px 10px;margin-bottom:4px;">
-                    <span style="font-size:12px;"><strong>${m.name||''}</strong> ${m.dose||''} — ${m.route||''} ${m.freq||''}</span>
-                    <button class="btn-sm-del" onclick="removeMedication(${mi})">✕</button>
-                  </div>
-                `).join('')}
-              </div>
-            ` : ''}
-            ${_rxFormOpenKey === rxKey ? `
-              <div style="background:var(--bg);border:1px solid ${color};border-radius:8px;padding:10px;margin-top:8px;">
-                <input type="text" id="rx-name-${rxKey}" list="all-med-names" placeholder="${lang==='en'?'Medication name...':'Nome do medicamento...'}" style="margin-bottom:6px;font-size:13px;">
-                <div class="input-row">
-                  <input type="text" id="rx-dose-${rxKey}" placeholder="${lang==='en'?'Dose':'Dose'}" style="font-size:13px;">
-                  <input type="text" id="rx-route-${rxKey}" placeholder="${lang==='en'?'Route':'Via'}" style="font-size:13px;">
-                </div>
-                <input type="text" id="rx-freq-${rxKey}" placeholder="${lang==='en'?'Frequency':'Frequência'}" style="margin-top:6px;margin-bottom:8px;font-size:13px;">
-                <div style="display:flex;gap:6px;">
-                  <button class="btn-add" style="flex:1;margin:0;font-size:12px;padding:6px 0;" onclick="addLinkedMedication('${rxKey}')">${lang==='en'?'Add':'Adicionar'}</button>
-                  <button style="padding:6px 12px;background:transparent;border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:12px;" onclick="toggleRxForm(null)">${lang==='en'?'Cancel':'Cancelar'}</button>
-                </div>
-              </div>
-            ` : `
-              <button class="btn-add" style="margin-top:6px;margin-bottom:0;font-size:12px;padding:6px 14px;background:${color};border-color:${color};" onclick="toggleRxForm('${rxKey}')">+ ${lang==='en'?'Prescribe':'Prescrever'}</button>
-            `}
-          </div>
         </div>`;
     }
 
@@ -8727,6 +8696,83 @@ const FAM_DISEASE_OPTS = lang === 'en'
       </div>
       <button class="btn-add" style="margin-bottom:8px;" onclick="addDDx(); return false;">${lang==='en'?'+ Add differential':'+ Adicionar diferencial'}</button>
 
+      <!-- ── PRESCRIÇÃO (FAST-HUG-CHAMP) ──────────────────────────────── -->
+      ${impSection('℞ ' + (lang==='en'?'Prescription (FAST-HUG-CHAMP)':'Prescrição (FAST-HUG-CHAMP)'), 'var(--primary)')}
+      ${FHC_DOMAINS[lang].map(d => {
+        const domain = d.key;
+        const presets = FHC_PRESETS[lang][domain] || { meds: [], orders: [] };
+        const customMeds = getFhcCustomMeds(domain);
+        const customOrders = getCustomList('rx_order_' + domain);
+        const domainMeds = state.medications.map((m,mi)=>({m,mi})).filter(x => x.m.domain === domain);
+        const domainOrders = (state.routineOrders||[]).map((o,oi)=>({o,oi})).filter(x => x.o.domain === domain);
+        return `
+        <div class="card" style="border-left:4px solid var(--primary);margin-bottom:10px;">
+          <div class="card-label">${d.label}</div>
+
+          ${(domainMeds.length || domainOrders.length) ? `
+            <div style="margin-bottom:8px;">
+              ${domainMeds.map(({m,mi}) => `
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;background:var(--bg);border-radius:6px;padding:6px 10px;margin-bottom:4px;">
+                  <span style="font-size:12px;">℞ <strong>${m.name||''}</strong> ${m.dose||''} — ${m.route||''} ${m.freq||''}</span>
+                  <button class="btn-sm-del" onclick="removeMedication(${mi})">✕</button>
+                </div>
+              `).join('')}
+              ${domainOrders.map(({o,oi}) => `
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;background:var(--bg);border-radius:6px;padding:6px 10px;margin-bottom:4px;">
+                  <span style="font-size:12px;">• ${o.text}</span>
+                  <button class="btn-sm-del" onclick="removeRoutineOrder(${oi})">✕</button>
+                </div>
+              `).join('')}
+            </div>
+          ` : ''}
+
+          <div class="input-row">
+            <div>
+              <label style="font-size:11px;">${lang==='en'?'Medication':'Medicação'}</label>
+              <select onchange="selectFhcMed('${domain}', this.value)">
+                <option value="">${lang==='en'?'Select...':'Selecionar...'}</option>
+                ${presets.meds.map(m => `<option value="${m.name}">${m.name} — ${m.dose}</option>`).join('')}
+                ${customMeds.length ? `<optgroup label="${lang==='en'?'Custom':'Personalizados'}">${customMeds.map(m => `<option value="${m.name}">${m.name} — ${m.dose}</option>`).join('')}</optgroup>` : ''}
+                <option value="__other__">${lang==='en'?'Other (add new)...':'Outro (adicionar novo)...'}</option>
+              </select>
+              ${_fhcOpenForm === domain + '-med' ? `
+                <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px;margin-top:6px;">
+                  <input type="text" id="fhc-med-name-${domain}" placeholder="${lang==='en'?'Medication name...':'Nome do medicamento...'}" style="margin-bottom:4px;font-size:12px;">
+                  <div class="input-row">
+                    <input type="text" id="fhc-med-dose-${domain}" placeholder="${lang==='en'?'Dose':'Dose'}" style="font-size:12px;">
+                    <input type="text" id="fhc-med-route-${domain}" placeholder="${lang==='en'?'Route':'Via'}" style="font-size:12px;">
+                  </div>
+                  <input type="text" id="fhc-med-freq-${domain}" placeholder="${lang==='en'?'Frequency':'Frequência'}" style="margin-top:4px;margin-bottom:6px;font-size:12px;">
+                  <div style="display:flex;gap:6px;">
+                    <button class="btn-add" style="flex:1;margin:0;font-size:11px;padding:5px 0;" onclick="addFhcMedCustom('${domain}')">${lang==='en'?'Add':'Adicionar'}</button>
+                    <button style="padding:5px 10px;background:transparent;border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:11px;" onclick="toggleFhcForm(null)">${lang==='en'?'Cancel':'Cancelar'}</button>
+                  </div>
+                </div>
+              ` : ''}
+            </div>
+            <div>
+              <label style="font-size:11px;">${lang==='en'?'Routine order':'Conduta'}</label>
+              <select onchange="selectFhcOrder('${domain}', this.value)">
+                <option value="">${lang==='en'?'Select...':'Selecionar...'}</option>
+                ${presets.orders.map(o => `<option value="${o}">${o}</option>`).join('')}
+                ${customOrders.length ? `<optgroup label="${lang==='en'?'Custom':'Personalizados'}">${customOrders.map(o => `<option value="${o}">${o}</option>`).join('')}</optgroup>` : ''}
+                <option value="__other__">${lang==='en'?'Other (add new)...':'Outro (adicionar novo)...'}</option>
+              </select>
+              ${_fhcOpenForm === domain + '-order' ? `
+                <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:8px;margin-top:6px;">
+                  <input type="text" id="fhc-order-text-${domain}" placeholder="${lang==='en'?'New routine order...':'Nova conduta...'}" style="margin-bottom:6px;font-size:12px;">
+                  <div style="display:flex;gap:6px;">
+                    <button class="btn-add" style="flex:1;margin:0;font-size:11px;padding:5px 0;" onclick="addFhcOrderCustom('${domain}')">${lang==='en'?'Add':'Adicionar'}</button>
+                    <button style="padding:5px 10px;background:transparent;border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:11px;" onclick="toggleFhcForm(null)">${lang==='en'?'Cancel':'Cancelar'}</button>
+                  </div>
+                </div>
+              ` : ''}
+            </div>
+          </div>
+        </div>
+        `;
+      }).join('')}
+
       <!-- ── PENDÊNCIAS / FOLLOW-UP ────────────────────────────────────── -->
       ${impSection(lang==='en'?'Pending Items / Follow-up':'Pendências / Follow-up', 'var(--primary-muted, #64748b)', (state.pendencias||[]).filter(p=>p.text).length + ' ' + (lang==='en'?'item(s)':'item(ns)'))}
       <div id="pend-list">
@@ -8761,21 +8807,16 @@ const FAM_DISEASE_OPTS = lang === 'en'
       ${(() => {
         const chronicDx = (state.chronicProblems||[]).filter(p => p.dx);
         if (!chronicDx.length) return '';
-        const meds = state.medications || [];
+        const chronicMeds = (state.medications||[]).filter(m => m.domain === 'chronic');
         return `
         <div class="card" style="border-left:4px solid var(--warn);">
           <div class="card-label">${lang==='en'?'Medication Reconciliation — Chronic Conditions':'Reconciliação Medicamentosa — Condições Crônicas'}</div>
-          ${chronicDx.map(p => {
-            const linked = meds.filter(m => m.linkedDx === p.dx);
-            return `
-              <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);">
-                <span style="font-size:13px;">${p.dx}</span>
-                ${linked.length
-                  ? `<span style="font-size:12px;color:var(--success,#15803d);font-weight:600;">✓ ${linked.map(m=>m.name).join(', ')}</span>`
-                  : `<span style="font-size:12px;color:var(--danger);font-weight:600;">⚠ ${lang==='en'?'No active medication linked':'Sem medicação ativa vinculada'}</span>`}
-              </div>
-            `;
-          }).join('')}
+          <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;">${lang==='en'?'Chronic conditions on record:':'Condições crônicas registradas:'} ${chronicDx.map(p=>p.dx).join(', ')}</div>
+          ${chronicMeds.length
+            ? chronicMeds.map(m => `
+                <div style="display:flex;align-items:center;gap:8px;padding:4px 0;font-size:13px;color:var(--success,#15803d);font-weight:600;">✓ ${m.name} ${m.dose||''} — ${m.route||''} ${m.freq||''}</div>
+              `).join('')
+            : `<div style="font-size:13px;color:var(--danger);font-weight:600;">⚠ ${lang==='en'?'No chronic-disease medications recorded in the Prescription section':'Nenhum medicamento de doença crônica registrado na seção de Prescrição'}</div>`}
         </div>
         `;
       })()}
@@ -10225,34 +10266,139 @@ function setSafetyItem(key, status) {
   renderSections();
 }
 
-function toggleRxForm(key) {
-  _rxFormOpenKey = (_rxFormOpenKey === key) ? null : key;
+const FHC_DOMAINS = {
+  en: [
+    {key:'feeding', label:'Feeding'},
+    {key:'analgesia', label:'Analgesia'},
+    {key:'sedation', label:'Sedation / Sleep'},
+    {key:'thromboprophylaxis', label:'Thromboprophylaxis'},
+    {key:'hob', label:'Head of Bed'},
+    {key:'ulcer', label:'Ulcer / GI Prophylaxis'},
+    {key:'glucose', label:'Glucose Control'},
+    {key:'chronic', label:'Chronic Disease'},
+    {key:'handoff', label:'Handoff / Transitions'},
+    {key:'ade', label:'Adverse Drug Events'},
+    {key:'monitoring', label:'Monitoring'},
+    {key:'education', label:'Patient Education'}
+  ],
+  pt: [
+    {key:'feeding', label:'Alimentação'},
+    {key:'analgesia', label:'Analgesia'},
+    {key:'sedation', label:'Sedação / Sono'},
+    {key:'thromboprophylaxis', label:'Tromboprofilaxia'},
+    {key:'hob', label:'Cabeceira Elevada'},
+    {key:'ulcer', label:'Profilaxia de Úlcera / GI'},
+    {key:'glucose', label:'Controle Glicêmico'},
+    {key:'chronic', label:'Doença Crônica'},
+    {key:'handoff', label:'Handoff / Transição'},
+    {key:'ade', label:'Eventos Adversos'},
+    {key:'monitoring', label:'Monitorização'},
+    {key:'education', label:'Educação do Paciente'}
+  ]
+};
+
+const FHC_PRESETS = {
+  en: {
+    feeding: { meds: [{name:'Oral Nutritional Supplement', dose:'1 bottle', route:'Oral', freq:'Twice daily'}], orders: ['Regular oral diet','Enteral tube feeding','NPO (fasting)','Soft / pureed diet','Low-sodium diet'] },
+    analgesia: { meds: [{name:'Acetaminophen', dose:'750mg', route:'Oral', freq:'Every 6h as needed'},{name:'Tramadol', dose:'50mg', route:'Oral', freq:'Every 8h as needed'},{name:'Morphine', dose:'5mg', route:'Oral', freq:'Every 4h as needed'}], orders: ['Pain assessment every shift (numeric scale)'] },
+    sedation: { meds: [], orders: ['Sleep hygiene — minimize nighttime stimulation','Avoid unnecessary nighttime awakenings','Assess need for sedative'] },
+    thromboprophylaxis: { meds: [{name:'Enoxaparin', dose:'40mg', route:'Subcutaneous', freq:'Once daily'},{name:'Unfractionated Heparin', dose:'5000 units', route:'Subcutaneous', freq:'Every 8h'}], orders: ['Mechanical prophylaxis (compression stockings/IPC)','Reassess VTE risk daily'] },
+    hob: { meds: [], orders: ['Head of bed elevated 30-45°','Positioning for aspiration prevention'] },
+    ulcer: { meds: [{name:'Omeprazole', dose:'40mg', route:'Oral', freq:'Once daily'},{name:'Pantoprazole', dose:'40mg', route:'Intravenous', freq:'Once daily'}], orders: ['Reassess indication for GI prophylaxis daily'] },
+    glucose: { meds: [{name:'Regular Insulin', dose:'Per protocol', route:'Subcutaneous', freq:'Per glucose check'},{name:'NPH Insulin', dose:'Per protocol', route:'Subcutaneous', freq:'1-2x daily'}], orders: ['Capillary glucose monitoring every 6h'] },
+    chronic: { meds: [], orders: ['Continue chronic home medications','Review adherence to chronic treatment'] },
+    handoff: { meds: [], orders: ['Medication reconciliation on admission','Discharge planning from day one','Structured handoff (SBAR)'] },
+    ade: { meds: [], orders: ['Drug-drug interaction screening','Renal/hepatic dose adjustment per function','Verify allergies before prescribing'] },
+    monitoring: { meds: [], orders: ['Electrolyte monitoring with diuretics','INR monitoring with warfarin','Serum level for vancomycin/aminoglycoside','Serial renal function'] },
+    education: { meds: [], orders: ['Medication counseling provided','Teach-back completed','Written materials provided','Follow-up appointment scheduled'] }
+  },
+  pt: {
+    feeding: { meds: [{name:'Suplemento Nutricional Oral', dose:'1 frasco', route:'VO', freq:'2x ao dia'}], orders: ['Dieta oral livre','Dieta enteral por sonda','Jejum (NPO)','Dieta pastosa/branda','Dieta hipossódica'] },
+    analgesia: { meds: [{name:'Dipirona Sódica', dose:'1g', route:'VO', freq:'De 6/6h se necessário'},{name:'Paracetamol', dose:'750mg', route:'VO', freq:'De 6/6h se necessário'},{name:'Tramadol', dose:'50mg', route:'VO', freq:'De 8/8h se necessário'},{name:'Morfina', dose:'5mg', route:'VO', freq:'De 4/4h se necessário'}], orders: ['Avaliação de dor a cada turno (escala numérica)'] },
+    sedation: { meds: [], orders: ['Higiene do sono — reduzir estímulos noturnos','Evitar despertares noturnos desnecessários','Avaliar necessidade de sedativo'] },
+    thromboprophylaxis: { meds: [{name:'Enoxaparina', dose:'40mg', route:'SC', freq:'1x ao dia'},{name:'Heparina Não Fracionada', dose:'5000 UI', route:'SC', freq:'De 8/8h'}], orders: ['Profilaxia mecânica (meias de compressão/compressão pneumática)','Reavaliar risco de TVP diariamente'] },
+    hob: { meds: [], orders: ['Cabeceira elevada 30-45°','Posicionamento para prevenção de aspiração'] },
+    ulcer: { meds: [{name:'Omeprazol', dose:'40mg', route:'VO', freq:'1x ao dia'},{name:'Pantoprazol', dose:'40mg', route:'EV', freq:'1x ao dia'}], orders: ['Reavaliar indicação de profilaxia gástrica diariamente'] },
+    glucose: { meds: [{name:'Insulina Regular', dose:'Conforme protocolo', route:'SC', freq:'Conforme HGT'},{name:'Insulina NPH', dose:'Conforme protocolo', route:'SC', freq:'1-2x ao dia'}], orders: ['Monitorização de glicemia capilar (HGT) de 6/6h'] },
+    chronic: { meds: [], orders: ['Manter medicações de uso crônico','Revisar adesão ao tratamento crônico'] },
+    handoff: { meds: [], orders: ['Reconciliação medicamentosa na admissão','Planejamento de alta desde o primeiro dia','Passagem de caso estruturada (SBAR)'] },
+    ade: { meds: [], orders: ['Triagem de interações medicamentosas','Ajuste de dose renal/hepática conforme função','Verificar alergias antes de prescrever'] },
+    monitoring: { meds: [], orders: ['Monitorização de eletrólitos com diuréticos','INR com warfarina','Nível sérico de vancomicina/aminoglicosídeo','Função renal seriada'] },
+    education: { meds: [], orders: ['Orientação sobre medicações em uso','Teach-back realizado','Material escrito fornecido','Agendamento de retorno'] }
+  }
+};
+
+function getFhcCustomMeds(domain) {
+  try { return JSON.parse(localStorage.getItem('rmd_fhc_meds_' + domain) || '[]'); } catch { return []; }
+}
+function saveFhcCustomMed(domain, med) {
+  const list = getFhcCustomMeds(domain);
+  if (!list.some(m => m.name === med.name)) {
+    list.push(med);
+    localStorage.setItem('rmd_fhc_meds_' + domain, JSON.stringify(list));
+  }
+}
+
+function toggleFhcForm(key) {
+  _fhcOpenForm = (_fhcOpenForm === key) ? null : key;
   renderSections();
 }
 
-function addLinkedMedication(rxKey) {
-  const nameEl = document.getElementById('rx-name-' + rxKey);
-  const doseEl = document.getElementById('rx-dose-' + rxKey);
-  const routeEl = document.getElementById('rx-route-' + rxKey);
-  const freqEl = document.getElementById('rx-freq-' + rxKey);
+function selectFhcMed(domain, value) {
+  if (!value) return;
+  if (value === '__other__') {
+    toggleFhcForm(domain + '-med');
+    return;
+  }
+  const presets = (FHC_PRESETS[lang][domain] && FHC_PRESETS[lang][domain].meds) || [];
+  const custom = getFhcCustomMeds(domain);
+  const med = presets.find(m => m.name === value) || custom.find(m => m.name === value);
+  if (!med) return;
+  state.medications.push({ name: med.name, dose: med.dose||'', route: med.route||'', freq: med.freq||'', notes: '', domain });
+  saveState();
+  renderSections();
+}
+
+function addFhcMedCustom(domain) {
+  const nameEl = document.getElementById('fhc-med-name-' + domain);
+  const doseEl = document.getElementById('fhc-med-dose-' + domain);
+  const routeEl = document.getElementById('fhc-med-route-' + domain);
+  const freqEl = document.getElementById('fhc-med-freq-' + domain);
   if (!nameEl || !nameEl.value.trim()) return;
-  const name = nameEl.value.trim();
-  const dashIdx = rxKey.lastIndexOf('-');
-  const kind = rxKey.slice(0, dashIdx);
-  const pIdx = parseInt(rxKey.slice(dashIdx + 1));
-  const list = kind === 'acute' ? state.problems : state.chronicProblems;
-  const dxText = (list && list[pIdx]) ? (list[pIdx].dx || '') : '';
-  state.medications.push({
-    name,
-    dose: doseEl ? doseEl.value.trim() : '',
-    route: routeEl ? routeEl.value.trim() : '',
-    freq: freqEl ? freqEl.value.trim() : '',
-    notes: '',
-    linkedDx: dxText
-  });
-  const lib = Object.values(COMMON_MEDS[lang]).flat();
-  if (!lib.some(m => m.name === name)) saveCustomMed(name);
-  _rxFormOpenKey = null;
+  const med = { name: nameEl.value.trim(), dose: doseEl?doseEl.value.trim():'', route: routeEl?routeEl.value.trim():'', freq: freqEl?freqEl.value.trim():'' };
+  state.medications.push({ ...med, notes: '', domain });
+  saveFhcCustomMed(domain, med);
+  _fhcOpenForm = null;
+  saveState();
+  renderSections();
+}
+
+function selectFhcOrder(domain, value) {
+  if (!value) return;
+  if (value === '__other__') {
+    toggleFhcForm(domain + '-order');
+    return;
+  }
+  if (!state.routineOrders) state.routineOrders = [];
+  state.routineOrders.push({ domain, text: value });
+  saveState();
+  renderSections();
+}
+
+function addFhcOrderCustom(domain) {
+  const el = document.getElementById('fhc-order-text-' + domain);
+  if (!el || !el.value.trim()) return;
+  const text = el.value.trim();
+  if (!state.routineOrders) state.routineOrders = [];
+  state.routineOrders.push({ domain, text });
+  saveToCustomList('rx_order_' + domain, text);
+  _fhcOpenForm = null;
+  saveState();
+  renderSections();
+}
+
+function removeRoutineOrder(idx) {
+  state.routineOrders.splice(idx, 1);
   saveState();
   renderSections();
 }
