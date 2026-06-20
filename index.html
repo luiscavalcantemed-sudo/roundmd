@@ -8229,63 +8229,13 @@ const FAM_DISEASE_OPTS = lang === 'en'
         </div>
         
         <div style="display:flex; flex-wrap:wrap; gap:20px; margin-bottom:16px;">
-          <!-- SVG BMP Fishbone UI -->
-          <div style="background:var(--bg); padding:10px 10px 20px 10px; border-radius:var(--radius-sm); border:1px solid var(--border); flex:1; min-width:320px; display:flex; flex-direction:column; align-items:center;">
-            <div style="font-weight:600; font-size:12px; margin-bottom:16px; color:var(--primary); width:100%; display:flex; justify-content:space-between; align-items:center;">
-              <span>${lang === 'en' ? 'Basic Metabolic Panel (BMP)' : 'Painel Metabólico Básico (BMP)'}</span>
-              <input type="text" inputmode="numeric" class="phi-mask" placeholder="${lang === 'en' ? 'MM/DD/YYYY' : 'DD/MM/AAAA'}" maxlength="10" value="${state.fishbone.bmpDate || ''}" oninput="handleDateInput(event, 'bmpDate', state.fishbone)" style="width: 85px; padding: 2px 4px; font-size: 10px; text-align: center;">
-            </div>
-            
-            <div style="position: relative; width: 300px; height: 100px; color: var(--text);">
-              <svg width="300" height="100" style="position: absolute; top:0; left:0; stroke: var(--text); stroke-width: 1.5; fill: none; opacity: 1; pointer-events:none;">
-                <line x1="10" y1="50" x2="220" y2="50" />
-                <line x1="80" y1="10" x2="80" y2="90" />
-                <line x1="150" y1="10" x2="150" y2="90" />
-                <line x1="220" y1="50" x2="260" y2="15" />
-                <line x1="220" y1="50" x2="260" y2="85" />
-              </svg>
-              
-              <div style="position: absolute; top: 12px; left: 10px; width: 65px; text-align: center;">
-                <div style="font-size:10px; color:var(--muted); line-height:1;">Na+</div>
-                <input type="text" id="fish-na" class="fish-input" value="${state.fishbone.na || ''}" oninput="state.fishbone.na=this.value; _fishboneSync('na');">
-              </div>
-              <div style="position: absolute; top: 54px; left: 10px; width: 65px; text-align: center;">
-                <input type="text" id="fish-k" class="fish-input" value="${state.fishbone.k || ''}" oninput="state.fishbone.k=this.value; _fishboneSync('k');">
-                <div style="font-size:10px; color:var(--muted); line-height:1;">K+</div>
-              </div>
-              
-              <div style="position: absolute; top: 12px; left: 83px; width: 65px; text-align: center;">
-                <div style="font-size:10px; color:var(--muted); line-height:1;">Cl-</div>
-                <input type="text" id="fish-cl" class="fish-input" value="${state.fishbone.cl || ''}" oninput="state.fishbone.cl=this.value; _fishboneSync('cl');">
-              </div>
-              <div style="position: absolute; top: 54px; left: 83px; width: 65px; text-align: center;">
-                <input type="text" id="fish-co2" class="fish-input" value="${state.fishbone.co2 || ''}" oninput="state.fishbone.co2=this.value; _fishboneSync('co2');">
-                <div style="font-size:10px; color:var(--muted); line-height:1;">HCO₃</div>
-              </div>
-
-              <div style="position: absolute; top: 12px; left: 153px; width: 65px; text-align: center;">
-                <div style="font-size:10px; color:var(--muted); line-height:1;">${lang === 'en' ? 'BUN' : 'Ureia'}</div>
-                <input type="text" id="fish-bun" class="fish-input" value="${state.fishbone.bun || ''}" oninput="state.fishbone.bun=this.value; _fishboneSync('bun');">
-              </div>
-              <div style="position: absolute; top: 54px; left: 153px; width: 65px; text-align: center;">
-                <input type="text" id="fish-cr" class="fish-input" value="${state.fishbone.cr || ''}" oninput="state.fishbone.cr=this.value; _fishboneSync('cr');">
-                <div style="font-size:10px; color:var(--muted); line-height:1;">Cr</div>
-              </div>
-
-              <div style="position: absolute; top: 32px; left: 228px; width: 55px; text-align: center;">
-                <div style="font-size:10px; color:var(--muted); line-height:1;">${lang === 'en' ? 'Glu' : 'Glic'}</div>
-                <input type="text" id="fish-glu" class="fish-input" value="${state.fishbone.glu || ''}" oninput="state.fishbone.glu=this.value; _fishboneSync('glu');">
-              </div>
-            </div>
-          </div>
-          
           <!-- SVG CBC X UI -->
           <div style="background:var(--bg); padding:10px 10px 20px 10px; border-radius:var(--radius-sm); border:1px solid var(--border); flex:1; min-width:280px; display:flex; flex-direction:column; align-items:center;">
             <div style="font-weight:600; font-size:12px; margin-bottom:16px; color:var(--primary); width:100%; display:flex; justify-content:space-between; align-items:center;">
               <span>${lang === 'en' ? 'Complete Blood Count (CBC)' : 'Hemograma Completo'}</span>
-              <input type="text" inputmode="numeric" class="phi-mask" placeholder="${lang === 'en' ? 'MM/DD/YYYY' : 'DD/MM/AAAA'}" maxlength="10" value="${state.fishbone.cbcDate || ''}" oninput="handleDateInput(event, 'cbcDate', state.fishbone)" style="width: 85px; padding: 2px 4px; font-size: 10px; text-align: center;">
+              <span style="font-size:10px;color:var(--muted);">${state.fishbone.cbcDate || (lang==='en'?'no date':'sem data')}</span>
             </div>
-            
+
             <div style="position: relative; width: 260px; height: 100px; color: var(--text); margin-top: 4px;">
               <svg width="260" height="100" style="position: absolute; top:0; left:0; stroke: var(--text); stroke-width: 1.5; fill: none; opacity: 1; pointer-events:none;">
                 <line x1="10" y1="0" x2="80" y2="50" />
@@ -8294,28 +8244,81 @@ const FAM_DISEASE_OPTS = lang === 'en'
                 <line x1="180" y1="50" x2="250" y2="0" />
                 <line x1="180" y1="50" x2="250" y2="100" />
               </svg>
-              
+
               <div style="position: absolute; top: 14px; left: 95px; width: 70px; text-align: center;">
                 <div style="font-size:10px; color:var(--muted); line-height:1;">${lang === 'en' ? 'Hgb' : 'Hb'}</div>
-                <input type="text" id="fish-hgb" class="fish-input" value="${state.fishbone.hgb || ''}" oninput="state.fishbone.hgb=this.value; _fishboneSync('hgb');">
+                <input type="text" id="fish-hgb" class="fish-input" value="${state.fishbone.hgb || ''}" readonly tabindex="-1" style="cursor:default;">
               </div>
-              
+
               <div style="position: absolute; top: 54px; left: 95px; width: 70px; text-align: center;">
-                <input type="text" id="fish-hct" class="fish-input" value="${state.fishbone.hct || ''}" oninput="state.fishbone.hct=this.value; _fishboneSync('hct');">
+                <input type="text" id="fish-hct" class="fish-input" value="${state.fishbone.hct || ''}" readonly tabindex="-1" style="cursor:default;">
                 <div style="font-size:10px; color:var(--muted); line-height:1;">${lang === 'en' ? 'Hct' : 'Ht'}</div>
               </div>
-              
+
               <div style="position: absolute; top: 32px; left: 0px; width: 55px; text-align: center;">
                 <div style="font-size:10px; color:var(--muted); line-height:1;">${lang === 'en' ? 'WBC' : 'Leuco'}</div>
-                <input type="text" id="fish-wbc" class="fish-input" value="${state.fishbone.wbc || ''}" oninput="state.fishbone.wbc=this.value; _fishboneSync('wbc');">
+                <input type="text" id="fish-wbc" class="fish-input" value="${state.fishbone.wbc || ''}" readonly tabindex="-1" style="cursor:default;">
               </div>
-              
+
               <div style="position: absolute; top: 32px; right: 0px; width: 55px; text-align: center;">
                 <div style="font-size:10px; color:var(--muted); line-height:1;">${lang === 'en' ? 'Plt' : 'Plaq'}</div>
-                <input type="text" id="fish-plt" class="fish-input" value="${state.fishbone.plt || ''}" oninput="state.fishbone.plt=this.value; _fishboneSync('plt');">
+                <input type="text" id="fish-plt" class="fish-input" value="${state.fishbone.plt || ''}" readonly tabindex="-1" style="cursor:default;">
               </div>
             </div>
           </div>
+
+          <!-- SVG BMP Fishbone UI -->
+          <div style="background:var(--bg); padding:10px 10px 20px 10px; border-radius:var(--radius-sm); border:1px solid var(--border); flex:1; min-width:320px; display:flex; flex-direction:column; align-items:center;">
+            <div style="font-weight:600; font-size:12px; margin-bottom:16px; color:var(--primary); width:100%; display:flex; justify-content:space-between; align-items:center;">
+              <span>${lang === 'en' ? 'Basic Metabolic Panel (BMP)' : 'Painel Metabólico Básico (BMP)'}</span>
+              <span style="font-size:10px;color:var(--muted);">${state.fishbone.bmpDate || (lang==='en'?'no date':'sem data')}</span>
+            </div>
+
+            <div style="position: relative; width: 300px; height: 100px; color: var(--text);">
+              <svg width="300" height="100" style="position: absolute; top:0; left:0; stroke: var(--text); stroke-width: 1.5; fill: none; opacity: 1; pointer-events:none;">
+                <line x1="10" y1="50" x2="220" y2="50" />
+                <line x1="80" y1="10" x2="80" y2="90" />
+                <line x1="150" y1="10" x2="150" y2="90" />
+                <line x1="220" y1="50" x2="260" y2="15" />
+                <line x1="220" y1="50" x2="260" y2="85" />
+              </svg>
+
+              <div style="position: absolute; top: 12px; left: 10px; width: 65px; text-align: center;">
+                <div style="font-size:10px; color:var(--muted); line-height:1;">Na+</div>
+                <input type="text" id="fish-na" class="fish-input" value="${state.fishbone.na || ''}" readonly tabindex="-1" style="cursor:default;">
+              </div>
+              <div style="position: absolute; top: 54px; left: 10px; width: 65px; text-align: center;">
+                <input type="text" id="fish-k" class="fish-input" value="${state.fishbone.k || ''}" readonly tabindex="-1" style="cursor:default;">
+                <div style="font-size:10px; color:var(--muted); line-height:1;">K+</div>
+              </div>
+
+              <div style="position: absolute; top: 12px; left: 83px; width: 65px; text-align: center;">
+                <div style="font-size:10px; color:var(--muted); line-height:1;">Cl-</div>
+                <input type="text" id="fish-cl" class="fish-input" value="${state.fishbone.cl || ''}" readonly tabindex="-1" style="cursor:default;">
+              </div>
+              <div style="position: absolute; top: 54px; left: 83px; width: 65px; text-align: center;">
+                <input type="text" id="fish-co2" class="fish-input" value="${state.fishbone.co2 || ''}" readonly tabindex="-1" style="cursor:default;">
+                <div style="font-size:10px; color:var(--muted); line-height:1;">HCO₃</div>
+              </div>
+
+              <div style="position: absolute; top: 12px; left: 153px; width: 65px; text-align: center;">
+                <div style="font-size:10px; color:var(--muted); line-height:1;">${lang === 'en' ? 'BUN' : 'Ureia'}</div>
+                <input type="text" id="fish-bun" class="fish-input" value="${state.fishbone.bun || ''}" readonly tabindex="-1" style="cursor:default;">
+              </div>
+              <div style="position: absolute; top: 54px; left: 153px; width: 65px; text-align: center;">
+                <input type="text" id="fish-cr" class="fish-input" value="${state.fishbone.cr || ''}" readonly tabindex="-1" style="cursor:default;">
+                <div style="font-size:10px; color:var(--muted); line-height:1;">Cr</div>
+              </div>
+
+              <div style="position: absolute; top: 32px; left: 228px; width: 55px; text-align: center;">
+                <div style="font-size:10px; color:var(--muted); line-height:1;">${lang === 'en' ? 'Glu' : 'Glic'}</div>
+                <input type="text" id="fish-glu" class="fish-input" value="${state.fishbone.glu || ''}" readonly tabindex="-1" style="cursor:default;">
+              </div>
+            </div>
+          </div>
+        </div>
+        <div style="font-size:11px;color:var(--text-muted);margin-bottom:12px;margin-top:-8px;">
+          ${lang==='en'?'Values are filled automatically from the list below — edit results there.':'Os valores são preenchidos automaticamente a partir da lista abaixo — edite os resultados ali.'}
         </div>
         
         <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; margin-top: 16px;">
@@ -8368,43 +8371,31 @@ const FAM_DISEASE_OPTS = lang === 'en'
               <div style="width:20px;"></div>
             </div>
           ` : ''}
-          ${(state.customLabs || []).map((exam, idx) => (exam.dateConfirmed || (exam.dateConfirmed === undefined && exam.date)) ? `
-            <div id="lab-row-${idx}" style="display:flex; gap:8px; align-items:center; background: ${exam.abnormal ? 'var(--danger-light)' : 'transparent'}; border-bottom: ${(idx === state.customLabs.length - 1) ? 'none' : '1px solid var(--border)'}; padding: 6px 8px;">
+          ${(state.customLabs || []).map((exam, idx) => {
+            const confirmed = exam.dateConfirmed || (exam.dateConfirmed === undefined && exam.date);
+            return `
+            <div id="lab-row-${idx}" style="display:flex; gap:8px; align-items:center; background: ${exam.abnormal ? 'var(--danger-light)' : 'transparent'}; border-left: ${confirmed ? 'none' : '3px solid var(--warn)'}; border-bottom: ${(idx === state.customLabs.length - 1) ? 'none' : '1px solid var(--border)'}; padding: 6px 8px;">
 
               <div style="flex: 2;">
                 <input type="text" list="lab-exams-list" value="${exam.name || ''}" oninput="updateCustomLab(${idx}, 'name', this.value)" onchange="onLabNameChange(${idx},this.value)" placeholder="${lang === 'en' ? 'Select/type...' : 'Exame...'}" style="padding: 4px 6px; font-size: 12px; width:100%; box-sizing:border-box; background:transparent; border:none; border-bottom:1px solid var(--border); border-radius:0;">
               </div>
-              <div style="flex: 1;">
-                <input type="text" inputmode="numeric" class="phi-mask" value="${exam.date || ''}" oninput="handleDateInput(event, 'date', state.customLabs[${idx}])" placeholder="${lang === 'en' ? 'MM/DD/YYYY' : 'DD/MM/AAAA'}" maxlength="10" style="padding: 4px 6px; font-size: 12px; width:100%; box-sizing:border-box; background:transparent; border:none; border-bottom:1px solid var(--border); border-radius:0; text-align:center;">
+              <div style="flex: 1; display:flex; gap:3px; align-items:center;">
+                <input type="text" inputmode="numeric" class="phi-mask" value="${exam.date || ''}" oninput="handleDateInput(event, 'date', state.customLabs[${idx}])" onblur="_confirmDateForBundle(${idx})" placeholder="${lang === 'en' ? 'MM/DD/YYYY' : 'DD/MM/AAAA'}" maxlength="10" style="padding: 4px 6px; font-size: 12px; min-width:0; flex:1; box-sizing:border-box; background:transparent; border:none; border-bottom:1px solid var(--border); border-radius:0; text-align:center;">
+                ${!confirmed ? `<button onclick="setLabDateToday(${idx})" title="${lang==='en'?'Use today':'Usar hoje'}" style="flex-shrink:0; padding:3px 6px; font-size:10px; font-weight:700; background:var(--primary); color:#fff; border:none; border-radius:3px; cursor:pointer;">${lang==='en'?'Today':'Hoje'}</button>` : ''}
               </div>
               <div style="flex: 1;">
-                <input type="text" id="lab-result-${idx}" inputmode="decimal" list="lab-result-options" value="${exam.result || ''}" oninput="updateCustomLab(${idx}, 'result', this.value)" placeholder="${lang === 'en' ? 'Value...' : 'Valor...'}" style="padding: 4px 6px; font-size: 12px; width:100%; box-sizing:border-box; background:transparent; border:none; border-bottom:1px solid var(--border); border-radius:0; color: ${exam.abnormal ? 'var(--danger)' : 'inherit'}; font-weight: ${exam.abnormal ? '700' : 'normal'};">
-                ${(() => { const rng = exam.name ? LAB_RANGES[exam.name.toLowerCase().trim()] : null; const val = exam.result ? parseFloat(exam.result.replace(',','.')) : NaN; if (!rng || isNaN(val)) return exam.abnormal ? '<span style="font-size:10px;font-weight:700;color:var(--danger);">▲</span>' : ''; if (val < rng.min) return `<span style="font-size:10px;font-weight:700;color:var(--danger);">▼ ${rng.min}–${rng.max}</span>`; if (val > rng.max) return `<span style="font-size:10px;font-weight:700;color:var(--danger);">▲ ${rng.min}–${rng.max}</span>`; return `<span style="font-size:10px;color:var(--success,#15803d);">✓ ${rng.min}–${rng.max}</span>`; })()}
+                <input type="text" id="lab-result-${idx}" inputmode="decimal" list="lab-result-options" value="${exam.result || ''}" ${confirmed ? '' : 'disabled'} oninput="updateCustomLab(${idx}, 'result', this.value)" placeholder="${confirmed ? (lang === 'en' ? 'Value...' : 'Valor...') : (lang==='en'?'Confirm date first':'Confirme a data')}" style="padding: 4px 6px; font-size: 12px; width:100%; box-sizing:border-box; background:transparent; border:none; border-bottom:1px solid var(--border); border-radius:0; color: ${exam.abnormal ? 'var(--danger)' : 'inherit'}; font-weight: ${exam.abnormal ? '700' : 'normal'}; ${confirmed ? '' : 'opacity:0.5;'}">
+                ${confirmed ? (() => { const rng = exam.name ? LAB_RANGES[exam.name.toLowerCase().trim()] : null; const val = exam.result ? parseFloat(exam.result.replace(',','.')) : NaN; if (!rng || isNaN(val)) return exam.abnormal ? '<span style="font-size:10px;font-weight:700;color:var(--danger);">▲</span>' : ''; if (val < rng.min) return `<span style="font-size:10px;font-weight:700;color:var(--danger);">▼ ${rng.min}–${rng.max}</span>`; if (val > rng.max) return `<span style="font-size:10px;font-weight:700;color:var(--danger);">▲ ${rng.min}–${rng.max}</span>`; return `<span style="font-size:10px;color:var(--success,#15803d);">✓ ${rng.min}–${rng.max}</span>`; })() : ''}
               </div>
               <div style="flex: 0.8;">
-                <input type="text" list="common-units-list" id="lab-unit-${idx}" value="${exam.unit || ''}" oninput="updateCustomLab(${idx}, 'unit', this.value)" placeholder="Unid." style="padding: 4px 6px; font-size: 12px; width:100%; box-sizing:border-box; background:transparent; border:none; border-bottom:1px solid var(--border); border-radius:0; text-align:center; color: var(--muted);">
+                <input type="text" list="common-units-list" id="lab-unit-${idx}" value="${exam.unit || ''}" ${confirmed ? '' : 'disabled'} oninput="updateCustomLab(${idx}, 'unit', this.value)" placeholder="Unid." style="padding: 4px 6px; font-size: 12px; width:100%; box-sizing:border-box; background:transparent; border:none; border-bottom:1px solid var(--border); border-radius:0; text-align:center; color: var(--muted); ${confirmed ? '' : 'opacity:0.5;'}">
               </div>
               <div style="width: 20px; text-align:center;">
                 <button class="btn-sm-del" style="background:transparent; margin:0 auto;" onclick="removeCustomLab(${idx})">✕</button>
               </div>
-              ` : `
-            <div id="lab-row-${idx}" style="display:flex; gap:8px; align-items:center; background:var(--warn-light,#faeeda); border-bottom: ${(idx === state.customLabs.length - 1) ? 'none' : '1px solid var(--border)'}; padding: 6px 8px;">
-              <div style="flex: 2;">
-                <input type="text" list="lab-exams-list" value="${exam.name || ''}" oninput="updateCustomLab(${idx}, 'name', this.value)" onchange="onLabNameChange(${idx},this.value)" placeholder="${lang === 'en' ? 'Select/type...' : 'Exame...'}" style="padding: 4px 6px; font-size: 12px; width:100%; box-sizing:border-box; background:transparent; border:none; border-bottom:1px solid var(--border); border-radius:0;">
-              </div>
-              <div style="flex: 1;">
-                <input type="text" inputmode="numeric" class="phi-mask" value="${exam.date || ''}" oninput="handleDateInput(event, 'date', state.customLabs[${idx}])" placeholder="${lang === 'en' ? 'MM/DD/YYYY' : 'DD/MM/AAAA'}" maxlength="10" style="padding: 4px 6px; font-size: 12px; width:100%; box-sizing:border-box; background:var(--surface-solid); border:1px solid var(--warn); border-radius:4px; text-align:center;">
-              </div>
-              <div style="flex: 2; display:flex; gap:4px;">
-                <button onclick="setLabDateToday(${idx})" style="flex:1; padding:5px 6px; font-size:11px; font-weight:600; background:var(--primary); color:#fff; border:none; border-radius:4px; cursor:pointer;">${lang==='en'?'Today':'Hoje'}</button>
-                <button onclick="confirmLabDate(${idx})" style="flex:1; padding:5px 6px; font-size:11px; font-weight:600; background:var(--surface-solid); color:var(--warn); border:1px solid var(--warn); border-radius:4px; cursor:pointer;">${lang==='en'?'Confirm date':'Confirmar data'}</button>
-              </div>
-              <div style="width: 20px; text-align:center;">
-                <button class="btn-sm-del" style="background:transparent; margin:0 auto;" onclick="removeCustomLab(${idx})">✕</button>
-              </div>
-
             </div>
-          `).join('')}
+          `;
+          }).join('')}
         </div>
 
 
@@ -10088,7 +10079,7 @@ function addCustomLab() {
     nextDate = state.customLabs[state.customLabs.length - 1].date || '';
   }
   if (!nextDate) nextDate = _getDefaultExamDate();
-  state.customLabs.push({ name: '', date: nextDate, result: '', unit: '', abnormal: false, dateConfirmed: false });
+  state.customLabs.push({ name: '', date: nextDate, result: '', unit: '', abnormal: false, dateConfirmed: false, bundleId: 'b' + Date.now() + Math.random() });
   saveState();
   renderSections();
 }
@@ -10099,14 +10090,25 @@ function setLabDateToday(idx) {
   const mm = String(d.getMonth()+1).padStart(2,'0');
   const yy = d.getFullYear();
   state.customLabs[idx].date = (lang==='en') ? `${mm}/${dd}/${yy}` : `${dd}/${mm}/${yy}`;
-  state.customLabs[idx].dateConfirmed = true;
-  saveState();
-  renderSections();
+  _confirmDateForBundle(idx);
 }
 
 function confirmLabDate(idx) {
-  if (!state.customLabs[idx].date) return;
-  state.customLabs[idx].dateConfirmed = true;
+  _confirmDateForBundle(idx);
+}
+
+function _confirmDateForBundle(idx) {
+  const entry = state.customLabs[idx];
+  if (!entry || !entry.date) return;
+  entry.dateConfirmed = true;
+  if (entry.bundleId) {
+    state.customLabs.forEach((e, i) => {
+      if (i !== idx && e.bundleId === entry.bundleId && !e.dateConfirmed) {
+        e.date = entry.date;
+        e.dateConfirmed = true;
+      }
+    });
+  }
   saveState();
   renderSections();
 }
@@ -10347,6 +10349,7 @@ function addLabKit(kitType) {
   if (!nextDate) nextDate = _getDefaultExamDate();
 
   const exams = (LAB_KIT_EXAMS[lang] && LAB_KIT_EXAMS[lang][kitType]) || [];
+  const bundleId = 'b' + Date.now() + Math.random();
 
   exams.forEach(ex => {
     state.customLabs.push({
@@ -10355,7 +10358,8 @@ function addLabKit(kitType) {
       result: '',
       unit: LAB_UNITS[ex] || '',
       abnormal: false,
-      dateConfirmed: false
+      dateConfirmed: false,
+      bundleId: bundleId
     });
   });
 
