@@ -8384,8 +8384,16 @@ const FAM_DISEASE_OPTS = lang === 'en'
                 ${!confirmed ? `<button onclick="setLabDateToday(${idx})" title="${lang==='en'?'Use today':'Usar hoje'}" style="flex-shrink:0; padding:3px 6px; font-size:10px; font-weight:700; background:var(--primary); color:#fff; border:none; border-radius:3px; cursor:pointer;">${lang==='en'?'Today':'Hoje'}</button>` : ''}
               </div>
               <div style="flex: 1;">
-                <input type="text" id="lab-result-${idx}" inputmode="${_isQualitativeLab(exam.name) ? 'text' : 'decimal'}" list="${_isQualitativeLab(exam.name) ? 'lab-result-options-qual' : ''}" value="${exam.result || ''}" ${confirmed ? '' : 'disabled'} oninput="updateCustomLab(${idx}, 'result', this.value)" placeholder="${confirmed ? (lang === 'en' ? 'Value...' : 'Valor...') : (lang==='en'?'Confirm date first':'Confirme a data')}" style="padding: 4px 6px; font-size: 12px; width:100%; box-sizing:border-box; background:transparent; border:none; border-bottom:1px solid var(--border); border-radius:0; color: ${exam.abnormal ? 'var(--danger)' : 'inherit'}; font-weight: ${exam.abnormal ? '700' : 'normal'}; ${confirmed ? '' : 'opacity:0.5;'}">
-                ${confirmed ? (() => { const rng = exam.name ? LAB_RANGES[exam.name.toLowerCase().trim()] : null; const val = exam.result ? parseFloat(exam.result.replace(',','.')) : NaN; if (!rng || isNaN(val)) return exam.abnormal ? '<span style="font-size:10px;font-weight:700;color:var(--danger);">▲</span>' : ''; if (val < rng.min) return `<span style="font-size:10px;font-weight:700;color:var(--danger);">▼ ${rng.min}–${rng.max}</span>`; if (val > rng.max) return `<span style="font-size:10px;font-weight:700;color:var(--danger);">▲ ${rng.min}–${rng.max}</span>`; return `<span style="font-size:10px;color:var(--success,#15803d);">✓ ${rng.min}–${rng.max}</span>`; })() : ''}
+                ${(() => {
+                  const sev = confirmed ? _labSeverityFlag(exam.name, exam.result) : null;
+                  const isSevere = sev && sev.level === 'severe';
+                  const isMild = sev && sev.level === 'mild';
+                  const fontSize = isSevere ? '13px' : '12px';
+                  const fontWeight = isSevere ? '800' : (isMild || exam.abnormal) ? '700' : 'normal';
+                  const color = (isSevere || isMild || exam.abnormal) ? 'var(--danger)' : 'inherit';
+                  return `<input type="text" id="lab-result-${idx}" inputmode="${_isQualitativeLab(exam.name) ? 'text' : 'decimal'}" list="${_isQualitativeLab(exam.name) ? 'lab-result-options-qual' : ''}" value="${exam.result || ''}" ${confirmed ? '' : 'disabled'} oninput="updateCustomLab(${idx}, 'result', this.value)" placeholder="${confirmed ? (lang === 'en' ? 'Value...' : 'Valor...') : (lang==='en'?'Confirm date first':'Confirme a data')}" style="padding: 4px 6px; font-size: ${fontSize}; width:100%; box-sizing:border-box; background:transparent; border:none; border-bottom:1px solid var(--border); border-radius:0; color: ${color}; font-weight: ${fontWeight}; ${confirmed ? '' : 'opacity:0.5;'}">`;
+                })()}
+                ${confirmed ? (() => { const rng = exam.name ? LAB_RANGES[exam.name.toLowerCase().trim()] : null; if (!rng) return exam.abnormal ? '<span style="font-size:10px;font-weight:700;color:var(--danger);">▲</span>' : ''; return _labFlagHtml(exam.name, exam.result, `${rng.min}–${rng.max}`); })() : ''}
               </div>
               <div style="flex: 0.8;">
                 <input type="text" list="common-units-list" id="lab-unit-${idx}" value="${exam.unit || ''}" ${confirmed ? '' : 'disabled'} oninput="updateCustomLab(${idx}, 'unit', this.value)" placeholder="Unid." style="padding: 4px 6px; font-size: 12px; width:100%; box-sizing:border-box; background:transparent; border:none; border-bottom:1px solid var(--border); border-radius:0; text-align:center; color: var(--muted); ${confirmed ? '' : 'opacity:0.5;'}">
@@ -10249,16 +10257,43 @@ function checkLabAbnormal(name, resultStr) {
   if (!name || !resultStr) return false;
   const r = resultStr.toString().toLowerCase().trim();
   if (['positivo', 'reagente', 'anormal', 'high', 'low', 'alto', 'baixo', 'reag'].some(v => r.includes(v))) return true;
-  
+
   const n = name.toLowerCase().trim();
   let range = LAB_RANGES[n];
   if (!range) return false;
-  
+
   const val = parseFloat(resultStr.replace(',','.'));
   if (!isNaN(val)) {
     if (val < range.min || val > range.max) return true;
   }
   return false;
+}
+
+// EPIC-style severity flag: single arrow for mild deviation, bold double arrow for marked deviation
+function _labSeverityFlag(name, resultStr) {
+  if (!name || !resultStr) return null;
+  const rng = LAB_RANGES[name.toLowerCase().trim()];
+  if (!rng) return null;
+  const val = parseFloat(resultStr.toString().replace(',', '.'));
+  if (isNaN(val)) return null;
+  const width = rng.max - rng.min;
+  const severeThreshold = width > 0 ? width * 0.5 : Math.abs(rng.max) * 0.2;
+  if (val >= rng.min && val <= rng.max) return { level: 'normal' };
+  if (val > rng.max) {
+    return { level: (val - rng.max) > severeThreshold ? 'severe' : 'mild', direction: 'high' };
+  }
+  return { level: (rng.min - val) > severeThreshold ? 'severe' : 'mild', direction: 'low' };
+}
+
+function _labFlagHtml(name, resultStr, rangeLabel) {
+  const f = _labSeverityFlag(name, resultStr);
+  if (!f) return '';
+  if (f.level === 'normal') return `<span style="font-size:10px;color:var(--success,#15803d);">✓ ${rangeLabel}</span>`;
+  const arrow = f.direction === 'high' ? '▲' : '▼';
+  if (f.level === 'severe') {
+    return `<span style="font-size:12px;font-weight:800;color:var(--danger);">${arrow}${arrow} ${rangeLabel}</span>`;
+  }
+  return `<span style="font-size:10px;font-weight:700;color:var(--danger);">${arrow} ${rangeLabel}</span>`;
 }
 
 function updateCustomLab(idx, field, value) {
