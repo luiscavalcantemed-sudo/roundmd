@@ -8383,7 +8383,7 @@ const FAM_DISEASE_OPTS = lang === 'en'
                 <input type="text" inputmode="numeric" class="phi-mask" value="${exam.date || ''}" oninput="handleDateInput(event, 'date', state.customLabs[${idx}])" onblur="_confirmDateForBundle(${idx})" placeholder="${lang === 'en' ? 'MM/DD/YYYY' : 'DD/MM/AAAA'}" maxlength="10" style="padding: 4px 6px; font-size: 12px; min-width:0; flex:1; box-sizing:border-box; background:transparent; border:none; border-bottom:1px solid var(--border); border-radius:0; text-align:center;">
                 ${!confirmed ? `<button onclick="setLabDateToday(${idx})" title="${lang==='en'?'Use today':'Usar hoje'}" style="flex-shrink:0; padding:3px 6px; font-size:10px; font-weight:700; background:var(--primary); color:#fff; border:none; border-radius:3px; cursor:pointer;">${lang==='en'?'Today':'Hoje'}</button>` : ''}
               </div>
-              <div style="flex: 1;">
+              <div style="flex: 1; display:flex; align-items:center; gap:3px;">
                 ${(() => {
                   const sev = confirmed ? _labSeverityFlag(exam.name, exam.result) : null;
                   const isSevere = sev && sev.level === 'severe';
@@ -8391,9 +8391,10 @@ const FAM_DISEASE_OPTS = lang === 'en'
                   const fontSize = isSevere ? '13px' : '12px';
                   const fontWeight = isSevere ? '800' : (isMild || exam.abnormal) ? '700' : 'normal';
                   const color = (isSevere || isMild || exam.abnormal) ? 'var(--danger)' : 'inherit';
-                  return `<input type="text" id="lab-result-${idx}" inputmode="${_isQualitativeLab(exam.name) ? 'text' : 'decimal'}" list="${_isQualitativeLab(exam.name) ? 'lab-result-options-qual' : ''}" value="${exam.result || ''}" ${confirmed ? '' : 'disabled'} oninput="updateCustomLab(${idx}, 'result', this.value)" placeholder="${confirmed ? (lang === 'en' ? 'Value...' : 'Valor...') : (lang==='en'?'Confirm date first':'Confirme a data')}" style="padding: 4px 6px; font-size: ${fontSize}; width:100%; box-sizing:border-box; background:transparent; border:none; border-bottom:1px solid var(--border); border-radius:0; color: ${color}; font-weight: ${fontWeight}; ${confirmed ? '' : 'opacity:0.5;'}">`;
+                  return `<input type="text" id="lab-result-${idx}" inputmode="${_isQualitativeLab(exam.name) ? 'text' : 'decimal'}" list="${_isQualitativeLab(exam.name) ? 'lab-result-options-qual' : ''}" value="${exam.result || ''}" ${confirmed ? '' : 'disabled'} oninput="updateCustomLab(${idx}, 'result', this.value)" placeholder="${confirmed ? (lang === 'en' ? 'Value...' : 'Valor...') : (lang==='en'?'Confirm date first':'Confirme a data')}" style="padding: 4px 6px; font-size: ${fontSize}; flex:1; min-width:0; box-sizing:border-box; background:transparent; border:none; border-bottom:1px solid var(--border); border-radius:0; color: ${color}; font-weight: ${fontWeight}; ${confirmed ? '' : 'opacity:0.5;'}">`;
                 })()}
-                ${confirmed ? (() => { const rng = exam.name ? LAB_RANGES[exam.name.toLowerCase().trim()] : null; if (!rng) return exam.abnormal ? '<span style="font-size:10px;font-weight:700;color:var(--danger);">▲</span>' : ''; return _labFlagHtml(exam.name, exam.result, `${rng.min}–${rng.max}`); })() : ''}
+                <span id="lab-flag-${idx}" style="flex-shrink:0;">${confirmed ? _labFlagHtml(exam.name, exam.result) : ''}</span>
+                ${(confirmed && exam.name && LAB_RANGES[exam.name.toLowerCase().trim()]) ? `<button onclick="showLabRefRange('${exam.name.replace(/'/g, "\\'")}')" title="${lang==='en'?'Reference range':'Faixa normal'}" style="flex-shrink:0;width:16px;height:16px;border-radius:50%;border:1px solid var(--border);background:var(--surface-solid);font-size:10px;line-height:1;color:var(--text-muted);cursor:pointer;padding:0;">i</button>` : ''}
               </div>
               <div style="flex: 0.8;">
                 <input type="text" list="common-units-list" id="lab-unit-${idx}" value="${exam.unit || ''}" ${confirmed ? '' : 'disabled'} oninput="updateCustomLab(${idx}, 'unit', this.value)" placeholder="Unid." style="padding: 4px 6px; font-size: 12px; width:100%; box-sizing:border-box; background:transparent; border:none; border-bottom:1px solid var(--border); border-radius:0; text-align:center; color: var(--muted); ${confirmed ? '' : 'opacity:0.5;'}">
@@ -10353,15 +10354,21 @@ function _labSeverityFlag(name, resultStr) {
   return { level: (rng.min - val) > severeThreshold ? 'severe' : 'mild', direction: 'low' };
 }
 
-function _labFlagHtml(name, resultStr, rangeLabel) {
+function _labFlagHtml(name, resultStr) {
   const f = _labSeverityFlag(name, resultStr);
   if (!f) return '';
-  if (f.level === 'normal') return `<span style="font-size:10px;color:var(--success,#15803d);">✓ ${rangeLabel}</span>`;
+  if (f.level === 'normal') return `<span style="font-size:13px;color:var(--success,#15803d);">✓</span>`;
   const arrow = f.direction === 'high' ? '▲' : '▼';
   if (f.level === 'severe') {
-    return `<span style="font-size:12px;font-weight:800;color:var(--danger);">${arrow}${arrow} ${rangeLabel}</span>`;
+    return `<span style="font-size:14px;font-weight:800;color:var(--danger);">${arrow}${arrow}</span>`;
   }
-  return `<span style="font-size:10px;font-weight:700;color:var(--danger);">${arrow} ${rangeLabel}</span>`;
+  return `<span style="font-size:13px;font-weight:700;color:var(--danger);">${arrow}</span>`;
+}
+
+function showLabRefRange(name) {
+  const rng = name ? LAB_RANGES[name.toLowerCase().trim()] : null;
+  if (!rng) return;
+  alert((lang==='en' ? 'Reference range: ' : 'Faixa normal: ') + rng.min + '–' + rng.max);
 }
 
 function updateCustomLab(idx, field, value) {
@@ -10380,21 +10387,21 @@ function updateCustomLab(idx, field, value) {
   if (field === 'result' || field === 'name') {
     const isAbn = checkLabAbnormal(state.customLabs[idx].name, state.customLabs[idx].result);
     state.customLabs[idx].abnormal = isAbn;
-    
-    // Update DOM directly to show abnormal state without losing focus
+
+    // Update DOM directly to show abnormal state + severity flag without losing focus
     const rowDiv = document.getElementById(`lab-row-${idx}`);
     const resInput = document.getElementById(`lab-result-${idx}`);
-    if (rowDiv && resInput) {
-      if (isAbn) {
-        rowDiv.style.background = 'var(--danger-light)';
-        resInput.style.color = 'var(--danger)';
-        resInput.style.fontWeight = '700';
-      } else {
-        rowDiv.style.background = 'transparent';
-        resInput.style.color = 'inherit';
-        resInput.style.fontWeight = 'normal';
-      }
+    const flagSpan = document.getElementById(`lab-flag-${idx}`);
+    const sev = _labSeverityFlag(state.customLabs[idx].name, state.customLabs[idx].result);
+    const isSevere = sev && sev.level === 'severe';
+    const isMild = sev && sev.level === 'mild';
+    if (rowDiv) rowDiv.style.background = isAbn ? 'var(--danger-light)' : 'transparent';
+    if (resInput) {
+      if (isSevere) { resInput.style.color = 'var(--danger)'; resInput.style.fontWeight = '800'; resInput.style.fontSize = '13px'; }
+      else if (isMild || isAbn) { resInput.style.color = 'var(--danger)'; resInput.style.fontWeight = '700'; resInput.style.fontSize = '12px'; }
+      else { resInput.style.color = 'inherit'; resInput.style.fontWeight = 'normal'; resInput.style.fontSize = '12px'; }
     }
+    if (flagSpan) flagSpan.innerHTML = _labFlagHtml(state.customLabs[idx].name, state.customLabs[idx].result);
   }
 
   if (field === 'result' || field === 'date') {
