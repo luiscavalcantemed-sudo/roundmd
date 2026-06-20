@@ -1746,6 +1746,7 @@ const SVG = {
 
 let lang = 'en';
 let activeMedCat = null;
+let _rxFormOpenKey = null;
 let activeCalcSection = null;
 let activePmhCat = null;
 let activePshCat = null;
@@ -3786,6 +3787,7 @@ function EMPTY() {
     includeNormalPE: true,
     medFavs: [],
     calcs: {},
+    safetyChecklist: {},
     _antOpen: { pmh: true, psh: true, gyn: true, peds: true, fam: true }
   };
 }
@@ -8544,6 +8546,8 @@ const FAM_DISEASE_OPTS = lang === 'en'
       const updFn  = isAcute ? `updateProblemField(${idx},'dx',this.value)` : `updateChronicProblemField(${idx},'dx',this.value)`;
       const updPl  = isAcute ? (pi) => `updatePlanItem(${idx},${pi},this.value)` : (pi) => `updateChronicPlanItem(${idx},${pi},this.value)`;
       const remPl  = isAcute ? (pi) => `removePlanItem(${idx},${pi})` : (pi) => `removeChronicPlanItem(${idx},${pi})`;
+      const rxKey = (isAcute ? 'acute' : 'chronic') + '-' + idx;
+      const linkedMeds = p.dx ? state.medications.map((m,mi)=>({m,mi})).filter(x => x.m.linkedDx === p.dx) : [];
       return `
         <div style="border:1px solid var(--border);border-left:4px solid ${color};border-radius:var(--radius);padding:14px 16px;margin-bottom:12px;background:var(--surface-solid);">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
@@ -8571,6 +8575,36 @@ const FAM_DISEASE_OPTS = lang === 'en'
             </div>
           `).join('')}
           <button class="btn-add" style="margin-top:6px;margin-bottom:0;font-size:12px;padding:6px 14px;" onclick="${addFn}">+ ${lang==='en'?'Add item':'Adicionar item'}</button>
+
+          <div style="margin-top:12px;border-top:1px solid var(--border);padding-top:10px;">
+            <span style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;">℞ ${lang==='en'?'Prescription':'Prescrição'}</span>
+            ${linkedMeds.length ? `
+              <div style="margin-top:6px;">
+                ${linkedMeds.map(({m,mi}) => `
+                  <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;background:var(--bg);border-radius:6px;padding:6px 10px;margin-bottom:4px;">
+                    <span style="font-size:12px;"><strong>${m.name||''}</strong> ${m.dose||''} — ${m.route||''} ${m.freq||''}</span>
+                    <button class="btn-sm-del" onclick="removeMedication(${mi})">✕</button>
+                  </div>
+                `).join('')}
+              </div>
+            ` : ''}
+            ${_rxFormOpenKey === rxKey ? `
+              <div style="background:var(--bg);border:1px solid ${color};border-radius:8px;padding:10px;margin-top:8px;">
+                <input type="text" id="rx-name-${rxKey}" list="all-med-names" placeholder="${lang==='en'?'Medication name...':'Nome do medicamento...'}" style="margin-bottom:6px;font-size:13px;">
+                <div class="input-row">
+                  <input type="text" id="rx-dose-${rxKey}" placeholder="${lang==='en'?'Dose':'Dose'}" style="font-size:13px;">
+                  <input type="text" id="rx-route-${rxKey}" placeholder="${lang==='en'?'Route':'Via'}" style="font-size:13px;">
+                </div>
+                <input type="text" id="rx-freq-${rxKey}" placeholder="${lang==='en'?'Frequency':'Frequência'}" style="margin-top:6px;margin-bottom:8px;font-size:13px;">
+                <div style="display:flex;gap:6px;">
+                  <button class="btn-add" style="flex:1;margin:0;font-size:12px;padding:6px 0;" onclick="addLinkedMedication('${rxKey}','${(p.dx||'').replace(/'/g,"\\'")}')">${lang==='en'?'Add':'Adicionar'}</button>
+                  <button style="padding:6px 12px;background:transparent;border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:12px;" onclick="toggleRxForm(null)">${lang==='en'?'Cancel':'Cancelar'}</button>
+                </div>
+              </div>
+            ` : `
+              <button class="btn-add" style="margin-top:6px;margin-bottom:0;font-size:12px;padding:6px 14px;background:${color};border-color:${color};" onclick="toggleRxForm('${rxKey}')" ${!p.dx ? 'disabled title="'+(lang==='en'?'Enter a diagnosis first':'Insira um diagnóstico primeiro')+'"' : ''}>+ ${lang==='en'?'Prescribe':'Prescrever'}</button>
+            `}
+          </div>
         </div>`;
     }
 
@@ -8585,7 +8619,18 @@ const FAM_DISEASE_OPTS = lang === 'en'
       </div>`;
     }
 
+    const _safetyAlerts = checkSafetyAlerts();
     html += `
+      ${_safetyAlerts.length ? `
+        <div style="margin-bottom:14px;">
+          ${_safetyAlerts.map(i => `<div class="ixn-item ${i.sev === 'high' ? 'ixn-high' : 'ixn-moderate'}">
+            <svg viewBox="0 0 24 24" style="width:15px;height:15px;fill:${i.sev === 'high' ? 'var(--danger)' : 'var(--warn)'};flex-shrink:0;margin-top:2px;"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
+            <span style="flex:1;font-size:12px;line-height:1.4;">${i.msg}</span>
+            <span class="ixn-sev-badge">${i.sev}</span>
+          </div>`).join('')}
+        </div>
+      ` : ''}
+
       <!-- ── PROBLEMAS AGUDOS ────────────────────────────────────────── -->
       ${impSection(lang==='en'?'Active Problems':'Problemas Agudos', 'var(--primary)', state.problems.filter(p=>p.dx).length + ' ' + (lang==='en'?'item(s)':'item(ns)'))}
       <div id="problems-list">
@@ -8601,6 +8646,64 @@ const FAM_DISEASE_OPTS = lang === 'en'
         ` : (state.chronicProblems||[]).map((p,idx) => probCard(p, idx, false)).join('')}
       </div>
       <button class="btn-add" style="margin-bottom:8px;" onclick="addChronicProblem()">+ ${lang==='en'?'Add Chronic Problem':'Adicionar Problema Crônico'}</button>
+
+      <!-- ── CHECKLIST FAST-HUGBIDS-CHAMP ────────────────────────────── -->
+      ${impSection(lang==='en'?'Safety Checklist (FAST-HUGBIDS-CHAMP)':'Checklist de Segurança (FAST-HUGBIDS-CHAMP)', 'var(--success, #15803d)')}
+      <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(240px, 1fr)); gap:8px; margin-bottom:8px;">
+        ${SAFETY_DOMAINS[lang].map(d => {
+          const st = (state.safetyChecklist || {})[d.key];
+          return `
+            <div style="border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px 10px;background:var(--surface-solid);">
+              <div style="font-size:12px;font-weight:600;margin-bottom:6px;">${d.label}</div>
+              <div style="display:flex;gap:4px;">
+                <button onclick="setSafetyItem('${d.key}','complete')" style="flex:1;padding:4px 0;font-size:10px;font-weight:700;border-radius:5px;cursor:pointer;border:1px solid ${st==='complete'?'var(--success,#15803d)':'var(--border)'};background:${st==='complete'?'var(--success,#15803d)':'transparent'};color:${st==='complete'?'#fff':'var(--text-muted)'};">${lang==='en'?'Done':'Completo'}</button>
+                <button onclick="setSafetyItem('${d.key}','na')" style="flex:1;padding:4px 0;font-size:10px;font-weight:700;border-radius:5px;cursor:pointer;border:1px solid ${st==='na'?'var(--text-muted)':'var(--border)'};background:${st==='na'?'var(--text-muted)':'transparent'};color:${st==='na'?'#fff':'var(--text-muted)'};">N/A</button>
+                <button onclick="setSafetyItem('${d.key}','incomplete')" style="flex:1;padding:4px 0;font-size:10px;font-weight:700;border-radius:5px;cursor:pointer;border:1px solid ${st==='incomplete'?'var(--danger)':'var(--border)'};background:${st==='incomplete'?'var(--danger)':'transparent'};color:${st==='incomplete'?'#fff':'var(--text-muted)'};">${lang==='en'?'Incomplete':'Incompleto'}</button>
+              </div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+
+      ${(() => {
+        const antibioticKw = ['cilina','micina','azol','ciclina','floxacin','floxacino','cefa','penem','vancomicina','vancomycin'];
+        const abxList = (state.medications||[]).map((m,mi)=>({m,mi})).filter(x => antibioticKw.some(k => (x.m.name||'').toLowerCase().includes(k)));
+        if (!abxList.length) return '';
+        return `
+          <!-- ── STEWARDSHIP ANTIMICROBIANO ──────────────────────────── -->
+          ${impSection(lang==='en'?'Antimicrobial Stewardship':'Stewardship Antimicrobiano', 'var(--danger)')}
+          ${abxList.map(({m,mi}) => {
+            const startD = m.startDate ? _parseExamDate(m.startDate) : 0;
+            const today = Date.now();
+            const daysElapsed = startD ? Math.floor((today - startD) / 86400000) : null;
+            const daysLeft = (m.durationDays && daysElapsed !== null) ? (parseInt(m.durationDays) - daysElapsed) : null;
+            return `
+            <div style="border:1px solid var(--border);border-left:4px solid var(--danger);border-radius:var(--radius);padding:12px 14px;margin-bottom:10px;background:var(--surface-solid);">
+              <div style="font-weight:700;font-size:13px;margin-bottom:8px;">${m.name} ${m.dose||''}</div>
+              <div class="input-row">
+                <div>
+                  <label style="font-size:11px;">${lang==='en'?'Indication':'Indicação'}</label>
+                  <input type="text" value="${m.indication||''}" oninput="updateMedField(${mi},'indication',this.value)" style="font-size:12px;">
+                </div>
+                <div>
+                  <label style="font-size:11px;">${lang==='en'?'Planned duration (days)':'Duração planejada (dias)'}</label>
+                  <input type="number" value="${m.durationDays||''}" oninput="updateMedField(${mi},'durationDays',this.value); renderSections();" style="font-size:12px;">
+                </div>
+              </div>
+              <label style="font-size:11px;margin-top:6px;">${lang==='en'?'Start date':'Data de início'}</label>
+              <input type="text" inputmode="numeric" class="phi-mask" maxlength="10" placeholder="${lang === 'en' ? 'MM/DD/YYYY' : 'DD/MM/AAAA'}" value="${m.startDate||''}" oninput="handleDateInput(event,'startDate',state.medications[${mi}]); renderSections();" style="font-size:12px;width:120px;">
+              ${daysLeft !== null ? `
+                <div style="margin-top:8px;font-size:12px;font-weight:700;color:${daysLeft <= 0 ? 'var(--danger)' : (daysLeft <= 1 ? 'var(--warn)' : 'var(--success,#15803d)')};">
+                  ${daysLeft <= 0 ? (lang==='en'?'Duration completed — reassess/stop':'Duração concluída — reavaliar/suspender') : (lang==='en'?`${daysLeft} day(s) remaining`:`${daysLeft} dia(s) restante(s)`)}
+                </div>
+              ` : (daysElapsed !== null && daysElapsed >= 2 ? `
+                <div style="margin-top:8px;font-size:12px;font-weight:700;color:var(--warn);">${lang==='en'?'48-72h reassessment due — set planned duration':'Reavaliação de 48-72h pendente — definir duração planejada'}</div>
+              ` : '')}
+            </div>
+          `;
+          }).join('')}
+        `;
+      })()}
 
       <!-- ── DIAGNÓSTICOS DIFERENCIAIS ────────────────────────────────── -->
       ${impSection(lang==='en'?'Differential Diagnoses':'Diagnósticos Diferenciais', 'var(--warn, #d97706)', (state.ddx||[]).filter(d=>d.dx).length + ' ' + (lang==='en'?'item(s)':'item(ns)'))}
@@ -8653,6 +8756,30 @@ const FAM_DISEASE_OPTS = lang === 'en'
     const dc = state.discharge;
     function updateDC(f,v){ state.discharge[f]=v; saveState(); }
     html += `<h2 class="section-title">${currentTabDef.icon} ${lang==='en'?'Discharge Planning':'Planejamento de Alta'}</h2>`;
+    html += `
+      <!-- RECONCILIAÇÃO MEDICAMENTOSA -->
+      ${(() => {
+        const chronicDx = (state.chronicProblems||[]).filter(p => p.dx);
+        if (!chronicDx.length) return '';
+        const meds = state.medications || [];
+        return `
+        <div class="card" style="border-left:4px solid var(--warn);">
+          <div class="card-label">${lang==='en'?'Medication Reconciliation — Chronic Conditions':'Reconciliação Medicamentosa — Condições Crônicas'}</div>
+          ${chronicDx.map(p => {
+            const linked = meds.filter(m => m.linkedDx === p.dx);
+            return `
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);">
+                <span style="font-size:13px;">${p.dx}</span>
+                ${linked.length
+                  ? `<span style="font-size:12px;color:var(--success,#15803d);font-weight:600;">✓ ${linked.map(m=>m.name).join(', ')}</span>`
+                  : `<span style="font-size:12px;color:var(--danger);font-weight:600;">⚠ ${lang==='en'?'No active medication linked':'Sem medicação ativa vinculada'}</span>`}
+              </div>
+            `;
+          }).join('')}
+        </div>
+        `;
+      })()}
+      `;
     html += `
       <!-- RELATÓRIO DE ALTA -->
       <div class="card" style="border-left:4px solid var(--primary);">
@@ -10035,6 +10162,92 @@ function markAllPESystemsNormal() {
 // Problems plan dynamic builders
 function addProblem() {
   state.problems.push({ dx: '', plans: [''] });
+  saveState();
+  renderSections();
+}
+
+function checkSafetyAlerts() {
+  const alerts = [];
+  const meds = state.medications || [];
+  const medNames = meds.map(m => (m.name||'').toLowerCase());
+  const hasAny = (keywords) => medNames.some(n => keywords.some(k => n.includes(k)));
+
+  const opioidKw = ['morfina','morphine','tramadol','codeína','codeine','oxicodona','oxycodone','fentanil','fentanyl','metadona','methadone'];
+  const laxativeKw = ['lactulose','polietileno glicol','polyethylene glycol','bisacodil','bisacodyl','senna','sene','docusato','docusate'];
+  const anticoagKw = ['warfarina','warfarin','rivaroxaban','apixaban','dabigatran','enoxaparina','enoxaparin','heparina','heparin'];
+  const steroidKw = ['prednisona','prednisone','dexametasona','dexamethasone','hidrocortisona','hydrocortisone','metilprednisolona','methylprednisolone'];
+  const gipxKw = ['omeprazol','omeprazole','pantoprazol','pantoprazole','esomeprazol','esomeprazole','ranitidina','ranitidine'];
+  const nsaidKw = ['ibuprofeno','ibuprofen','naproxeno','naproxen','diclofenaco','diclofenac','cetoprofeno','ketoprofen','ácido acetilsalicílico','aas','aspirin'];
+  const ckdKw = ['doença renal crônica','drc','insuficiência renal','renal disease','ckd','chronic kidney'];
+  const antibioticKw = ['cilina','micina','azol','ciclina','floxacin','floxacino','cefa','penem','vancomicina','vancomycin'];
+
+  const allDx = [...(state.problems||[]), ...(state.chronicProblems||[])].map(p => (p.dx||'').toLowerCase());
+
+  if (hasAny(opioidKw) && !hasAny(laxativeKw)) {
+    alerts.push({ sev: 'moderate', msg: lang==='en' ? 'Opioid prescribed without a bowel regimen (laxative).' : 'Opioide prescrito sem regime intestinal (laxante).' });
+  }
+  if ((hasAny(anticoagKw) || hasAny(steroidKw)) && !hasAny(gipxKw)) {
+    alerts.push({ sev: 'moderate', msg: lang==='en' ? 'Anticoagulant/corticosteroid without GI (ulcer) prophylaxis.' : 'Anticoagulante/corticoide sem profilaxia gastrointestinal.' });
+  }
+  if (hasAny(nsaidKw) && allDx.some(d => ckdKw.some(k => d.includes(k)))) {
+    alerts.push({ sev: 'high', msg: lang==='en' ? 'NSAID prescribed in a patient with chronic kidney disease.' : 'AINE prescrito em paciente com doença renal crônica.' });
+  }
+  if (hasAny(antibioticKw)) {
+    const noStopDate = meds.some(m => antibioticKw.some(k => (m.name||'').toLowerCase().includes(k)) && !m.durationDays);
+    if (noStopDate) alerts.push({ sev: 'moderate', msg: lang==='en' ? 'Antimicrobial without a documented planned duration / stop date.' : 'Antimicrobiano sem duração planejada / data de reavaliação documentada.' });
+  }
+  return alerts;
+}
+
+const SAFETY_DOMAINS = {
+  en: [
+    {key:'feeding', label:'Feeding'}, {key:'analgesia', label:'Analgesia'}, {key:'sedation', label:'Sedation / Sleep'},
+    {key:'vte', label:'VTE Thromboprophylaxis'}, {key:'hob', label:'Head of Bed Elevation'}, {key:'gipx', label:'GI / Ulcer Prophylaxis'},
+    {key:'glucose', label:'Glucose Control'}, {key:'bowel', label:'Bowel Regimen'}, {key:'devices', label:'Indwelling Devices Review'},
+    {key:'delirium', label:'Delirium Prevention'}, {key:'stewardship', label:'Antimicrobial Stewardship'},
+    {key:'chronic', label:'Chronic Disease Meds Continued'}, {key:'handoff', label:'Handoff / Transitions'},
+    {key:'ade', label:'Adverse Drug Event Screening'}, {key:'monitoring', label:'Therapeutic Monitoring'}, {key:'education', label:'Patient Education'}
+  ],
+  pt: [
+    {key:'feeding', label:'Alimentação'}, {key:'analgesia', label:'Analgesia'}, {key:'sedation', label:'Sedação / Sono'},
+    {key:'vte', label:'Tromboprofilaxia (TVP)'}, {key:'hob', label:'Cabeceira Elevada'}, {key:'gipx', label:'Profilaxia de Úlcera / GI'},
+    {key:'glucose', label:'Controle Glicêmico'}, {key:'bowel', label:'Regime Intestinal'}, {key:'devices', label:'Revisão de Dispositivos Invasivos'},
+    {key:'delirium', label:'Prevenção de Delirium'}, {key:'stewardship', label:'Stewardship Antimicrobiano'},
+    {key:'chronic', label:'Manutenção de Medicações Crônicas'}, {key:'handoff', label:'Handoff / Transição de Cuidado'},
+    {key:'ade', label:'Triagem de Eventos Adversos'}, {key:'monitoring', label:'Monitorização Terapêutica'}, {key:'education', label:'Educação do Paciente'}
+  ]
+};
+
+function setSafetyItem(key, status) {
+  if (!state.safetyChecklist) state.safetyChecklist = {};
+  state.safetyChecklist[key] = (state.safetyChecklist[key] === status) ? null : status;
+  saveState();
+  renderSections();
+}
+
+function toggleRxForm(key) {
+  _rxFormOpenKey = (_rxFormOpenKey === key) ? null : key;
+  renderSections();
+}
+
+function addLinkedMedication(rxKey, dxText) {
+  const nameEl = document.getElementById('rx-name-' + rxKey);
+  const doseEl = document.getElementById('rx-dose-' + rxKey);
+  const routeEl = document.getElementById('rx-route-' + rxKey);
+  const freqEl = document.getElementById('rx-freq-' + rxKey);
+  if (!nameEl || !nameEl.value.trim()) return;
+  const name = nameEl.value.trim();
+  state.medications.push({
+    name,
+    dose: doseEl ? doseEl.value.trim() : '',
+    route: routeEl ? routeEl.value.trim() : '',
+    freq: freqEl ? freqEl.value.trim() : '',
+    notes: '',
+    linkedDx: dxText || ''
+  });
+  const lib = Object.values(COMMON_MEDS[lang]).flat();
+  if (!lib.some(m => m.name === name)) saveCustomMed(name);
+  _rxFormOpenKey = null;
   saveState();
   renderSections();
 }
