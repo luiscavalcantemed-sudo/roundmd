@@ -8597,12 +8597,12 @@ const FAM_DISEASE_OPTS = lang === 'en'
                 </div>
                 <input type="text" id="rx-freq-${rxKey}" placeholder="${lang==='en'?'Frequency':'Frequência'}" style="margin-top:6px;margin-bottom:8px;font-size:13px;">
                 <div style="display:flex;gap:6px;">
-                  <button class="btn-add" style="flex:1;margin:0;font-size:12px;padding:6px 0;" onclick="addLinkedMedication('${rxKey}','${(p.dx||'').replace(/'/g,"\\'")}')">${lang==='en'?'Add':'Adicionar'}</button>
+                  <button class="btn-add" style="flex:1;margin:0;font-size:12px;padding:6px 0;" onclick="addLinkedMedication('${rxKey}')">${lang==='en'?'Add':'Adicionar'}</button>
                   <button style="padding:6px 12px;background:transparent;border:1px solid var(--border);border-radius:6px;cursor:pointer;font-size:12px;" onclick="toggleRxForm(null)">${lang==='en'?'Cancel':'Cancelar'}</button>
                 </div>
               </div>
             ` : `
-              <button class="btn-add" style="margin-top:6px;margin-bottom:0;font-size:12px;padding:6px 14px;background:${color};border-color:${color};" onclick="toggleRxForm('${rxKey}')" ${!p.dx ? 'disabled title="'+(lang==='en'?'Enter a diagnosis first':'Insira um diagnóstico primeiro')+'"' : ''}>+ ${lang==='en'?'Prescribe':'Prescrever'}</button>
+              <button class="btn-add" style="margin-top:6px;margin-bottom:0;font-size:12px;padding:6px 14px;background:${color};border-color:${color};" onclick="toggleRxForm('${rxKey}')">+ ${lang==='en'?'Prescribe':'Prescrever'}</button>
             `}
           </div>
         </div>`;
@@ -10230,20 +10230,25 @@ function toggleRxForm(key) {
   renderSections();
 }
 
-function addLinkedMedication(rxKey, dxText) {
+function addLinkedMedication(rxKey) {
   const nameEl = document.getElementById('rx-name-' + rxKey);
   const doseEl = document.getElementById('rx-dose-' + rxKey);
   const routeEl = document.getElementById('rx-route-' + rxKey);
   const freqEl = document.getElementById('rx-freq-' + rxKey);
   if (!nameEl || !nameEl.value.trim()) return;
   const name = nameEl.value.trim();
+  const dashIdx = rxKey.lastIndexOf('-');
+  const kind = rxKey.slice(0, dashIdx);
+  const pIdx = parseInt(rxKey.slice(dashIdx + 1));
+  const list = kind === 'acute' ? state.problems : state.chronicProblems;
+  const dxText = (list && list[pIdx]) ? (list[pIdx].dx || '') : '';
   state.medications.push({
     name,
     dose: doseEl ? doseEl.value.trim() : '',
     route: routeEl ? routeEl.value.trim() : '',
     freq: freqEl ? freqEl.value.trim() : '',
     notes: '',
-    linkedDx: dxText || ''
+    linkedDx: dxText
   });
   const lib = Object.values(COMMON_MEDS[lang]).flat();
   if (!lib.some(m => m.name === name)) saveCustomMed(name);
