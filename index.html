@@ -8247,22 +8247,22 @@ const FAM_DISEASE_OPTS = lang === 'en'
 
               <div style="position: absolute; top: 14px; left: 95px; width: 70px; text-align: center;">
                 <div style="font-size:10px; color:var(--muted); line-height:1;">${lang === 'en' ? 'Hgb' : 'Hb'}</div>
-                <input type="text" id="fish-hgb" class="fish-input" value="${state.fishbone.hgb || ''}" readonly tabindex="-1" style="cursor:default;">
+                <div style="display:flex;align-items:center;justify-content:center;gap:1px;"><input type="text" id="fish-hgb" class="fish-input" value="${state.fishbone.hgb || ''}" readonly tabindex="-1" style="cursor:default;width:auto !important;flex:0 1 auto;min-width:0;"><span id="fish-flag-hgb" style="flex-shrink:0;">${_fishFlagHtml('hgb')}</span></div>
               </div>
 
               <div style="position: absolute; top: 54px; left: 95px; width: 70px; text-align: center;">
-                <input type="text" id="fish-hct" class="fish-input" value="${state.fishbone.hct || ''}" readonly tabindex="-1" style="cursor:default;">
+                <div style="display:flex;align-items:center;justify-content:center;gap:1px;"><input type="text" id="fish-hct" class="fish-input" value="${state.fishbone.hct || ''}" readonly tabindex="-1" style="cursor:default;width:auto !important;flex:0 1 auto;min-width:0;"><span id="fish-flag-hct" style="flex-shrink:0;">${_fishFlagHtml('hct')}</span></div>
                 <div style="font-size:10px; color:var(--muted); line-height:1;">${lang === 'en' ? 'Hct' : 'Ht'}</div>
               </div>
 
               <div style="position: absolute; top: 32px; left: 0px; width: 55px; text-align: center;">
                 <div style="font-size:10px; color:var(--muted); line-height:1;">${lang === 'en' ? 'WBC' : 'Leuco'}</div>
-                <input type="text" id="fish-wbc" class="fish-input" value="${state.fishbone.wbc || ''}" readonly tabindex="-1" style="cursor:default;">
+                <div style="display:flex;align-items:center;justify-content:center;gap:1px;"><input type="text" id="fish-wbc" class="fish-input" value="${state.fishbone.wbc || ''}" readonly tabindex="-1" style="cursor:default;width:auto !important;flex:0 1 auto;min-width:0;"><span id="fish-flag-wbc" style="flex-shrink:0;">${_fishFlagHtml('wbc')}</span></div>
               </div>
 
               <div style="position: absolute; top: 32px; right: 0px; width: 55px; text-align: center;">
                 <div style="font-size:10px; color:var(--muted); line-height:1;">${lang === 'en' ? 'Plt' : 'Plaq'}</div>
-                <input type="text" id="fish-plt" class="fish-input" value="${state.fishbone.plt || ''}" readonly tabindex="-1" style="cursor:default;">
+                <div style="display:flex;align-items:center;justify-content:center;gap:1px;"><input type="text" id="fish-plt" class="fish-input" value="${state.fishbone.plt || ''}" readonly tabindex="-1" style="cursor:default;width:auto !important;flex:0 1 auto;min-width:0;"><span id="fish-flag-plt" style="flex-shrink:0;">${_fishFlagHtml('plt')}</span></div>
               </div>
             </div>
           </div>
@@ -8285,34 +8285,34 @@ const FAM_DISEASE_OPTS = lang === 'en'
 
               <div style="position: absolute; top: 12px; left: 10px; width: 65px; text-align: center;">
                 <div style="font-size:10px; color:var(--muted); line-height:1;">Na+</div>
-                <input type="text" id="fish-na" class="fish-input" value="${state.fishbone.na || ''}" readonly tabindex="-1" style="cursor:default;">
+                <div style="display:flex;align-items:center;justify-content:center;gap:1px;"><input type="text" id="fish-na" class="fish-input" value="${state.fishbone.na || ''}" readonly tabindex="-1" style="cursor:default;width:auto !important;flex:0 1 auto;min-width:0;"><span id="fish-flag-na" style="flex-shrink:0;">${_fishFlagHtml('na')}</span></div>
               </div>
               <div style="position: absolute; top: 54px; left: 10px; width: 65px; text-align: center;">
-                <input type="text" id="fish-k" class="fish-input" value="${state.fishbone.k || ''}" readonly tabindex="-1" style="cursor:default;">
+                <div style="display:flex;align-items:center;justify-content:center;gap:1px;"><input type="text" id="fish-k" class="fish-input" value="${state.fishbone.k || ''}" readonly tabindex="-1" style="cursor:default;width:auto !important;flex:0 1 auto;min-width:0;"><span id="fish-flag-k" style="flex-shrink:0;">${_fishFlagHtml('k')}</span></div>
                 <div style="font-size:10px; color:var(--muted); line-height:1;">K+</div>
               </div>
 
               <div style="position: absolute; top: 12px; left: 83px; width: 65px; text-align: center;">
                 <div style="font-size:10px; color:var(--muted); line-height:1;">Cl-</div>
-                <input type="text" id="fish-cl" class="fish-input" value="${state.fishbone.cl || ''}" readonly tabindex="-1" style="cursor:default;">
+                <div style="display:flex;align-items:center;justify-content:center;gap:1px;"><input type="text" id="fish-cl" class="fish-input" value="${state.fishbone.cl || ''}" readonly tabindex="-1" style="cursor:default;width:auto !important;flex:0 1 auto;min-width:0;"><span id="fish-flag-cl" style="flex-shrink:0;">${_fishFlagHtml('cl')}</span></div>
               </div>
               <div style="position: absolute; top: 54px; left: 83px; width: 65px; text-align: center;">
-                <input type="text" id="fish-co2" class="fish-input" value="${state.fishbone.co2 || ''}" readonly tabindex="-1" style="cursor:default;">
+                <div style="display:flex;align-items:center;justify-content:center;gap:1px;"><input type="text" id="fish-co2" class="fish-input" value="${state.fishbone.co2 || ''}" readonly tabindex="-1" style="cursor:default;width:auto !important;flex:0 1 auto;min-width:0;"><span id="fish-flag-co2" style="flex-shrink:0;">${_fishFlagHtml('co2')}</span></div>
                 <div style="font-size:10px; color:var(--muted); line-height:1;">HCO₃</div>
               </div>
 
               <div style="position: absolute; top: 12px; left: 153px; width: 65px; text-align: center;">
                 <div style="font-size:10px; color:var(--muted); line-height:1;">${lang === 'en' ? 'BUN' : 'Ureia'}</div>
-                <input type="text" id="fish-bun" class="fish-input" value="${state.fishbone.bun || ''}" readonly tabindex="-1" style="cursor:default;">
+                <div style="display:flex;align-items:center;justify-content:center;gap:1px;"><input type="text" id="fish-bun" class="fish-input" value="${state.fishbone.bun || ''}" readonly tabindex="-1" style="cursor:default;width:auto !important;flex:0 1 auto;min-width:0;"><span id="fish-flag-bun" style="flex-shrink:0;">${_fishFlagHtml('bun')}</span></div>
               </div>
               <div style="position: absolute; top: 54px; left: 153px; width: 65px; text-align: center;">
-                <input type="text" id="fish-cr" class="fish-input" value="${state.fishbone.cr || ''}" readonly tabindex="-1" style="cursor:default;">
+                <div style="display:flex;align-items:center;justify-content:center;gap:1px;"><input type="text" id="fish-cr" class="fish-input" value="${state.fishbone.cr || ''}" readonly tabindex="-1" style="cursor:default;width:auto !important;flex:0 1 auto;min-width:0;"><span id="fish-flag-cr" style="flex-shrink:0;">${_fishFlagHtml('cr')}</span></div>
                 <div style="font-size:10px; color:var(--muted); line-height:1;">Cr</div>
               </div>
 
               <div style="position: absolute; top: 32px; left: 228px; width: 55px; text-align: center;">
                 <div style="font-size:10px; color:var(--muted); line-height:1;">${lang === 'en' ? 'Glu' : 'Glic'}</div>
-                <input type="text" id="fish-glu" class="fish-input" value="${state.fishbone.glu || ''}" readonly tabindex="-1" style="cursor:default;">
+                <div style="display:flex;align-items:center;justify-content:center;gap:1px;"><input type="text" id="fish-glu" class="fish-input" value="${state.fishbone.glu || ''}" readonly tabindex="-1" style="cursor:default;width:auto !important;flex:0 1 auto;min-width:0;"><span id="fish-flag-glu" style="flex-shrink:0;">${_fishFlagHtml('glu')}</span></div>
               </div>
             </div>
           </div>
@@ -10018,6 +10018,10 @@ function _fishboneLabName(field) {
   };
   return m[field];
 }
+function _fishFlagHtml(field) {
+  const labName = _fishboneLabName(field);
+  return _labFlagHtml(labName, state.fishbone[field]);
+}
 const _FISHBONE_BMP_FIELDS = ['na','k','cl','co2','bun','cr','glu'];
 function _fishboneDateField(field) { return _FISHBONE_BMP_FIELDS.includes(field) ? 'bmpDate' : 'cbcDate'; }
 
@@ -10436,6 +10440,8 @@ function _syncDiagramFromLabEntry(idx) {
   }
   const el = document.getElementById('fish-' + field);
   if (el) el.value = state.fishbone[field];
+  const flagEl = document.getElementById('fish-flag-' + field);
+  if (flagEl) flagEl.innerHTML = _fishFlagHtml(field);
 }
 
 const LAB_KIT_EXAMS = {
