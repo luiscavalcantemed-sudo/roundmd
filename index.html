@@ -8247,34 +8247,34 @@ const FAM_DISEASE_OPTS = lang === 'en'
               
               <div style="position: absolute; top: 12px; left: 10px; width: 65px; text-align: center;">
                 <div style="font-size:10px; color:var(--muted); line-height:1;">Na+</div>
-                <input type="text" id="fish-na" class="fish-input" value="${state.fishbone.na || '}" oninput="state.fishbone.na=this.value; _fishboneSync('na');">
+                <input type="text" id="fish-na" class="fish-input" value="${state.fishbone.na || ''}" oninput="state.fishbone.na=this.value; _fishboneSync('na');">
               </div>
               <div style="position: absolute; top: 54px; left: 10px; width: 65px; text-align: center;">
-                <input type="text" id="fish-k" class="fish-input" value="${state.fishbone.k || '}" oninput="state.fishbone.k=this.value; _fishboneSync('k');">
+                <input type="text" id="fish-k" class="fish-input" value="${state.fishbone.k || ''}" oninput="state.fishbone.k=this.value; _fishboneSync('k');">
                 <div style="font-size:10px; color:var(--muted); line-height:1;">K+</div>
               </div>
               
               <div style="position: absolute; top: 12px; left: 83px; width: 65px; text-align: center;">
                 <div style="font-size:10px; color:var(--muted); line-height:1;">Cl-</div>
-                <input type="text" id="fish-cl" class="fish-input" value="${state.fishbone.cl || '}" oninput="state.fishbone.cl=this.value; _fishboneSync('cl');">
+                <input type="text" id="fish-cl" class="fish-input" value="${state.fishbone.cl || ''}" oninput="state.fishbone.cl=this.value; _fishboneSync('cl');">
               </div>
               <div style="position: absolute; top: 54px; left: 83px; width: 65px; text-align: center;">
-                <input type="text" id="fish-co2" class="fish-input" value="${state.fishbone.co2 || '}" oninput="state.fishbone.co2=this.value; _fishboneSync('co2');">
+                <input type="text" id="fish-co2" class="fish-input" value="${state.fishbone.co2 || ''}" oninput="state.fishbone.co2=this.value; _fishboneSync('co2');">
                 <div style="font-size:10px; color:var(--muted); line-height:1;">HCO₃</div>
               </div>
 
               <div style="position: absolute; top: 12px; left: 153px; width: 65px; text-align: center;">
                 <div style="font-size:10px; color:var(--muted); line-height:1;">${lang === 'en' ? 'BUN' : 'Ureia'}</div>
-                <input type="text" id="fish-bun" class="fish-input" value="${state.fishbone.bun || '}" oninput="state.fishbone.bun=this.value; _fishboneSync('bun');">
+                <input type="text" id="fish-bun" class="fish-input" value="${state.fishbone.bun || ''}" oninput="state.fishbone.bun=this.value; _fishboneSync('bun');">
               </div>
               <div style="position: absolute; top: 54px; left: 153px; width: 65px; text-align: center;">
-                <input type="text" id="fish-cr" class="fish-input" value="${state.fishbone.cr || '}" oninput="state.fishbone.cr=this.value; _fishboneSync('cr');">
+                <input type="text" id="fish-cr" class="fish-input" value="${state.fishbone.cr || ''}" oninput="state.fishbone.cr=this.value; _fishboneSync('cr');">
                 <div style="font-size:10px; color:var(--muted); line-height:1;">Cr</div>
               </div>
 
               <div style="position: absolute; top: 32px; left: 228px; width: 55px; text-align: center;">
                 <div style="font-size:10px; color:var(--muted); line-height:1;">${lang === 'en' ? 'Glu' : 'Glic'}</div>
-                <input type="text" id="fish-glu" class="fish-input" value="${state.fishbone.glu || '}" oninput="state.fishbone.glu=this.value; _fishboneSync('glu');">
+                <input type="text" id="fish-glu" class="fish-input" value="${state.fishbone.glu || ''}" oninput="state.fishbone.glu=this.value; _fishboneSync('glu');">
               </div>
             </div>
           </div>
@@ -8297,22 +8297,22 @@ const FAM_DISEASE_OPTS = lang === 'en'
               
               <div style="position: absolute; top: 14px; left: 95px; width: 70px; text-align: center;">
                 <div style="font-size:10px; color:var(--muted); line-height:1;">${lang === 'en' ? 'Hgb' : 'Hb'}</div>
-                <input type="text" id="fish-hgb" class="fish-input" value="${state.fishbone.hgb || '}" oninput="state.fishbone.hgb=this.value; _fishboneSync('hgb');">
+                <input type="text" id="fish-hgb" class="fish-input" value="${state.fishbone.hgb || ''}" oninput="state.fishbone.hgb=this.value; _fishboneSync('hgb');">
               </div>
               
               <div style="position: absolute; top: 54px; left: 95px; width: 70px; text-align: center;">
-                <input type="text" id="fish-hct" class="fish-input" value="${state.fishbone.hct || '}" oninput="state.fishbone.hct=this.value; _fishboneSync('hct');">
+                <input type="text" id="fish-hct" class="fish-input" value="${state.fishbone.hct || ''}" oninput="state.fishbone.hct=this.value; _fishboneSync('hct');">
                 <div style="font-size:10px; color:var(--muted); line-height:1;">${lang === 'en' ? 'Hct' : 'Ht'}</div>
               </div>
               
               <div style="position: absolute; top: 32px; left: 0px; width: 55px; text-align: center;">
                 <div style="font-size:10px; color:var(--muted); line-height:1;">${lang === 'en' ? 'WBC' : 'Leuco'}</div>
-                <input type="text" id="fish-wbc" class="fish-input" value="${state.fishbone.wbc || '}" oninput="state.fishbone.wbc=this.value; _fishboneSync('wbc');">
+                <input type="text" id="fish-wbc" class="fish-input" value="${state.fishbone.wbc || ''}" oninput="state.fishbone.wbc=this.value; _fishboneSync('wbc');">
               </div>
               
               <div style="position: absolute; top: 32px; right: 0px; width: 55px; text-align: center;">
                 <div style="font-size:10px; color:var(--muted); line-height:1;">${lang === 'en' ? 'Plt' : 'Plaq'}</div>
-                <input type="text" id="fish-plt" class="fish-input" value="${state.fishbone.plt || '}" oninput="state.fishbone.plt=this.value; _fishboneSync('plt');">
+                <input type="text" id="fish-plt" class="fish-input" value="${state.fishbone.plt || ''}" oninput="state.fishbone.plt=this.value; _fishboneSync('plt');">
               </div>
             </div>
           </div>
